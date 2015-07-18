@@ -1,6 +1,5 @@
 package io.mopar.rs2.file;
 
-import io.mopar.core.msg.Message;
 import io.mopar.file.res.CreateSessionResponse;
 import io.mopar.file.res.StreamFileResponse;
 import io.mopar.rs2.Application;

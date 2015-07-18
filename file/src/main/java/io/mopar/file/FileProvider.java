@@ -1,7 +1,5 @@
 package io.mopar.file;
 
-import io.mopar.file.FileChunk;
-
 import java.io.IOException;
 
 /**

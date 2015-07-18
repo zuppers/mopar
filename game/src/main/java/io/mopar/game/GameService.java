@@ -1,6 +1,5 @@
 package io.mopar.game;
 
-import com.sun.istack.internal.logging.Logger;
 import io.mopar.core.*;
 import io.mopar.core.lua.Coerce;
 import io.mopar.core.asset.AssetLoader;
@@ -17,6 +16,8 @@ import io.mopar.game.res.*;
 import io.mopar.game.model.Player;
 import io.mopar.game.model.World;
 import io.mopar.game.util.ExecutionTimer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.script.ScriptException;
 import java.io.IOException;
@@ -29,7 +30,7 @@ public class GameService extends Service {
     /**
      * The logger.
      */
-    private static final Logger logger = Logger.getLogger(GameService.class);
+    private static final Logger logger = LoggerFactory.getLogger(GameService.class);
 
     /**
      * The script engine.
@@ -193,7 +194,7 @@ public class GameService extends Service {
                 Profile profile = profileCodec.decode(request.getEncoding(), request.getProfileData());
 
             } catch (IOException ex) {
-                logger.severe("Failed to decode the provided player profile", ex);
+                logger.error("Failed to decode the provided player profile", ex);
                 callback.call(new NewPlayerResponse(NewPlayerResponse.INVALID_PROFILE));
                 return;
             }
@@ -300,7 +301,7 @@ public class GameService extends Service {
             response.setResult(result);
             callback.call(response);
         } catch (ScriptException ex) {
-            logger.severe("Failed to evaluate script", ex);
+            logger.error("Failed to evaluate script", ex);
 
             // TODO(sinisoul): How to effectively callback the exception?
             callback.call(new EvalScriptResponse(EvalScriptResponse.ERROR));
@@ -317,7 +318,7 @@ public class GameService extends Service {
         try {
             scriptEngine.load(request.getNamespace(), request.getScript());
         } catch (ScriptException ex) {
-            logger.severe("Failed to load script", ex);
+            logger.error("Failed to load script", ex);
 
             // TODO(sinisoul): How to effectively callback the exception?
             callback.call(new LoadScriptResponse(LoadScriptResponse.ERROR));

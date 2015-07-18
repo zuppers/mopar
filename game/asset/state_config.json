@@ -1,0 +1,16 @@
+[
+  {
+    "id" : 0,
+    "name" : "idle"
+  },
+
+  {
+    "id" : 1,
+    "name" : "death"
+  },
+
+  {
+    "id" : 100,
+    "name" : "fresh"
+  }
+]

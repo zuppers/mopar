@@ -38,8 +38,8 @@ public class WorldService extends Service {
     @Override
     public void setup() throws Exception {
         setBlockForRequests(true);
-        Location location = new Location("US1", "US West", Location.FLAG_USA);
-        worlds.set(1, new World("-", "local.runescape.com", location));
+        Location location = new Location("US1", "US East", Location.FLAG_USA);
+        worlds.set(1, new World("-", "game.moparscape.com", location));
         locations.add(location);
 
         registerRequestHandler(SnapshotRequest.class, this::handleSnapshotRequest);

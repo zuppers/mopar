@@ -84,15 +84,35 @@ public class GameApplicationService extends ApplicationService<GameService> {
      * @param incomingPackets The incoming packet list.
      */
     private void registerIncomingPackets(PacketMetaList incomingPackets) {
+        incomingPackets.add(new PacketMetaData(3, "npc_option_1", 2));
+        incomingPackets.add(new PacketMetaData(10, "button_option_2", 4));
         incomingPackets.add(new PacketMetaData(20, "rebuilt_scene", 4));
         incomingPackets.add(new PacketMetaData(21, "camera_moved", 4));
         incomingPackets.add(new PacketMetaData(22, "focus_changed", 1));
+        incomingPackets.add(new PacketMetaData(23, "enter_amount", 4));
+        incomingPackets.add(new PacketMetaData(27, "item_on_item", 16));
+        incomingPackets.add(new PacketMetaData(30, "npc_option_4", 2));
+        incomingPackets.add(new PacketMetaData(34, "add_ignore", 8));
+        incomingPackets.add(new PacketMetaData(39, "route_minimap", PacketMetaData.VAR_BYTE_LENGTH));
+        incomingPackets.add(new PacketMetaData(44, "command", PacketMetaData.VAR_BYTE_LENGTH));
+        incomingPackets.add(new PacketMetaData(53, "button_option_9", 6));
+        incomingPackets.add(new PacketMetaData(55, "item_option_1", 8));
+        incomingPackets.add(new PacketMetaData(57, "remove_friend", 8));
+        incomingPackets.add(new PacketMetaData(64, "button_option_8", 6));
+        incomingPackets.add(new PacketMetaData(66, "ground_item_option_1", 6));
+        incomingPackets.add(new PacketMetaData(68, "player_option_1", 2));
+        incomingPackets.add(new PacketMetaData(71, "player_option_2", 2));
         incomingPackets.add(new PacketMetaData(75, "click", 6));
+        incomingPackets.add(new PacketMetaData(77, "route_target", PacketMetaData.VAR_BYTE_LENGTH));
+        incomingPackets.add(new PacketMetaData(78, "npc_option_2", 2));
+        incomingPackets.add(new PacketMetaData(79, "swap_items", 12));
+        incomingPackets.add(new PacketMetaData(81, "button_option_1", 8));
         incomingPackets.add(new PacketMetaData(93, "heartbeat", 0));
         incomingPackets.add(new PacketMetaData(110, "load_scene", 0));
         incomingPackets.add(new PacketMetaData(177, "packet_check", 2));
         incomingPackets.add(new PacketMetaData(215, "route_ground", PacketMetaData.VAR_BYTE_LENGTH));
         incomingPackets.add(new PacketMetaData(243, "screen_info", 6));
+        incomingPackets.add(new PacketMetaData(254, "loc_option_1", 6));
     }
 
     /**

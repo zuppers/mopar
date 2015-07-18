@@ -47,7 +47,10 @@ public class GameMessageCodecInitializer implements MessageCodecInitializer {
      */
     private void registerMessageDecoders(MessageCodec codec, PacketMetaList incomingPackets) {
         codec.registerMessageDecoder(incomingPackets.getId("heartbeat"), this::decodeHeartbeatMessage);
-        codec.registerMessageDecoder(incomingPackets.getId("route_ground"), this::decodeRouteMessage);
+
+        codec.registerMessageDecoder(incomingPackets.getId("route_ground"), (packet) -> decodeRouteMessage(packet, false));
+        codec.registerMessageDecoder(incomingPackets.getId("route_target"), (packet) -> decodeRouteMessage(packet, false));
+        codec.registerMessageDecoder(incomingPackets.getId("route_minimap"), (packet) -> decodeRouteMessage(packet, true));
 
         codec.registerMessageDecoder(incomingPackets.getId("screen_info"), this::decodeBlankMessage);
         codec.registerMessageDecoder(incomingPackets.getId("rebuilt_scene"), this::decodeBlankMessage);
@@ -56,7 +59,7 @@ public class GameMessageCodecInitializer implements MessageCodecInitializer {
         codec.registerMessageDecoder(incomingPackets.getId("packet_check"), this::decodeBlankMessage);
         codec.registerMessageDecoder(incomingPackets.getId("focus_changed"), this::decodeBlankMessage);
         codec.registerMessageDecoder(incomingPackets.getId("click"), this::decodeBlankMessage);
-
+        codec.registerMessageDecoder(incomingPackets.getId("loc_option_1"), this::decodeBlankMessage);
     }
 
     /**
@@ -85,8 +88,10 @@ public class GameMessageCodecInitializer implements MessageCodecInitializer {
      * @param packet The packet to decode.
      * @return The decoded message.
      */
-    private RouteMessage decodeRouteMessage(Packet packet) {
+    private RouteMessage decodeRouteMessage(Packet packet, boolean minimap) {
         ByteBuf buffer = packet.getBuffer();
+
+        int steps = (buffer.readableBytes() - 5 - (minimap ? 14 : 0)) / 2;
 
         boolean active = readUByteA(buffer) == 1;
         int firstX = buffer.readUnsignedShort();
@@ -95,7 +100,7 @@ public class GameMessageCodecInitializer implements MessageCodecInitializer {
         RouteMessage message = new RouteMessage();
         message.appendPoint(firstX, firstY);
 
-        while(buffer.isReadable(2)) {
+        while(steps-- > 0) {
             int dx = readByteA(buffer);
             int dy = readByteS(buffer);
 

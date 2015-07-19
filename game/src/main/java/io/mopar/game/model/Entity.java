@@ -61,7 +61,12 @@ public abstract class Entity {
      *
      * @param position The position.
      */
-    public void setPosition(Position position) { this.position = position; }
+    public void setPosition(Position position) {
+        if(position == null) {
+            throw new NullPointerException("Position cannot be null");
+        }
+        this.position = position;
+    }
 
     /**
      * Gets the position.

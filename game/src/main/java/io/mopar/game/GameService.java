@@ -136,6 +136,16 @@ public class GameService extends Service {
     }
 
     /**
+     *
+     * @param playerId
+     * @param displayMode
+     * @param callback
+     */
+    public void updateDisplay(int playerId, int displayMode, Callback<UpdateDisplayResponse> callback) {
+        submit(new UpdateDisplayRequest(playerId, displayMode), callback);
+    }
+
+    /**
      * Helper method; evaluates a script.
      *
      * @param script The script to evaluate.
@@ -166,7 +176,7 @@ public class GameService extends Service {
         registerRequestHandler(NewPlayerRequest.class, this::handleNewPlayerRequest);
         registerRequestHandler(RemovePlayerRequest.class, this::handleRemovePlayerRequest);
         registerRequestHandler(RoutePlayerRequest.class, this::handleRoutePlayerRequest);
-
+        registerRequestHandler(UpdateDisplayRequest.class, this::handleUpdateDisplayRequest);
 
         // Bind all of the menu action request handlers
         registerRequestHandler(PlayerMenuActionRequest.class, this::handlePlayerActionRequest);
@@ -212,6 +222,26 @@ public class GameService extends Service {
         NewPlayerResponse response = new NewPlayerResponse(NewPlayerResponse.OK);
         response.setPlayer(player);
         callback.call(response);
+    }
+
+    /**
+     * Handles a display update request.
+     *
+     * @param request The request.
+     * @param callback The callback.
+     */
+    private void handleUpdateDisplayRequest(UpdateDisplayRequest request, Callback callback) {
+        Player player = world.getPlayer(request.getPlayerId());
+        if(player == null) {
+            callback.call(new UpdateDisplayResponse());
+            return;
+        }
+
+        // TODO: Is queuing a state for this the best way to do this?
+        player.setDisplayMode(request.getDisplayMode());
+        player.queueState(States.DISPLAY_UPDATED);
+
+        callback.call(new UpdateDisplayResponse());
     }
 
     /**

@@ -135,7 +135,7 @@ public class LoginMessageCodecInitializer implements MessageCodecInitializer {
         builder.writeBoolean(false);                                                            // ?
         builder.writeShort(0);                                                                  // Id
         builder.writeBoolean(false);                                                            // ?
-        builder.writeBoolean(false);                                                            // ?
+        builder.writeBoolean(true);                                                            // ?
         return builder.build();
     }
 }

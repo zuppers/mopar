@@ -2,9 +2,7 @@ package io.mopar.game.model;
 
 import io.mopar.core.msg.Message;
 import io.mopar.core.msg.MessageListener;
-import io.mopar.game.msg.PlayerSynchronizationMessage;
-import io.mopar.game.msg.PrintMessage;
-import io.mopar.game.msg.RebuildSceneMessage;
+import io.mopar.game.msg.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,6 +18,11 @@ public class Player extends Mobile {
     private List<MessageListener> messageListeners = new ArrayList<>();
 
     /**
+     * The display mode.
+     */
+    private int displayMode;
+
+    /**
      * The scene.
      */
     private Scene scene = new Scene();
@@ -28,6 +31,27 @@ public class Player extends Mobile {
      * Constructs a new {@link Player};
      */
     public Player() {}
+
+    /**
+     * Sets the display mode.
+     *
+     * @param displayMode The display mode.
+     */
+    public void setDisplayMode(int displayMode) {
+        this.displayMode = displayMode;
+    }
+
+    /**
+     *
+     * @param widgetId
+     */
+    public void setRootInterface(int widgetId) {
+        send(new SetRootInterfaceMessage(widgetId));
+    }
+
+    public void setInterface(int parentId, int componentId, int widgetId, int type) {
+        send(new SetInterfaceMessage(parentId, componentId, widgetId, type));
+    }
 
     /**
      * Gets the scene.
@@ -67,6 +91,7 @@ public class Player extends Mobile {
     }
 
     /**
+     * Prints text to the players console.
      *
      * @param text
      */
@@ -92,4 +117,7 @@ public class Player extends Mobile {
         messageListeners.forEach(listener -> listener.handle(message));
     }
 
+    public int getDisplayMode() {
+        return displayMode;
+    }
 }

@@ -185,7 +185,6 @@ public class PlayerSynchronizationMessageEncoder implements MessageEncoder<Playe
         int y = descriptor.getPosition().getY() - descriptor.getRelative().getY();
 
         builder.writeBits(11, descriptor.getPlayerId());
-        System.out.println(descriptor.getPlayerId());
         builder.writeBits(1, descriptor.hasUpdateBlocks() ? 1 : 0);
         builder.writeBits(5, x);
         builder.writeBits(3, descriptor.getLastStep().toInteger());

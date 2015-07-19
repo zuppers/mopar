@@ -110,6 +110,16 @@ public class PacketBuilder {
     }
 
     /**
+     *
+     * @param i
+     * @return
+     */
+    public PacketBuilder writeByteN(int i) {
+        buf.writeByte(-i);
+        return this;
+    }
+
+    /**
      * Writes a short.
      *
      * @param i The integer value.
@@ -150,6 +160,19 @@ public class PacketBuilder {
      */
     public PacketBuilder writeInt(int value) {
         buf.writeInt(value);
+        return this;
+    }
+
+    /**
+     *
+     * @param i
+     * @return
+     */
+    public PacketBuilder writeLEInt(int i) {
+        buf.writeByte((byte)  i);
+        buf.writeByte((byte) (i >> 8));
+        buf.writeByte((byte) (i >> 16));
+        buf.writeByte((byte) (i >> 24));
         return this;
     }
 

@@ -218,7 +218,6 @@ public class Application {
     }
 
     public static void main(String... args) throws IOException {
-
         FileSystem fileSystem = FileSystem.create(Paths.get("file/data"), 28);
 
         Application app = new Application();

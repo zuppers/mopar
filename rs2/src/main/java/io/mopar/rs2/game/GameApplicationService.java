@@ -2,15 +2,15 @@ package io.mopar.rs2.game;
 
 import io.mopar.game.GameService;
 import io.mopar.game.model.Position;
-import io.mopar.game.msg.RebuildSceneMessage;
-import io.mopar.game.msg.SetInterfaceMessage;
-import io.mopar.game.msg.SetRootInterfaceMessage;
+import io.mopar.game.msg.*;
 import io.mopar.login.res.LoginResponse;
 import io.mopar.rs2.Application;
 import io.mopar.rs2.ApplicationService;
+import io.mopar.rs2.file.FileSessionContext;
 import io.mopar.rs2.login.LoginApplicationService;
 import io.mopar.rs2.msg.StatusMessage;
 import io.mopar.rs2.msg.game.RouteMessage;
+import io.mopar.rs2.msg.game.ScreenInfoMessage;
 import io.mopar.rs2.msg.login.LoginRequestMessage;
 import io.mopar.rs2.msg.login.LoginStatusCheck;
 import io.mopar.rs2.msg.login.ProfileMessage;
@@ -70,6 +70,7 @@ public class GameApplicationService extends ApplicationService<GameService> {
         registerOutgoingPackets(app.getOutgoingPackets());
 
         registerMessageHandler(RouteMessage.class, this::handleRouteMessage);
+        registerMessageHandler(ScreenInfoMessage.class, this::handleScreenInfoMessage);
         registerMessageHandler(SessionClosedMessage.class, this::handleSessionClosed);
 
         app.registerMessageHandler(LoginStatusCheck.class, this::handleLoginStatusCheck);
@@ -106,10 +107,11 @@ public class GameApplicationService extends ApplicationService<GameService> {
         incomingPackets.add(new PacketMetaData(77, "route_target", PacketMetaData.VAR_BYTE_LENGTH));
         incomingPackets.add(new PacketMetaData(78, "npc_option_2", 2));
         incomingPackets.add(new PacketMetaData(79, "swap_items", 12));
-        incomingPackets.add(new PacketMetaData(81, "button_option_1", 8));
         incomingPackets.add(new PacketMetaData(93, "heartbeat", 0));
         incomingPackets.add(new PacketMetaData(110, "load_scene", 0));
+        incomingPackets.add(new PacketMetaData(155, "button_option_1", 6));
         incomingPackets.add(new PacketMetaData(177, "packet_check", 2));
+        incomingPackets.add(new PacketMetaData(184, "interfaces_closed", 0));
         incomingPackets.add(new PacketMetaData(215, "route_ground", PacketMetaData.VAR_BYTE_LENGTH));
         incomingPackets.add(new PacketMetaData(243, "screen_info", 6));
         incomingPackets.add(new PacketMetaData(254, "loc_option_1", 6));
@@ -121,6 +123,7 @@ public class GameApplicationService extends ApplicationService<GameService> {
      * @param outgoingPackets The outgoing packet list.
      */
     private void registerOutgoingPackets(PacketMetaList outgoingPackets) {
+        outgoingPackets.add(new PacketMetaData(21, "set_interface_hidden", 7));
         outgoingPackets.add(new PacketMetaData(70, "print", PacketMetaData.VAR_BYTE_LENGTH));
         outgoingPackets.add(new PacketMetaData(145, "set_root_interface", 5));
         outgoingPackets.add(new PacketMetaData(155, "set_interface", 9));
@@ -165,6 +168,15 @@ public class GameApplicationService extends ApplicationService<GameService> {
      * @param session
      * @param message
      */
+    private void handleScreenInfoMessage(Session session, ScreenInfoMessage message) {
+        service.updateDisplay(session.get(PlayerSessionContext.class).getPlayerId(), message.getDisplayMode(), (res) -> {});
+    }
+
+    /**
+     *
+     * @param session
+     * @param message
+     */
     private void handleSessionClosed(Session session, SessionClosedMessage message) {
         service.removePlayer(session.get(PlayerSessionContext.class).getPlayerId(), (res) -> {});
     }
@@ -178,6 +190,14 @@ public class GameApplicationService extends ApplicationService<GameService> {
      */
     private void handleLoginResponse(Session session, LoginRequestMessage request, LoginResponse response) {
         service.createPlayer(res -> {
+
+            // TODO(sinisoul: This most likely will not fix the problem. Hurr.
+            if(session.get(FileSessionContext.class) != null) {
+                logger.info("Session attempted to register to file and game service");
+                session.close();
+                return;
+            }
+
             // TODO: Clean this up properly
             session.attach(PlayerSessionContext.class, new PlayerSessionContext(res.getPlayer()));
             session.setDispatcher(dispatcher);
@@ -195,16 +215,8 @@ public class GameApplicationService extends ApplicationService<GameService> {
             }
             session.pipeline().get(PacketEncoder.class).initCipher(cipherKeys);
 
-            Position position = new Position(3200, 3200);
-            res.getPlayer().setPosition(position);
-
+            res.getPlayer().setPosition(new Position(3222, 3222));
             res.getPlayer().rebuildScene();
-            session.write(new SetRootInterfaceMessage(548));
-            session.write(new SetInterfaceMessage(548, 75, 752, 1));
-            session.write(new SetInterfaceMessage(548, 14, 751, 1));
-            session.write(new SetInterfaceMessage(752, 8, 137, 1));
-            session.write(new SetInterfaceMessage(548, 10, 754, 1));
-            session.flush();
         });
     }
 }

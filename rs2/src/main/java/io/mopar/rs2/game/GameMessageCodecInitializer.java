@@ -47,12 +47,14 @@ public class GameMessageCodecInitializer implements MessageCodecInitializer {
      */
     private void registerMessageDecoders(MessageCodec codec, PacketMetaList incomingPackets) {
         codec.registerMessageDecoder(incomingPackets.getId("heartbeat"), this::decodeHeartbeatMessage);
+        codec.registerMessageDecoder(incomingPackets.getId("screen_info"), this::decodeScreenInfoMessage);
+        codec.registerMessageDecoder(incomingPackets.getId("interfaces_closed"), this::decodeClosedInterfacesMessage);
 
         codec.registerMessageDecoder(incomingPackets.getId("route_ground"), (packet) -> decodeRouteMessage(packet, false));
         codec.registerMessageDecoder(incomingPackets.getId("route_target"), (packet) -> decodeRouteMessage(packet, false));
         codec.registerMessageDecoder(incomingPackets.getId("route_minimap"), (packet) -> decodeRouteMessage(packet, true));
 
-        codec.registerMessageDecoder(incomingPackets.getId("screen_info"), this::decodeBlankMessage);
+
         codec.registerMessageDecoder(incomingPackets.getId("rebuilt_scene"), this::decodeBlankMessage);
         codec.registerMessageDecoder(incomingPackets.getId("load_scene"), this::decodeBlankMessage);
         codec.registerMessageDecoder(incomingPackets.getId("camera_moved"), this::decodeBlankMessage);
@@ -60,6 +62,7 @@ public class GameMessageCodecInitializer implements MessageCodecInitializer {
         codec.registerMessageDecoder(incomingPackets.getId("focus_changed"), this::decodeBlankMessage);
         codec.registerMessageDecoder(incomingPackets.getId("click"), this::decodeBlankMessage);
         codec.registerMessageDecoder(incomingPackets.getId("loc_option_1"), this::decodeBlankMessage);
+        codec.registerMessageDecoder(incomingPackets.getId("button_option_1"), this::decodeBlankMessage);
     }
 
     /**
@@ -80,6 +83,24 @@ public class GameMessageCodecInitializer implements MessageCodecInitializer {
      */
     private HeartbeatMessage decodeHeartbeatMessage(Packet packet) {
         return new HeartbeatMessage();
+    }
+
+    /**
+     *
+     * @param packet
+     * @return
+     */
+    private ScreenInfoMessage decodeScreenInfoMessage(Packet packet) {
+        ByteBuf buf = packet.getBuffer();
+        int displayMode = buf.readUnsignedByte();
+        int width = buf.readUnsignedShort();
+        int height = buf.readUnsignedShort();
+        int numberSamples = buf.readUnsignedByte();
+        return new ScreenInfoMessage(displayMode, width, height, numberSamples);
+    }
+
+    private ClosedInterfacesMessage decodeClosedInterfacesMessage(Packet packet) {
+        return new ClosedInterfacesMessage();
     }
 
     /**
@@ -120,6 +141,7 @@ public class GameMessageCodecInitializer implements MessageCodecInitializer {
         codec.registerMessageEncoder(SetRootInterfaceMessage.class, this::encodeSetRootInterfaceMessage);
         codec.registerMessageEncoder(SetInterfaceMessage.class, this::encodeSetInterfaceMessage);
         codec.registerMessageEncoder(PrintMessage.class, this::encodePrintMessage);
+        codec.registerMessageEncoder(SetInterfaceHiddenMessage.class, this::encodeSetInterfaceHiddenMessage);
 
         // Register the synchronization message encoders
         codec.registerMessageEncoder(PlayerSynchronizationMessage.class, new PlayerSynchronizationMessageEncoder());
@@ -220,6 +242,21 @@ public class GameMessageCodecInitializer implements MessageCodecInitializer {
     private Packet encodePrintMessage(ByteBufAllocator allocator, PacketMetaList outgoingPackets, PrintMessage message) {
         PacketBuilder builder = PacketBuilder.create(outgoingPackets.get("print"), allocator);
         builder.writeJstr(message.getText());
+        return builder.build();
+    }
+
+    /**
+     *
+     * @param allocator
+     * @param outgoingPackets
+     * @param message
+     * @return
+     */
+    private Packet encodeSetInterfaceHiddenMessage(ByteBufAllocator allocator, PacketMetaList outgoingPackets, SetInterfaceHiddenMessage message) {
+        PacketBuilder builder = PacketBuilder.create(outgoingPackets.get("set_interface_hidden"), allocator);
+        builder.writeByteN(message.isHidden() ? 1 : 0);
+        builder.writeShort(0);
+        builder.writeLEInt(message.getWidgetId() << 16 | message.getComponentId());
         return builder.build();
     }
 }

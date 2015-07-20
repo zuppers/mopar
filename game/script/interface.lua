@@ -11,11 +11,11 @@ local module = {
     -- The interface configurations
     _config = {},
 
-    -- Load the interface configurations and subscripts
+    -- Load the interface configurations and scripts
     load = function(self, file)
         self:load_config(file)
         for _, script in pairs(self._scripts) do
-            require('inter/' .. script)
+            require('ui/' .. script)
         end
     end,
 

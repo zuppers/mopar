@@ -24,6 +24,7 @@ world:on_player_state(state.display_mode_updated, function(plr, st)
     local game_screen = inter.game_screen
 
     -- Get the screen for the given display mode, fixed for SD/HD small and resizable for HD large and HD fullscreen
+    -- TODO: Get the screen for the display mode in another method
     local screen
     if plr:display_mode() < 2 then
         screen = inter.fixed_screen

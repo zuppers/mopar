@@ -63,6 +63,26 @@ public class GameService extends Service {
     private World world = new World();
 
     /**
+     * The world update rate in milliseconds.
+     */
+    private long delay = 600L;
+
+    /**
+     * The cycle rate in milliseconds.
+     */
+    private long rate = 50L;
+
+    /**
+     * The minimum delay between cycles.
+     */
+    private long min = 5L;
+
+    /**
+     * The current loop cycle.
+     */
+    private int loopCycle = 0;
+
+    /**
      * Constructs a new {@link GameService};
      */
     public GameService() {}
@@ -94,10 +114,11 @@ public class GameService extends Service {
 
     @Override
     public void pulse() {
-        // Update the world for the amount of elapsed ticks since the last cycle
-        int elapsedTicks = timer.sleep(5, 600);
-        for(int i = 0; i < elapsedTicks; i++) {
-            world.update();
+        int elapsed = timer.sleep(min, rate);
+        for(int i = 0; i < elapsed; i++) {
+            if((loopCycle++ % (delay / rate) == 0)) {
+                world.update();
+            }
         }
     }
 
@@ -239,7 +260,7 @@ public class GameService extends Service {
 
         // TODO: Is queuing a state for this the best way to do this?
         player.setDisplayMode(request.getDisplayMode());
-        player.queueState(States.DISPLAY_UPDATED);
+        player.queueState(States.DISPLAY_MODE_UPDATED);
 
         callback.call(new UpdateDisplayResponse());
     }

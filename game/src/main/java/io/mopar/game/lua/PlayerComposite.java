@@ -49,6 +49,10 @@ public class PlayerComposite extends EntityComposite {
         player.setInterface(component.get("parent_id").checkint(), component.get("id").checkint(), table.get("id").checkint(), a);
     }
 
+    public void set_interface(int i, int i1, int i2, int i3) {
+        player.setInterface(i, i1, i2, i3);
+    }
+
     /**
      * Gets the display mode.
      *

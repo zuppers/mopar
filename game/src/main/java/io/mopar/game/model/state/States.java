@@ -19,7 +19,7 @@ public class States {
 
     public static final int FRESH = 100;
 
-    public static final int DISPLAY_UPDATED = 1000;
+    public static final int DISPLAY_MODE_UPDATED = 1000;
 
     /**
      * Prevent instantiation;

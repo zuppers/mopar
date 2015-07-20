@@ -28,6 +28,11 @@ public class Player extends Mobile {
     private Scene scene = new Scene();
 
     /**
+     * The chat message.
+     */
+    private ChatMessage chatMessage;
+
+    /**
      * Constructs a new {@link Player};
      */
     public Player() {}
@@ -43,12 +48,52 @@ public class Player extends Mobile {
 
     /**
      *
+     * @return
+     */
+    public int getDisplayMode() {
+        return displayMode;
+    }
+
+    /**
+     *
+     * @param message
+     */
+    public void setChatMessage(ChatMessage message) {
+        this.chatMessage = message;
+        setUpdated(true);
+    }
+
+    /**
+     *
+     * @return
+     */
+    public ChatMessage getChatMessage() {
+        return chatMessage;
+    }
+
+    /**
+     *
+     * @return
+     */
+    public boolean hasChatMessage() {
+        return chatMessage != null;
+    }
+
+    /**
+     *
      * @param widgetId
      */
     public void setRootInterface(int widgetId) {
         send(new SetRootInterfaceMessage(widgetId));
     }
 
+    /**
+     *
+     * @param parentId
+     * @param componentId
+     * @param widgetId
+     * @param type
+     */
     public void setInterface(int parentId, int componentId, int widgetId, int type) {
         send(new SetInterfaceMessage(parentId, componentId, widgetId, type));
     }
@@ -117,7 +162,11 @@ public class Player extends Mobile {
         messageListeners.forEach(listener -> listener.handle(message));
     }
 
-    public int getDisplayMode() {
-        return displayMode;
+    /**
+     * Resets the player.
+     */
+    public void reset() {
+        chatMessage = null;
+        super.reset();
     }
 }

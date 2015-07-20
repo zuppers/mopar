@@ -32,7 +32,7 @@ public class WorldLuaModule implements LuaModule {
      * @param closure The lua closure.
      */
     public void on_player_state(int stateId, LuaClosure closure) {
-        world.registerPlayerStateHandler(stateId, (plr, state) -> closure.call(Coerce.coerceToLua(plr), LuaNumber.valueOf(state)));
+        world.registerPlayerStateHandler(stateId, (plr) -> closure.call(Coerce.coerceToLua(plr)));
     }
 
     /**

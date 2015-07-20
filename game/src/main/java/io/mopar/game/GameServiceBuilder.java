@@ -9,11 +9,12 @@ import io.mopar.core.profile.ProfileCodec;
 public class GameServiceBuilder {
 
     /**
-     *
+     * The service.
      */
     private GameService service = new GameService();
 
     /**
+     * Sets the profile codec.
      *
      * @param profileCodec
      * @return
@@ -24,6 +25,7 @@ public class GameServiceBuilder {
     }
 
     /**
+     * Sets the asset loader.
      *
      * @param assetLoader
      * @return
@@ -34,16 +36,18 @@ public class GameServiceBuilder {
     }
 
     /**
+     * Builds the service.
      *
-     * @return
+     * @return the built service.
      */
     public GameService build() {
         return service;
     }
 
     /**
+     * Creates a new builder.
      *
-     * @return
+     * @return the created builder.
      */
     public static GameServiceBuilder create() {
         return new GameServiceBuilder();

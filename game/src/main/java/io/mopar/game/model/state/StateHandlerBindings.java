@@ -53,7 +53,7 @@ public class StateHandlerBindings {
         if(handler == null) {
             return false;
         }
-        handler.handle(player, stateId);
+        handler.handle(player);
         return true;
     }
 

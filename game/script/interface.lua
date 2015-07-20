@@ -1,43 +1,53 @@
 local module = {
-    namespace = 'inter',
 
     -- Enumations for interface types
-    -- TODO: Come up with better name for 'screen'
-    screen   = 2,
     closable = 0,
     static   = 1,
+    screen   = 2,
 
-    update_interface_table = function(name, data)
-        local table = _G[name] or {}
+    -- Scripts to load
+    _scripts = { 'display' },
+
+    -- The interface configurations
+    _config = {},
+
+    -- Load the interface configurations and subscripts
+    load = function(self, file)
+        self:load_config(file)
+        for _, script in pairs(self._scripts) do
+            require('inter/' .. script)
+        end
+    end,
+
+    -- Load the interface configurations
+    load_config = function(self, file)
+        local data = json:decode(asset:load(file))
+
         for _, inter in pairs(data) do
 
             -- Map all of the interface components to their name
-            local components = {}
+            local comps = {}
             if inter.components ~= nil then
                 for _, component in pairs(inter.components) do
-                    components[component.name] = { id = component.id, parent_id = inter.id }
+                    comps[component.name] = { id = component.id, parent_id = inter.id }
                 end
             end
 
-            local t = { id = inter.id, components = components }
-            setmetatable(t, { __index = function(t, k) return t.components[k] end})
-            table[inter.name] = t
-        end
-        rawset(_G, name, table)
-    end,
+            -- Create the interface configuration from the components, make it so that you
+            -- can look up a component from its name from the parent interface
+            local conf = { id = inter.id, components = comps }
+            setmetatable(conf, { __index = function(t, k) return t.components[k] end})
 
-    load = function(self)
-        self.update_interface_table(self.namespace, json:decode(asset:load('interface_config.json')))
-    end
+            -- Store the interface configuration
+            self._config[inter.name] = conf
+        end
+    end,
 }
 
 setmetatable(module, {
     __index = function(t, k)
-        local v = rawget(_G, t.namespace) or {}
-        return v[k]
+        return t._config[k]
     end
 })
-
-module:load()
 
 return module

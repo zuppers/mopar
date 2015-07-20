@@ -1,6 +1,7 @@
 package io.mopar.game.sync;
 
 import io.mopar.game.model.Player;
+import io.mopar.game.sync.block.ChatUpdateBlock;
 import io.mopar.game.sync.player.IdlePlayerDescriptor;
 import io.mopar.game.sync.player.RunningPlayerDescriptor;
 import io.mopar.game.sync.player.WalkingPlayerDescriptor;
@@ -17,6 +18,10 @@ public abstract class PlayerDescriptor extends Descriptor<Player> {
      */
     protected PlayerDescriptor(Player player) {
         super(player);
+
+        if(player.hasChatMessage()) {
+            addUpdateBlock(new ChatUpdateBlock(player.getChatMessage()));
+        }
     }
 
     /**

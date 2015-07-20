@@ -18,9 +18,14 @@ public class ActionBindings {
     public static final int NO_TYPE = -1;
 
     /**
-     * The binded entity menu actions.
+     * The bound entity menu actions.
      */
     private Map<Integer, EntityMenuAction<?>> entityMenuActions = new HashMap<>();
+
+    /**
+     * The bound button menu actions.
+     */
+    private Map<Long, ButtonMenuAction> buttonMenuActions = new HashMap<>();
 
     /**
      * Constructs a new {@link ActionBindings};
@@ -38,6 +43,17 @@ public class ActionBindings {
     }
 
     /**
+     *
+     * @param action
+     * @param widgetId
+     * @param componentId
+     * @param option
+     */
+    public void registerButtonMenuAction(ButtonMenuAction action, int widgetId, int componentId, int option) {
+        buttonMenuActions.put(getButtonMenuActionKey(widgetId, componentId, option), action);
+    }
+
+    /**
      * Helper method; calls a player menu action.
      *
      * @param player The source player.
@@ -51,6 +67,24 @@ public class ActionBindings {
             return false;
         }
         action.handle(player, target, option);
+        return true;
+    }
+
+    /**
+     *
+     * @param player
+     * @param widgetId
+     * @param componentId
+     * @param childId
+     * @param option
+     * @return
+     */
+    public boolean callButtonMenuAction(Player player, int widgetId, int componentId, int childId, int option) {
+        ButtonMenuAction action = buttonMenuActions.get(getButtonMenuActionKey(widgetId, componentId, option));
+        if(action == null) {
+            return false;
+        }
+        action.handle(player, widgetId, componentId, childId, option);
         return true;
     }
 
@@ -92,5 +126,16 @@ public class ActionBindings {
      */
     private static int getEntityMenuActionKey(TargetType targetType, int typeId, int option) {
         return (typeId & 0x3fff) << 7 | (option & 0xf) << 3 | targetType.ordinal();
+    }
+
+    /**
+     *
+     * @param widgetId
+     * @param componentId
+     * @param option
+     * @return
+     */
+    private long getButtonMenuActionKey(int widgetId, int componentId, int option) {
+        return (option & 0xfL) << 32L | (widgetId & 0xffffL) << 16L | (componentId & 0xffff);
     }
 }

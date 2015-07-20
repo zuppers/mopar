@@ -11,6 +11,8 @@ import io.mopar.rs2.net.packet.PacketBuilder;
 import io.mopar.rs2.net.packet.PacketMetaList;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufAllocator;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static io.mopar.rs2.util.ByteBufUtil.*;
 
@@ -18,6 +20,11 @@ import static io.mopar.rs2.util.ByteBufUtil.*;
  * @author Hadyn Fitzgerald
  */
 public class GameMessageCodecInitializer implements MessageCodecInitializer {
+
+    /**
+     * The logger.
+     */
+    private static final Logger logger = LoggerFactory.getLogger(GameMessageCodecInitializer.class);
 
     /**
      * The landscape key table.
@@ -49,11 +56,17 @@ public class GameMessageCodecInitializer implements MessageCodecInitializer {
         codec.registerMessageDecoder(incomingPackets.getId("heartbeat"), this::decodeHeartbeatMessage);
         codec.registerMessageDecoder(incomingPackets.getId("screen_info"), this::decodeScreenInfoMessage);
         codec.registerMessageDecoder(incomingPackets.getId("interfaces_closed"), this::decodeClosedInterfacesMessage);
+        codec.registerMessageDecoder(incomingPackets.getId("chat"), this::decodeChatMessage);
+
+        for(int i = 1; i <= 1; i++) {
+            final int optionId = i;                                                                     // Err...k
+            codec.registerMessageDecoder(incomingPackets.getId("button_option_" + i), (packet) ->
+                    decodeButtonOptionMessage(packet, optionId));
+        }
 
         codec.registerMessageDecoder(incomingPackets.getId("route_ground"), (packet) -> decodeRouteMessage(packet, false));
         codec.registerMessageDecoder(incomingPackets.getId("route_target"), (packet) -> decodeRouteMessage(packet, false));
         codec.registerMessageDecoder(incomingPackets.getId("route_minimap"), (packet) -> decodeRouteMessage(packet, true));
-
 
         codec.registerMessageDecoder(incomingPackets.getId("rebuilt_scene"), this::decodeBlankMessage);
         codec.registerMessageDecoder(incomingPackets.getId("load_scene"), this::decodeBlankMessage);
@@ -62,7 +75,7 @@ public class GameMessageCodecInitializer implements MessageCodecInitializer {
         codec.registerMessageDecoder(incomingPackets.getId("focus_changed"), this::decodeBlankMessage);
         codec.registerMessageDecoder(incomingPackets.getId("click"), this::decodeBlankMessage);
         codec.registerMessageDecoder(incomingPackets.getId("loc_option_1"), this::decodeBlankMessage);
-        codec.registerMessageDecoder(incomingPackets.getId("button_option_1"), this::decodeBlankMessage);
+        codec.registerMessageDecoder(incomingPackets.getId("settings"), this::decodeBlankMessage);
     }
 
     /**
@@ -72,6 +85,7 @@ public class GameMessageCodecInitializer implements MessageCodecInitializer {
      * @return The decoded message.
      */
     private BlankMessage decodeBlankMessage(Packet packet) {
+        logger.info("No message decoder registered for packet: " + packet.getMeta().getName());
         return new BlankMessage();
     }
 
@@ -99,6 +113,28 @@ public class GameMessageCodecInitializer implements MessageCodecInitializer {
         return new ScreenInfoMessage(displayMode, width, height, numberSamples);
     }
 
+    /**
+     *
+     * @param packet
+     * @param option
+     * @return
+     */
+    public ButtonOptionMessage decodeButtonOptionMessage(Packet packet, int option) {
+        ByteBuf buf = packet.getBuffer();
+        int widgetId = buf.readUnsignedShort();
+        int componentId = buf.readUnsignedShort();
+        int childId = buf.readUnsignedShort();
+        if(childId == 65535) {
+            childId = -1;
+        }
+        return new ButtonOptionMessage(widgetId, componentId, childId, option);
+    }
+
+    /**
+     *
+     * @param packet
+     * @return
+     */
     private ClosedInterfacesMessage decodeClosedInterfacesMessage(Packet packet) {
         return new ClosedInterfacesMessage();
     }
@@ -131,6 +167,23 @@ public class GameMessageCodecInitializer implements MessageCodecInitializer {
     }
 
     /**
+     * Decodes a chat message.
+     *
+     * @param packet the packet to decode.
+     * @return the decoded message.
+     */
+    private ChatMessage decodeChatMessage(Packet packet) {
+        ByteBuf buf = packet.getBuffer();
+        int color = buf.readUnsignedByte();
+        int effect = buf.readUnsignedByte();
+
+        byte[] data = new byte[buf.readableBytes()];
+        buf.readBytes(data);
+
+        return new ChatMessage(ChatMessage.HUFFMAN_ENCODING, color, effect, data);
+    }
+
+    /**
      * Registers all of the message encoders.
      *
      * @param codec The message codec.
@@ -160,8 +213,6 @@ public class GameMessageCodecInitializer implements MessageCodecInitializer {
         PacketBuilder builder = PacketBuilder.create(outgoingPackets.get("rebuild_scene"), alloc);
 
         Position position = message.getPosition();
-
-
 
         builder.writeShortA(position.getLocalX());
 

@@ -146,6 +146,17 @@ public class PacketBuilder {
      * @param i
      * @return
      */
+    public PacketBuilder writeLEShort(int i) {
+        buf.writeByte(i);
+        buf.writeByte(i >> 8);
+        return this;
+    }
+
+    /**
+     *
+     * @param i
+     * @return
+     */
     public PacketBuilder writeLEShortA(int i) {
         buf.writeByte(i + 128);
         buf.writeByte(i >> 8);
@@ -216,6 +227,16 @@ public class PacketBuilder {
             throw new IllegalStateException("Bad value");
         }
         return this;
+    }
+
+    /**
+     *
+     * @param bytes
+     */
+    public void writeBytesReverse(byte[] bytes) {
+        for (int i = bytes.length - 1; i >= 0; i--) {
+            buf.writeByte(bytes[i]);
+        }
     }
 
     /**

@@ -11,6 +11,7 @@ import io.mopar.game.model.Position;
 import io.mopar.game.model.Route;
 import io.mopar.game.model.Route.Point;
 import io.mopar.game.model.state.States;
+import io.mopar.game.msg.ChatMessage;
 import io.mopar.game.req.*;
 import io.mopar.game.res.*;
 import io.mopar.game.model.Player;
@@ -115,8 +116,9 @@ public class GameService extends Service {
     @Override
     public void pulse() {
         int elapsed = timer.sleep(min, rate);
+        int j = (int) (delay / rate);
         for(int i = 0; i < elapsed; i++) {
-            if((loopCycle++ % (delay / rate) == 0)) {
+            if((loopCycle++ % j == 0)) {
                 world.update();
             }
         }
@@ -139,28 +141,57 @@ public class GameService extends Service {
     }
 
     /**
+     * Removes a player.
      *
-     * @param playerId
-     * @param response
+     * @param playerId the player id.
+     * @param response the response callback.
      */
     public void removePlayer(int playerId, Callback<RemovePlayerResponse> response) {
         submit(new RemovePlayerRequest(playerId), response);
     }
 
     /**
+     * Routes a player.
      *
-     * @param playerId
-     * @param route
+     * @param playerId the player id.
+     * @param route the route.
+     * @param callback The response callback.
      */
-    public void route(int playerId, Route route, Callback callback) {
+    public void route(int playerId, Route route, Callback<RoutePlayerResponse> callback) {
         submit(new RoutePlayerRequest(playerId, route), callback);
+    }
+
+    /**
+     * Updates the players chat.
+     *
+     * @param playerId The player id.
+     * @param message The message.
+     * @param callback The response callback.
+     */
+    public void chat(int playerId, ChatMessage message, Callback<ChatResponse> callback) {
+        submit(new ChatRequest(playerId, message), callback);
     }
 
     /**
      *
      * @param playerId
-     * @param displayMode
+     * @param widgetId
+     * @param componentId
+     * @param childId
+     * @param option
      * @param callback
+     */
+    public void buttonPressed(int playerId, int widgetId, int componentId, int childId, int option,
+                              Callback<ButtonActionResponse> callback) {
+        submit(new ButtonActionRequest(playerId, widgetId, componentId, childId, option), callback);
+    }
+
+    /**
+     * Updates a players display.
+     *
+     * @param playerId The player id.
+     * @param displayMode The display mode.
+     * @param callback The response callback.
      */
     public void updateDisplay(int playerId, int displayMode, Callback<UpdateDisplayResponse> callback) {
         submit(new UpdateDisplayRequest(playerId, displayMode), callback);
@@ -197,10 +228,12 @@ public class GameService extends Service {
         registerRequestHandler(NewPlayerRequest.class, this::handleNewPlayerRequest);
         registerRequestHandler(RemovePlayerRequest.class, this::handleRemovePlayerRequest);
         registerRequestHandler(RoutePlayerRequest.class, this::handleRoutePlayerRequest);
+        registerRequestHandler(ChatRequest.class, this::handleChatRequest);
         registerRequestHandler(UpdateDisplayRequest.class, this::handleUpdateDisplayRequest);
 
         // Bind all of the menu action request handlers
         registerRequestHandler(PlayerMenuActionRequest.class, this::handlePlayerActionRequest);
+        registerRequestHandler(ButtonActionRequest.class, this::handleButtonActionRequest);
 
         // Bind all of the script request handlers
         registerRequestHandler(EvalScriptRequest.class, this::handleEvalScriptRequest);
@@ -281,6 +314,29 @@ public class GameService extends Service {
     }
 
     /**
+     *
+     * @param request
+     * @param callback
+     */
+    private void handleButtonActionRequest(ButtonActionRequest request, Callback callback) {
+        Player player = world.getPlayer(request.getPlayerId());
+        if(player == null) {
+            callback.call(new ButtonActionResponse());
+            return;
+        }
+
+        if(!actionBindings.callButtonMenuAction(player, request.getWidgetId(), request.getComponentId(), request.getChildId(), request.getOption())) {
+            logger.info("No binding for button id: " + request.getWidgetId() + ", comp: " + request.getComponentId()
+                    + ", option: " + request.getOption() + (request.getChildId() != -1 ? ", child: " + request
+                    .getChildId() : ""));
+            callback.call(new ButtonActionResponse());
+            return;
+        }
+
+        callback.call(new ButtonActionResponse());
+    }
+
+    /**
      * Handles a player action request.
      *
      * @param request The request.
@@ -327,6 +383,8 @@ public class GameService extends Service {
 
         player.clearSteps();
 
+        // TODO: At some point update this since you dont need to interpolate between all the points, so it'd save some
+        // TODO: processing power and memory
         Position currentPosition = player.getPosition();
         Route route = request.getRoute();
         for(Point point : route.getPoints()) {
@@ -335,6 +393,25 @@ public class GameService extends Service {
         }
 
         callback.call(new RoutePlayerResponse(RoutePlayerResponse.OK));
+    }
+
+    /**
+     * Handles a request to publish a chat message.
+     *
+     * @param request The request.
+     * @param callback The response callback.
+     */
+    private void handleChatRequest(ChatRequest request, Callback callback) {
+        Player player = world.getPlayer(request.getPlayerId());
+        if(player == null) {
+            callback.call(new ChatResponse(ChatResponse.PLAYER_DOES_NOT_EXIST));
+            return;
+        }
+
+        // Set the players public chat message
+        player.setChatMessage(request.getMessage());
+
+        callback.call(new ChatResponse(ChatResponse.OK));
     }
 
     /**

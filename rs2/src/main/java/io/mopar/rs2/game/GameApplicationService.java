@@ -9,6 +9,7 @@ import io.mopar.rs2.ApplicationService;
 import io.mopar.rs2.file.FileSessionContext;
 import io.mopar.rs2.login.LoginApplicationService;
 import io.mopar.rs2.msg.StatusMessage;
+import io.mopar.rs2.msg.game.ButtonOptionMessage;
 import io.mopar.rs2.msg.game.RouteMessage;
 import io.mopar.rs2.msg.game.ScreenInfoMessage;
 import io.mopar.rs2.msg.login.LoginRequestMessage;
@@ -71,6 +72,8 @@ public class GameApplicationService extends ApplicationService<GameService> {
 
         registerMessageHandler(RouteMessage.class, this::handleRouteMessage);
         registerMessageHandler(ScreenInfoMessage.class, this::handleScreenInfoMessage);
+        registerMessageHandler(ChatMessage.class, this::handleChatMessage);
+        registerMessageHandler(ButtonOptionMessage.class, this::handleButtonOptionMessage);
         registerMessageHandler(SessionClosedMessage.class, this::handleSessionClosed);
 
         app.registerMessageHandler(LoginStatusCheck.class, this::handleLoginStatusCheck);
@@ -108,11 +111,13 @@ public class GameApplicationService extends ApplicationService<GameService> {
         incomingPackets.add(new PacketMetaData(78, "npc_option_2", 2));
         incomingPackets.add(new PacketMetaData(79, "swap_items", 12));
         incomingPackets.add(new PacketMetaData(93, "heartbeat", 0));
+        incomingPackets.add(new PacketMetaData(98, "settings", 4));
         incomingPackets.add(new PacketMetaData(110, "load_scene", 0));
         incomingPackets.add(new PacketMetaData(155, "button_option_1", 6));
         incomingPackets.add(new PacketMetaData(177, "packet_check", 2));
         incomingPackets.add(new PacketMetaData(184, "interfaces_closed", 0));
         incomingPackets.add(new PacketMetaData(215, "route_ground", PacketMetaData.VAR_BYTE_LENGTH));
+        incomingPackets.add(new PacketMetaData(237, "chat", PacketMetaData.VAR_BYTE_LENGTH));
         incomingPackets.add(new PacketMetaData(243, "screen_info", 6));
         incomingPackets.add(new PacketMetaData(254, "loc_option_1", 6));
     }
@@ -160,7 +165,8 @@ public class GameApplicationService extends ApplicationService<GameService> {
      */
     private void handleRouteMessage(Session session, RouteMessage message) {
         PlayerSessionContext ctx = session.get(PlayerSessionContext.class);
-        service.route(ctx.getPlayer().getId(), message.getRoute(), (res) -> {});
+        service.route(ctx.getPlayer().getId(), message.getRoute(), (res) -> {
+        });
     }
 
     /**
@@ -169,7 +175,28 @@ public class GameApplicationService extends ApplicationService<GameService> {
      * @param message
      */
     private void handleScreenInfoMessage(Session session, ScreenInfoMessage message) {
-        service.updateDisplay(session.get(PlayerSessionContext.class).getPlayerId(), message.getDisplayMode(), (res) -> {});
+        service.updateDisplay(session.get(PlayerSessionContext.class).getPlayerId(), message.getDisplayMode(), (res) -> {
+        });
+    }
+
+    /**
+     *
+     * @param session
+     * @param message
+     */
+    private void handleChatMessage(Session session, ChatMessage message) {
+        service.chat(session.get(PlayerSessionContext.class).getPlayerId(), message, (res) -> {
+        });
+    }
+
+    /**
+     *
+     * @param session
+     * @param message
+     */
+    private void handleButtonOptionMessage(Session session, ButtonOptionMessage message) {
+        service.buttonPressed(session.get(PlayerSessionContext.class).getPlayerId(), message.getWidgetId(), message
+                        .getComponentId(), message.getChildId(), message.getOption(), (res) -> {});
     }
 
     /**

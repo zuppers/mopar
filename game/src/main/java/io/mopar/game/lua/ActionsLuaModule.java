@@ -4,8 +4,7 @@ import io.mopar.game.action.ActionBindings;
 import io.mopar.game.action.TargetType;
 import io.mopar.core.lua.Coerce;
 import io.mopar.core.lua.LuaModule;
-import org.luaj.vm2.LuaClosure;
-import org.luaj.vm2.LuaNumber;
+import org.luaj.vm2.*;
 
 /**
  * @author Hadyn Fitzgerald
@@ -27,13 +26,39 @@ public class ActionsLuaModule implements LuaModule {
     }
 
     /**
+     *
+     * @param table
+     */
+    public void on_button(LuaTable table, int option, LuaFunction closure) {
+        on_button(table.get("parent_id").checkint(), table.get("id").checkint(), option, closure);
+    }
+
+    /**
+     *
+     * @param widgetId
+     * @param componentId
+     * @param option
+     * @param closure
+     */
+    public void on_button(int widgetId, int componentId, int option, LuaFunction closure) {
+        bindings.registerButtonMenuAction(((plr, widget, comp, child, opt) ->
+                        closure.invoke(new LuaValue[] {
+                                Coerce.coerceToLua(plr),
+                                Coerce.coerceToLua(widgetId),
+                                Coerce.coerceToLua(componentId),
+                                Coerce.coerceToLua(child),
+                                Coerce.coerceToLua(opt)
+                        })), widgetId, componentId, option);
+    }
+
+    /**
      * Binds a menu option action.
      *
      * @param target The target.
      * @param option The menu option.
      * @param closure The lua closure to wrap the action with.
      */
-    public void on_option(String target, int option, LuaClosure closure) {
+    public void on_option(String target, int option, LuaFunction closure) {
         on_option(target, ActionBindings.NO_TYPE, option, closure);
     }
 
@@ -45,7 +70,7 @@ public class ActionsLuaModule implements LuaModule {
      * @param option The menu option.
      * @param closure The lua closure to wrap the action with.
      */
-    public void on_option(String target, int typeId, int option, LuaClosure closure) {
+    public void on_option(String target, int typeId, int option, LuaFunction closure) {
         bindings.registerEntityMenuAction(TargetType.valueOf(target.toUpperCase()),
                 (player, entity, opt) -> closure.invoke(
                         Coerce.coerceToLua(player),

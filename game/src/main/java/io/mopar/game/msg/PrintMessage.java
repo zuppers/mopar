@@ -8,22 +8,23 @@ import io.mopar.core.msg.Message;
 public class PrintMessage extends Message {
 
     /**
-     * The message.
+     * The text.
      */
     private String text;
 
     /**
+     * Constructs a new {@link PrintMessage};
      *
-     * @param text
+     * @param text the text.
      */
     public PrintMessage(String text) {
         this.text = text;
     }
 
     /***
-     * Gets the message.
+     * Gets the text.
      *
-     * @return the string.
+     * @return the text.
      */
     public String getText() {
         return text;

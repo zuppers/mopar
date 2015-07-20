@@ -2,8 +2,10 @@ package io.mopar.rs2.game;
 
 import io.mopar.game.model.Position;
 import io.mopar.game.model.Step;
+import io.mopar.game.msg.ChatMessage;
 import io.mopar.game.msg.PlayerSynchronizationMessage;
 import io.mopar.game.sync.*;
+import io.mopar.game.sync.block.ChatUpdateBlock;
 import io.mopar.game.sync.player.*;
 import io.mopar.rs2.msg.MessageEncoder;
 import io.mopar.rs2.net.packet.Packet;
@@ -24,10 +26,19 @@ public class PlayerSynchronizationMessageEncoder implements MessageEncoder<Playe
         void encode(T descriptor, PacketBuilder builder);
     }
 
+    interface UpdateBlockEncoder<T extends UpdateBlock> {
+        void encode(T descriptor, PacketBuilder builder);
+    }
+
     /**
      * The descriptor encoders.
      */
-    private Map<Class<? extends PlayerDescriptor>, PlayerDescriptorEncoder> encoders = new HashMap<>();
+    private Map<Class<? extends PlayerDescriptor>, PlayerDescriptorEncoder> descriptorEncoders = new HashMap<>();
+
+    /**
+     * The block encoders.
+     */
+    private Map<Class<? extends UpdateBlock>, UpdateBlockEncoder> blockEncoders = new HashMap<>();
 
     /**
      * Constructs a new {@link PlayerSynchronizationMessageEncoder};
@@ -39,6 +50,8 @@ public class PlayerSynchronizationMessageEncoder implements MessageEncoder<Playe
         register(TeleportingPlayerDescriptor.class, this::encodeTeleportDescriptor);
         register(AddPlayerDescriptor.class, this::encodeAddDescriptor);
         register(RemovedPlayerDescriptor.class, this::encodeRemoveDescriptor);
+
+        register(ChatUpdateBlock.class, this::encodeChatUpdateBlock);
     }
 
     /**
@@ -57,16 +70,27 @@ public class PlayerSynchronizationMessageEncoder implements MessageEncoder<Playe
         builder.switchToBitAccess();
 
         // Write the self descriptor
-        encodeDescriptor(message.getSelfDescriptor(), builder);
+        PlayerDescriptor selfDescriptor = message.getSelfDescriptor();
+        encodeDescriptor(selfDescriptor, builder);
 
         // Write out the descriptors for every player of interest, inview and new
         builder.writeBits(8, message.getLocalPlayerCount());
         for(PlayerDescriptor descriptor : message.getDescriptors()) {
             encodeDescriptor(descriptor, builder);
         }
-        builder.writeBits(11, 2047);                                                        // END OF DATA
+        builder.writeBits(11, 2047);
 
         builder.switchToByteAccess();
+
+        if(selfDescriptor.hasUpdateBlocks()) {
+            encodeBlocks(selfDescriptor, builder);
+        }
+
+        for(PlayerDescriptor descriptor : message.getDescriptors()) {
+            if(descriptor.hasUpdateBlocks() && descriptor.getClass() != RemovedPlayerDescriptor.class) {
+                encodeBlocks(descriptor, builder);
+            }
+        }
 
         return builder.build();
     }
@@ -79,7 +103,17 @@ public class PlayerSynchronizationMessageEncoder implements MessageEncoder<Playe
      * @param <T> The generic descriptor type.
      */
     private <T extends PlayerDescriptor> void register(Class<T> descriptorClass, PlayerDescriptorEncoder<T> encoder) {
-        encoders.put(descriptorClass, encoder);
+        descriptorEncoders.put(descriptorClass, encoder);
+    }
+
+    /**
+     *
+     * @param blockClass
+     * @param encoder
+     * @param <T>
+     */
+    private <T extends UpdateBlock> void register(Class<T> blockClass, UpdateBlockEncoder<T> encoder) {
+        blockEncoders.put(blockClass, encoder);
     }
 
     /**
@@ -89,8 +123,43 @@ public class PlayerSynchronizationMessageEncoder implements MessageEncoder<Playe
      * @param builder The packet builder to encode the descriptor to.
      */
     private void encodeDescriptor(PlayerDescriptor descriptor, PacketBuilder builder) {
-        PlayerDescriptorEncoder encoder = encoders.get(descriptor.getClass());
+        PlayerDescriptorEncoder encoder = descriptorEncoders.get(descriptor.getClass());
         encoder.encode(descriptor, builder);
+    }
+
+    /**
+     * Encodes the blocks for a descriptor.
+     *
+     * @param descriptor
+     * @param builder
+     */
+    private void encodeBlocks(PlayerDescriptor descriptor, PacketBuilder builder) {
+        int flags = 0;
+
+        if(descriptor.hasUpdateBlock(ChatUpdateBlock.class)) {
+            flags |= 0x80;
+        }
+
+        if(flags > 0xff) {
+            flags |= 0x10;
+            builder.writeLEShort(flags);
+        } else {
+            builder.writeByte(flags);
+        }
+
+        encodeBlock(descriptor.getUpdateBlock(ChatUpdateBlock.class), builder);
+    }
+
+    /**
+     *
+     * @param block
+     * @param builder
+     */
+    private void encodeBlock(UpdateBlock block, PacketBuilder builder) {
+        if(block != null) {
+            UpdateBlockEncoder encoder = blockEncoders.get(block.getClass());
+            encoder.encode(block, builder);
+        }
     }
 
     /**
@@ -190,5 +259,21 @@ public class PlayerSynchronizationMessageEncoder implements MessageEncoder<Playe
         builder.writeBits(3, descriptor.getLastStep().toInteger());
         builder.writeBits(1, 0);
         builder.writeBits(5, y);
+    }
+
+    /**
+     *
+     * @param block
+     * @param builder
+     */
+    private void encodeChatUpdateBlock(ChatUpdateBlock block, PacketBuilder builder) {
+        ChatMessage message = block.getMessage();
+
+        builder.writeLEShort((message.getColor() << 8) | message.getEffect());
+        builder.writeByte(2);                                                           // Rights
+
+        byte[] bytes = message.getBytes();
+        builder.writeByte(bytes.length);
+        builder.writeBytesReverse(bytes);
     }
 }

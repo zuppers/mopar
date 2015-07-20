@@ -31,7 +31,23 @@
 
   {
     "id" : 261,
-    "name" : "settings"
+    "name" : "settings",
+    "components" : [
+      {
+        "id" : 3,
+        "name" : "run"
+      },
+
+      {
+        "id" : 16,
+        "name" : "graphics"
+      },
+
+      {
+        "id" : 18,
+        "name" : "audio"
+      }
+    ]
   },
 
   {
@@ -68,6 +84,11 @@
     "id" : 548,
     "name" : "fixed_screen",
     "components" : [
+      {
+        "id" : 11,
+        "name" : "window"
+      },
+
       {
         "id" : 14,
         "name" : "chat_options"
@@ -207,6 +228,16 @@
   },
 
   {
+    "id" : 742,
+    "name" : "graphic_settings"
+  },
+
+  {
+    "id" : 743,
+    "name" : "audio_settings"
+  },
+
+  {
     "id" : 747,
     "name" : "summoning_orb"
   },
@@ -223,7 +254,13 @@
 
   {
     "id" : 750,
-    "name" : "energy_orb"
+    "name" : "energy_orb",
+    "components" : [
+      {
+        "id" : 1,
+        "name" : "toggle"
+      }
+    ]
   },
 
   {

@@ -6,7 +6,7 @@ import org.luaj.vm2.LuaTable;
 /**
  * @author Hadyn Fitzgerald
  */
-public class PlayerComposite extends EntityComposite {
+public class PlayerComposite extends MobileComposite {
 
     /**
      * The player.

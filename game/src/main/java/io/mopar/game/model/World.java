@@ -1,8 +1,5 @@
 package io.mopar.game.model;
 
-import io.mopar.game.model.state.StateHandler;
-import io.mopar.game.model.state.StateHandlerBindings;
-import io.mopar.game.model.state.States;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -39,7 +36,7 @@ public class World {
     /**
      * The state handler bindings.
      */
-    private StateHandlerBindings stateHandlers = new StateHandlerBindings();
+    private StateBindings stateHandlers = new StateBindings();
 
     /**
      * The current time.

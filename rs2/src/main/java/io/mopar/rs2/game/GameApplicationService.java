@@ -243,6 +243,7 @@ public class GameApplicationService extends ApplicationService<GameService> {
             session.pipeline().get(PacketEncoder.class).initCipher(cipherKeys);
 
             res.getPlayer().setPosition(new Position(3222, 3222));
+            res.getPlayer().setDisplayMode(request.getDisplayMode());
             res.getPlayer().rebuildScene();
         });
     }

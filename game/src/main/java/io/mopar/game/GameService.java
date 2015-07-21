@@ -6,16 +6,16 @@ import io.mopar.core.asset.AssetLoader;
 import io.mopar.game.action.ActionBindings;
 import io.mopar.core.lua.LuaScriptEngine;
 import io.mopar.core.profile.ProfileCodec;
+import io.mopar.game.event.Event;
+import io.mopar.game.event.EventBindings;
+import io.mopar.game.event.PlayerCreatedEvent;
+import io.mopar.game.event.PlayerDisplayUpdateEvent;
 import io.mopar.game.lua.*;
-import io.mopar.game.model.Position;
-import io.mopar.game.model.Route;
+import io.mopar.game.model.*;
 import io.mopar.game.model.Route.Point;
-import io.mopar.game.model.state.States;
 import io.mopar.game.msg.ChatMessage;
 import io.mopar.game.req.*;
 import io.mopar.game.res.*;
-import io.mopar.game.model.Player;
-import io.mopar.game.model.World;
 import io.mopar.game.util.ExecutionTimer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,6 +32,11 @@ public class GameService extends Service {
      * The logger.
      */
     private static final Logger logger = LoggerFactory.getLogger(GameService.class);
+
+    /**
+     * The event handler bindings.
+     */
+    private EventBindings eventBindings = new EventBindings();
 
     /**
      * The script engine.
@@ -116,9 +121,9 @@ public class GameService extends Service {
     @Override
     public void pulse() {
         int elapsed = timer.sleep(min, rate);
-        int j = (int) (delay / rate);
+        int step = (int) (delay / rate);
         for(int i = 0; i < elapsed; i++) {
-            if((loopCycle++ % j == 0)) {
+            if((loopCycle++ % step == 0)) {
                 world.update();
             }
         }
@@ -173,13 +178,14 @@ public class GameService extends Service {
     }
 
     /**
+     * Handles when a player presses a button.
      *
-     * @param playerId
-     * @param widgetId
-     * @param componentId
-     * @param childId
-     * @param option
-     * @param callback
+     * @param playerId the player id.
+     * @param widgetId the widget id.
+     * @param componentId the component id.
+     * @param childId the child id.
+     * @param option the option.
+     * @param callback the response callback.
      */
     public void buttonPressed(int playerId, int widgetId, int componentId, int childId, int option,
                               Callback<ButtonActionResponse> callback) {
@@ -208,6 +214,15 @@ public class GameService extends Service {
     }
 
     /**
+     * Dispatches an event.
+     *
+     * @param event the event to dispatch.
+     */
+    public void dispatch(Event event) {
+        eventBindings.handle(event);
+    }
+
+    /**
      * Initializer method; initializes the script engine.
      */
     private void initScriptEngine() {
@@ -215,6 +230,7 @@ public class GameService extends Service {
 
         // Register all of the modules
         scriptEngine.put(new ActionsLuaModule(actionBindings));
+        scriptEngine.put(new EventLuaModule(eventBindings));
         scriptEngine.put(new WorldLuaModule(world));
         scriptEngine.put(new AssetLuaModule(assetLoader));
         scriptEngine.put(new JsonLuaModule());
@@ -224,7 +240,7 @@ public class GameService extends Service {
      * Initializer method; binds all of the request handlers.
      */
     private void registerRequestHandlers() {
-        // Bind all of the create entity request handlers
+        // Bind all of the player request handlers
         registerRequestHandler(NewPlayerRequest.class, this::handleNewPlayerRequest);
         registerRequestHandler(RemovePlayerRequest.class, this::handleRemovePlayerRequest);
         registerRequestHandler(RoutePlayerRequest.class, this::handleRoutePlayerRequest);
@@ -270,12 +286,13 @@ public class GameService extends Service {
             return;
         }
 
-        player.queueState(States.FRESH);
-
         // Callback that the request was successful
         NewPlayerResponse response = new NewPlayerResponse(NewPlayerResponse.OK);
         response.setPlayer(player);
         callback.call(response);
+
+        // TODO: Clean this up better
+        eventBindings.handle(new PlayerCreatedEvent(player));
     }
 
     /**
@@ -291,9 +308,16 @@ public class GameService extends Service {
             return;
         }
 
-        // TODO: Is queuing a state for this the best way to do this?
-        player.setDisplayMode(request.getDisplayMode());
-        player.queueState(States.DISPLAY_MODE_UPDATED);
+        int mode = request.getDisplayMode();
+        if(mode < 0 || mode >= DisplayMode.FULLSCREEN_HD) {
+            callback.call(new UpdateDisplayResponse());
+            return;
+        }
+
+        if(mode != player.getDisplayMode()) {
+            player.setDisplayMode(request.getDisplayMode());
+            dispatch(new PlayerDisplayUpdateEvent(player));
+        }
 
         callback.call(new UpdateDisplayResponse());
     }
@@ -314,9 +338,10 @@ public class GameService extends Service {
     }
 
     /**
+     * Handles a button action request.
      *
-     * @param request
-     * @param callback
+     * @param request The request.
+     * @param callback The callback.
      */
     private void handleButtonActionRequest(ButtonActionRequest request, Callback callback) {
         Player player = world.getPlayer(request.getPlayerId());
@@ -326,9 +351,8 @@ public class GameService extends Service {
         }
 
         if(!actionBindings.callButtonMenuAction(player, request.getWidgetId(), request.getComponentId(), request.getChildId(), request.getOption())) {
-            logger.info("No binding for button id: " + request.getWidgetId() + ", comp: " + request.getComponentId()
-                    + ", option: " + request.getOption() + (request.getChildId() != -1 ? ", child: " + request
-                    .getChildId() : ""));
+            logger.info("No binding for button id: " + request.getWidgetId() + ", comp: " + request.getComponentId() + ", " +
+                    "option: " + request.getOption() + (request.getChildId() != -1 ? ", child: " + request.getChildId() : ""));
             callback.call(new ButtonActionResponse());
             return;
         }

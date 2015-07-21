@@ -12,21 +12,18 @@ local module = {
     fullscreen_hd   = 3,
 
     -- Gets the display screen for the display mode
-    -- TODO: Update this when HD is implemented
     screen_for = function(self, mode)
         if mode >= self.resizable_hd then
             return interface.resizable_screen
+        else
+            return interface.fixed_screen
         end
-        return interface.fixed_screen
     end,
 
-    -- Refreshes all the interfaces for the game screen based upon the players display mode
-    refresh_screen = function(self, plr)
-        -- Use the game screen for the root interface
-        local game_screen = interface.game_screen
+    open_screen = function(self, plr, mode)
 
         -- Get the screen for the given display mode
-        local screen = self:screen_for(plr:display_mode())
+        local screen = self:screen_for(mode)
 
         -- TODO: Determine the attack strategy from the currently equipped weapon
         plr:set_interface(screen.attack_tab, interface.unarmed_attack, interface.static)
@@ -55,10 +52,8 @@ local module = {
         plr:set_interface(screen.orb_2, interface.energy_orb, interface.static)
         plr:set_interface(screen.orb_3, interface.summoning_orb, interface.static)
 
-        plr:set_interface(game_screen.window, screen, interface.screen)
+        plr:set_root_interface(screen)
     end
 }
-
-world:on_player_state(state.display_mode_updated, wrap(module, module.refresh_screen))
 
 return module

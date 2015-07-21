@@ -7,15 +7,5 @@
   {
     "id" : 1,
     "name" : "death"
-  },
-
-  {
-    "id" : 100,
-    "name" : "fresh"
-  },
-
-  {
-    "id" : 1000,
-    "name" : "display_mode_updated"
   }
 ]

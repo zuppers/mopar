@@ -1,4 +1,4 @@
-package io.mopar.game.model.state;
+package io.mopar.game.model;
 
 import io.mopar.game.model.Mobile;
 

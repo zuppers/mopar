@@ -1,5 +1,6 @@
 local variable  = require('variable')
-local bitvar    = require('bitvar')
+local varbit    = require('varbit')
+local display   = lazy('ui/display')
 
 local module = {
 
@@ -15,18 +16,33 @@ local module = {
     end,
 
     load_bit_variables = function(self, file)
-        self.varbits = bitvar.load_config(file)
+        self.varbits = varbit.load_config(file)
     end,
 
-    -- Toggles the player running effect, TODO: Add in effects to make this possible
+    -- Toggles the player running effect
     toggle_running = function(plr)
     end
 }
 
 setmetatable(module, {
     __index = function(m, k)
-        return m.vars[k]
+        return m.vars[k] or m.varbits[k]
     end
 })
+
+event:on(event.player_created, function(plr)
+    -- Print the whale-cum
+    plr:print('Welcome to Moparscape.')
+
+    -- Open up the screen for the players current display mode
+    display:open_screen(plr, plr:display_mode())
+end)
+
+event:on(event.player_display_updated, function(plr)
+    display:open_screen(plr, plr:display_mode())
+end)
+
+-- Idle state, yo
+world:on_player_state(state.idle, function(plr) end)
 
 return module

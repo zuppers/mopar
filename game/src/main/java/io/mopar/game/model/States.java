@@ -1,4 +1,4 @@
-package io.mopar.game.model.state;
+package io.mopar.game.model;
 
 /**
  * @author Hadyn Fitzgerald
@@ -16,10 +16,6 @@ public class States {
      * The death entity state.
      */
     public static final int DEATH = 1;
-
-    public static final int FRESH = 100;
-
-    public static final int DISPLAY_MODE_UPDATED = 1000;
 
     /**
      * Prevent instantiation;

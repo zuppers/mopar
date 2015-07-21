@@ -1,6 +1,4 @@
-package io.mopar.game.model.state;
-
-import io.mopar.game.model.Player;
+package io.mopar.game.model;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -8,7 +6,7 @@ import java.util.Map;
 /**
  * @author Hadyn Fitzgerald
  */
-public class StateHandlerBindings {
+public class StateBindings {
 
     /**
      * The numeric representation for a player target.
@@ -60,8 +58,8 @@ public class StateHandlerBindings {
     /**
      * Registers a state handler.
      *
-     * @param targetType The target type. {@link StateHandlerBindings#PLAYER_TARGET} and {@link StateHandlerBindings#NPC_TARGET}
-     * @param typeId The type id, {@link StateHandlerBindings#NO_TYPE} may only be addressed to player targets.
+     * @param targetType The target type. {@link StateBindings#PLAYER_TARGET} and {@link StateBindings#NPC_TARGET}
+     * @param typeId The type id, {@link StateBindings#NO_TYPE} may only be addressed to player targets.
      * @param stateId The state id.
      * @param handler The state handler.
      */

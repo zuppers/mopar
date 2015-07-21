@@ -67,7 +67,13 @@
 
   {
     "id" : 378,
-    "name" : "welcome_screen"
+    "name" : "welcome_screen",
+    "components" : [
+      {
+        "id" : 140,
+        "name" : "confirm"
+      }
+    ]
   },
 
   {
@@ -85,6 +91,11 @@
     "name" : "fixed_screen",
     "components" : [
       {
+        "id" : 2,
+        "name" : "overlay"
+      },
+
+      {
         "id" : 11,
         "name" : "window"
       },
@@ -92,6 +103,11 @@
       {
         "id" : 14,
         "name" : "chat_options"
+      },
+
+      {
+        "id" : 66,
+        "name" : "world"
       },
 
       {
@@ -193,16 +209,16 @@
 
   {
     "id"   : 549,
-    "name" : "game_screen",
+    "name" : "_screen",
     "components" : [
       {
         "name" : "window",
-        "id"   : 0
+        "id"   : 2
       },
 
       {
         "name"  : "overlay",
-        "id"    : 2
+        "id"    : 3
       }
     ]
   },
@@ -344,6 +360,11 @@
       {
         "id"   : 107,
         "name" : "logout_tab"
+      },
+
+      {
+        "id"   : 110,
+        "name" : "world"
       }
     ]
   },
@@ -388,5 +409,10 @@
         "name" : "input"
       }
     ]
+  },
+
+  {
+    "id" : 755,
+    "name" : "world_map"
   }
 ]

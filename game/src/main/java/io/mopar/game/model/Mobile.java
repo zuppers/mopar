@@ -148,12 +148,8 @@ public class Mobile extends Entity {
      *
      * @return The recent steps.
      */
-    public List<Step> getRecentSteps() {
-        if(previousSteps.isEmpty()) {
-            return Collections.EMPTY_LIST;
-        }
-
-        List<Step> steps = new ArrayList<>();
+    public Queue<Step> getRecentSteps() {
+        Deque<Step> steps = new ArrayDeque<>();
 
         StepRecord previous = null;
         for(Iterator<StepRecord> i = previousSteps.descendingIterator(); i.hasNext(); ) {
@@ -163,7 +159,7 @@ public class Mobile extends Entity {
             }
 
             if(previous == null || previous.getTime() == record.getTime()) {
-                steps.add(record.getStep());
+                steps.addFirst(record.getStep());
                 previous = record;
                 continue;
             }

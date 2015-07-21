@@ -16,6 +16,7 @@ import io.netty.buffer.ByteBufAllocator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Queue;
 
 /**
  * @author Hadyn Fitzgerald
@@ -202,7 +203,7 @@ public class PlayerSynchronizationMessageEncoder implements MessageEncoder<Playe
         builder.writeBits(1, 1);
         builder.writeBits(2, 2);
 
-        List<Step> steps = descriptor.getSteps();
+        Queue<Step> steps = descriptor.getSteps();
         builder.writeBit(steps.size() > 1);
 
         for(Step step : steps) {

@@ -197,12 +197,12 @@
     "components" : [
       {
         "name" : "window",
-        "id"   : 2
+        "id"   : 0
       },
 
       {
         "name"  : "overlay",
-        "id"    : 3
+        "id"    : 2
       }
     ]
   },
@@ -235,6 +235,117 @@
   {
     "id" : 743,
     "name" : "audio_settings"
+  },
+
+  {
+    "id" : 746,
+    "name" : "resizable_screen",
+    "components" : [
+      {
+        "id" : 6,
+        "name" : "window"
+      },
+
+      {
+        "id" : 23,
+        "name" : "chat_options"
+      },
+
+      {
+        "id" : 70,
+        "name" : "chatbox"
+      },
+
+      {
+        "id"   : 13,
+        "name" : "orb_0"
+      },
+
+      {
+        "id"   : 14,
+        "name" : "orb_1"
+      },
+
+      {
+        "id"   : 15,
+        "name" : "orb_2"
+      },
+
+      {
+        "id"   : 16,
+        "name" : "orb_3"
+      },
+
+      {
+        "id"   : 93,
+        "name" : "attack_tab"
+      },
+
+      {
+        "id"   : 94,
+        "name" : "skill_tab"
+      },
+
+      {
+        "id"   : 95,
+        "name" : "quest_tab"
+      },
+
+      {
+        "id"   : 96,
+        "name" : "inventory_tab"
+      },
+
+      {
+        "id"   : 97,
+        "name" : "equipment_tab"
+      },
+
+      {
+        "id"   : 98,
+        "name" : "prayer_tab"
+      },
+
+      {
+        "id"   : 99,
+        "name" : "spell_tab"
+      },
+
+      {
+        "id"   : 101,
+        "name" : "friend_tab"
+      },
+
+      {
+        "id"   : 102,
+        "name" : "ignore_tab"
+      },
+
+      {
+        "id"   : 103,
+        "name" : "clan_tab"
+      },
+
+      {
+        "id"   : 104,
+        "name" : "settings_tab"
+      },
+
+      {
+        "id"   : 105,
+        "name" : "emotes_tab"
+      },
+
+      {
+        "id"   : 106,
+        "name" : "music_tab"
+      },
+
+      {
+        "id"   : 107,
+        "name" : "logout_tab"
+      }
+    ]
   },
 
   {

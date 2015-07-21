@@ -6,9 +6,17 @@ require('ui/orbs')
 
 local module = {
 
+    fixed_sd        = 0,
+    fixed_hd        = 1,
+    resizable_hd    = 2,
+    fullscreen_hd   = 3,
+
     -- Gets the display screen for the display mode
     -- TODO: Update this when HD is implemented
     screen_for = function(self, mode)
+        if mode >= self.resizable_hd then
+            return interface.resizable_screen
+        end
         return interface.fixed_screen
     end,
 

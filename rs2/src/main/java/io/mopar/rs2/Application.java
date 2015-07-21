@@ -218,7 +218,7 @@ public class Application {
     }
 
     public static void main(String... args) throws IOException {
-        FileSystem fileSystem = FileSystem.create(Paths.get("file/data"), 28);
+        FileSystem fileSystem = FileSystem.create(Paths.get("file/data"), 29);
 
         Application app = new Application();
         app.setAssetLoader(new StaticFileAssetLoader("rs2/asset"));
@@ -236,7 +236,6 @@ public class Application {
                 .assetLoader(new StaticFileAssetLoader("game/asset"))
                 .build();
         gameService.eval("require 'bootstrap'", (res) -> {});
-
         app.use(new GameApplicationService(gameService));
         app.start(40001);
     }

@@ -1,10 +1,14 @@
 package io.mopar.core.lua;
 
+import org.luaj.vm2.LuaTable;
 import org.luaj.vm2.LuaValue;
 import org.luaj.vm2.lib.jse.CoerceJavaToLua;
 
+import java.lang.reflect.Array;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
+import java.util.stream.Stream;
 
 /**
  * @author Hadyn Fitzgerald
@@ -35,10 +39,28 @@ public class Coerce {
      */
     @SuppressWarnings("unchecked")
     public static LuaValue coerceToLua(Object value) {
+        if(value.getClass().isArray()) {
+            return coerceArray((Object[]) value);
+        }
+
         CompositeFactory factory = factories.get(value.getClass());
         if(factory != null) {
             return CoerceJavaToLua.coerce(factory.create(value));
         }
         return CoerceJavaToLua.coerce(value);
+    }
+
+    /**
+     *
+     * @param arr
+     * @return
+     */
+    private static LuaTable coerceArray(Object[] arr) {
+        LuaTable table = new LuaTable();
+        int i = 1;
+        for(Object o : arr) {
+            table.rawset(i++, coerceToLua(o));
+        }
+        return table;
     }
 }

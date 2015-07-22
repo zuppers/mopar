@@ -27,6 +27,12 @@ public class ActionBindings {
      */
     private Map<Long, ButtonMenuAction> buttonMenuActions = new HashMap<>();
 
+
+    /**
+     * The swap item actions.
+     */
+    private Map<Integer, SwapItemAction> swapItemActions = new HashMap<>();
+
     /**
      * Constructs a new {@link ActionBindings};
      */
@@ -51,6 +57,16 @@ public class ActionBindings {
      */
     public void registerButtonMenuAction(ButtonMenuAction action, int widgetId, int componentId, int option) {
         buttonMenuActions.put(getButtonMenuActionKey(widgetId, componentId, option), action);
+    }
+
+    /**
+     *
+     * @param action
+     * @param widgetId
+     * @param componentId
+     */
+    public void registerSwapItemAction(SwapItemAction action, int widgetId, int componentId) {
+        swapItemActions.put(getSwapItemActionKey(widgetId, componentId), action);
     }
 
     /**
@@ -85,6 +101,25 @@ public class ActionBindings {
             return false;
         }
         action.handle(player, widgetId, componentId, childId, option);
+        return true;
+    }
+
+    /**
+     *
+     * @param player
+     * @param widgetId
+     * @param componentId
+     * @param firstSlot
+     * @param secondSlot
+     * @param mode
+     * @return
+     */
+    public boolean callSwapItemAction(Player player, int widgetId, int componentId, int firstSlot, int secondSlot, int mode) {
+        SwapItemAction action = swapItemActions.get(getSwapItemActionKey(widgetId, componentId));
+        if(action == null) {
+            return false;
+        }
+        action.handle(player, widgetId, componentId, firstSlot, secondSlot, mode);
         return true;
     }
 
@@ -136,6 +171,16 @@ public class ActionBindings {
      * @return
      */
     private long getButtonMenuActionKey(int widgetId, int componentId, int option) {
-        return (option & 0xfL) << 32L | (widgetId & 0xffffL) << 16L | (componentId & 0xffff);
+        return (option & 0xfL) << 32L | (widgetId & 0xffffL) << 16L | (componentId & 0xffffL);
+    }
+
+    /**
+     *
+     * @param widgetId
+     * @param componentId
+     * @return
+     */
+    private int getSwapItemActionKey(int widgetId, int componentId) {
+        return (widgetId & 0xffff) << 16 | (componentId & 0xffff);
     }
 }

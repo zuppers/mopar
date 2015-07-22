@@ -6,12 +6,12 @@ import io.mopar.game.msg.ChatMessage;
 /**
  * @author Hadyn Fitzgerald
  */
-public class ChatRequest extends Request {
+public class PublicChatRequest extends Request {
 
     private int playerId;
     private ChatMessage message;
 
-    public ChatRequest(int playerId, ChatMessage message) {
+    public PublicChatRequest(int playerId, ChatMessage message) {
         this.playerId = playerId;
         this.message = message;
     }

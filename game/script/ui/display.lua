@@ -29,7 +29,7 @@ local module = {
         plr:set_interface(screen.attack_tab, interface.unarmed_attack, interface.static)
         plr:set_interface(screen.skill_tab, interface.skills, interface.static)
         plr:set_interface(screen.quest_tab, interface.quest, interface.static)
-        plr:set_interface(screen.inventory_tab, interface.inventory, interface.static)
+        plr:set_interface(screen.backpack_tab, interface.backpack, interface.static)
         plr:set_interface(screen.equipment_tab, interface.equipment, interface.static)
         plr:set_interface(screen.prayer_tab, interface.prayer_book, interface.static)
         plr:set_interface(screen.spell_tab, interface.modern_spell_book, interface.static)

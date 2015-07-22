@@ -2,6 +2,8 @@ package io.mopar.game.model;
 
 import org.junit.Test;
 
+import java.util.TreeMap;
+
 import static org.junit.Assert.*;
 
 /**
@@ -10,14 +12,19 @@ import static org.junit.Assert.*;
 public class InventoryTest {
 
     @Test
-    public void testAdd() throws Exception {
+    public void testAddNonStack() throws Exception {
         Inventory inv = new Inventory();
         inv.add(555, 20, false);
         assertEquals(20, inv.count(555));
         for(int slot = 0; slot < 20; slot++) {
             assertNotNull(inv.get(slot));
         }
+    }
 
+    @Test
+    public void testAddStack() throws Exception {
+        Inventory inv = new Inventory();
+        inv.add(555, 1, true);
         inv.add(555, 2, true);
         assertEquals(3, inv.get(0).getAmount());
     }
@@ -25,6 +32,9 @@ public class InventoryTest {
     @Test
     public void testSet() throws Exception {
         Inventory inv = new Inventory();
+        Item replace = new Item(20);
+        inv.set(50, replace);
+        assertEquals(replace, inv.set(50, new Item(5)));
     }
 
     @Test

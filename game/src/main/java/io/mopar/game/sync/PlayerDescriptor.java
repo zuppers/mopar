@@ -19,8 +19,8 @@ public abstract class PlayerDescriptor extends Descriptor<Player> {
     protected PlayerDescriptor(Player player) {
         super(player);
 
-        if(player.hasChatMessage()) {
-            addUpdateBlock(new ChatUpdateBlock(player.getChatMessage()));
+        if(player.hasPublicChatMessage()) {
+            addUpdateBlock(new ChatUpdateBlock(player.getPublicChatMessage()));
         }
     }
 

@@ -2,9 +2,11 @@ package io.mopar.game.lua;
 
 import io.mopar.core.lua.Coerce;
 import io.mopar.core.lua.LuaModule;
-import io.mopar.game.event.EventBindings;
-import io.mopar.game.event.PlayerCreatedEvent;
-import io.mopar.game.event.PlayerDisplayUpdateEvent;
+import io.mopar.game.cmd.CommandHandler;
+import io.mopar.game.event.*;
+import io.mopar.game.event.player.PlayerCommandEvent;
+import io.mopar.game.event.player.PlayerCreatedEvent;
+import io.mopar.game.event.player.PlayerDisplayUpdateEvent;
 import org.luaj.vm2.LuaClosure;
 
 /**
@@ -67,6 +69,17 @@ public class EventLuaModule implements LuaModule {
      */
     public void on_player_display_updated(LuaClosure closure) {
         bindings.add(PlayerDisplayUpdateEvent.class, (PlayerDisplayUpdateEvent event) -> closure.call(Coerce.coerceToLua(event.getPlayer())));
+    }
+
+    /**
+     *
+     * @param command
+     * @param rights
+     * @param closure
+     */
+    public void on_command(String command, int rights, LuaClosure closure) {
+        CommandHandler handler = (plr, cmd, args) -> closure.call(Coerce.coerceToLua(plr), Coerce.coerceToLua(cmd), Coerce.coerceToLua(args));
+        bindings.add(PlayerCommandEvent.class, handler.wrap(command, rights));
     }
 
     /**

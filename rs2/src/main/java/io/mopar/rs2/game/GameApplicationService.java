@@ -9,9 +9,7 @@ import io.mopar.rs2.ApplicationService;
 import io.mopar.rs2.file.FileSessionContext;
 import io.mopar.rs2.login.LoginApplicationService;
 import io.mopar.rs2.msg.StatusMessage;
-import io.mopar.rs2.msg.game.ButtonOptionMessage;
-import io.mopar.rs2.msg.game.RouteMessage;
-import io.mopar.rs2.msg.game.ScreenInfoMessage;
+import io.mopar.rs2.msg.game.*;
 import io.mopar.rs2.msg.login.LoginRequestMessage;
 import io.mopar.rs2.msg.login.LoginStatusCheck;
 import io.mopar.rs2.msg.login.ProfileMessage;
@@ -74,7 +72,9 @@ public class GameApplicationService extends ApplicationService<GameService> {
         registerMessageHandler(ScreenInfoMessage.class, this::handleScreenInfoMessage);
         registerMessageHandler(ChatMessage.class, this::handleChatMessage);
         registerMessageHandler(ButtonOptionMessage.class, this::handleButtonOptionMessage);
+        registerMessageHandler(CommandMessage.class, this::handleCommandMessage);
         registerMessageHandler(SessionClosedMessage.class, this::handleSessionClosed);
+        registerMessageHandler(SwapItemMessage.class, this::handleSwapItemMessage);
 
         app.registerMessageHandler(LoginStatusCheck.class, this::handleLoginStatusCheck);
         app.registerMessageHandler(LoginRequestMessage.class, this::handleLoginRequest);
@@ -117,6 +117,7 @@ public class GameApplicationService extends ApplicationService<GameService> {
         incomingPackets.add(new PacketMetaData(177, "packet_check", 2));
         incomingPackets.add(new PacketMetaData(184, "interfaces_closed", 0));
         incomingPackets.add(new PacketMetaData(215, "route_ground", PacketMetaData.VAR_BYTE_LENGTH));
+        incomingPackets.add(new PacketMetaData(231, "swap_item", 9));
         incomingPackets.add(new PacketMetaData(237, "chat", PacketMetaData.VAR_BYTE_LENGTH));
         incomingPackets.add(new PacketMetaData(243, "screen_info", 6));
         incomingPackets.add(new PacketMetaData(254, "loc_option_1", 6));
@@ -129,7 +130,9 @@ public class GameApplicationService extends ApplicationService<GameService> {
      */
     private void registerOutgoingPackets(PacketMetaList outgoingPackets) {
         outgoingPackets.add(new PacketMetaData(21, "set_interface_hidden", 7));
+        outgoingPackets.add(new PacketMetaData(22, "update_inventory", PacketMetaData.VAR_SHORT_LENGTH));
         outgoingPackets.add(new PacketMetaData(70, "print", PacketMetaData.VAR_BYTE_LENGTH));
+        outgoingPackets.add(new PacketMetaData(105, "refresh_inventory", PacketMetaData.VAR_SHORT_LENGTH));
         outgoingPackets.add(new PacketMetaData(145, "set_root_interface", 5));
         outgoingPackets.add(new PacketMetaData(155, "set_interface", 9));
         outgoingPackets.add(new PacketMetaData(162, "rebuild_scene", PacketMetaData.VAR_SHORT_LENGTH));
@@ -196,7 +199,30 @@ public class GameApplicationService extends ApplicationService<GameService> {
      */
     private void handleButtonOptionMessage(Session session, ButtonOptionMessage message) {
         service.buttonPressed(session.get(PlayerSessionContext.class).getPlayerId(), message.getWidgetId(), message
-                        .getComponentId(), message.getChildId(), message.getOption(), (res) -> {});
+                .getComponentId(), message.getChildId(), message.getOption(), (res) -> {
+        });
+    }
+
+    /**
+     *
+     * @param session
+     * @param message
+     */
+    private void handleCommandMessage(Session session, CommandMessage message) {
+        service.commandEntered(session.get(PlayerSessionContext.class).getPlayerId(), message.getName(),
+                message.getArguments(), (res) -> {
+        });
+    }
+
+    /**
+     *
+     * @param session
+     * @param message
+     */
+    private void handleSwapItemMessage(Session session, SwapItemMessage message) {
+        service.swapItem(session.get(PlayerSessionContext.class).getPlayerId(), message.getWidgetId(),
+                message.getComponentId(), message.getFirstSlot(), message.getSecondSlot(), message.getMode(), (res) -> {
+        });
     }
 
     /**

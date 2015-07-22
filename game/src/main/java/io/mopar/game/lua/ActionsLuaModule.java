@@ -27,6 +27,33 @@ public class ActionsLuaModule implements LuaModule {
 
     /**
      *
+     * @param inter
+     * @param closure
+     */
+    public void on_swap(LuaTable inter, LuaClosure closure) {
+        on_swap(inter.get("parent_id").checkint(), inter.get("id").checkint(), closure);
+    }
+
+    /**
+     *
+     * @param widgetId
+     * @param componentId
+     * @param function
+     */
+    public void on_swap(int widgetId, int componentId, LuaClosure function) {
+        bindings.registerSwapItemAction((plr, widget, comp, first, second, mode) ->
+                function.invoke(new LuaValue[]{
+                        Coerce.coerceToLua(plr),
+                        Coerce.coerceToLua(widget),
+                        Coerce.coerceToLua(comp),
+                        Coerce.coerceToLua(first),
+                        Coerce.coerceToLua(second),
+                        Coerce.coerceToLua(mode)
+                }), widgetId, componentId);
+    }
+
+    /**
+     *
      * @param table
      */
     public void on_button(LuaTable table, int option, LuaFunction closure) {

@@ -11,7 +11,13 @@
 
   {
     "id" : 149,
-    "name" : "inventory"
+    "name" : "backpack",
+    "components" : [
+      {
+        "id" : 0,
+        "name" : "container"
+      }
+    ]
   },
 
   {
@@ -152,7 +158,7 @@
 
       {
         "id"   : 86,
-        "name" : "inventory_tab"
+        "name" : "backpack_tab"
       },
 
       {
@@ -309,7 +315,7 @@
 
       {
         "id"   : 96,
-        "name" : "inventory_tab"
+        "name" : "backpack_tab"
       },
 
       {

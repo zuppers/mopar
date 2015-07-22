@@ -1,5 +1,7 @@
 package io.mopar.rs2.game;
 
+import io.mopar.game.model.Inventory;
+import io.mopar.game.model.Item;
 import io.mopar.game.model.Position;
 import io.mopar.game.model.Scene;
 import io.mopar.game.msg.*;
@@ -9,10 +11,13 @@ import io.mopar.rs2.msg.game.*;
 import io.mopar.rs2.net.packet.Packet;
 import io.mopar.rs2.net.packet.PacketBuilder;
 import io.mopar.rs2.net.packet.PacketMetaList;
+import io.mopar.rs2.util.ByteBufUtil;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufAllocator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.Arrays;
 
 import static io.mopar.rs2.util.ByteBufUtil.*;
 
@@ -57,6 +62,8 @@ public class GameMessageCodecInitializer implements MessageCodecInitializer {
         codec.registerMessageDecoder(incomingPackets.getId("screen_info"), this::decodeScreenInfoMessage);
         codec.registerMessageDecoder(incomingPackets.getId("interfaces_closed"), this::decodeClosedInterfacesMessage);
         codec.registerMessageDecoder(incomingPackets.getId("chat"), this::decodeChatMessage);
+        codec.registerMessageDecoder(incomingPackets.getId("command"), this::decodeCommandMessage);
+        codec.registerMessageDecoder(incomingPackets.getId("swap_item"), this::decodeSwapItemMessage);
 
         for(int i = 1; i <= 1; i++) {
             final int optionId = i;                                                                     // Err...k
@@ -184,6 +191,41 @@ public class GameMessageCodecInitializer implements MessageCodecInitializer {
     }
 
     /**
+     *
+     * @param packet
+     * @return
+     */
+    private CommandMessage decodeCommandMessage(Packet packet) {
+        ByteBuf buf = packet.getBuffer();
+
+        String str = readString(buf);
+        String[] split = str.split(" ");
+
+        String name = split.length > 0 ? split[0] : "";
+
+        int argumentCount = Math.max(1, split.length);
+        String[] args = Arrays.copyOfRange(split, 1, argumentCount);
+
+        return new CommandMessage(name, args);
+    }
+
+    private SwapItemMessage decodeSwapItemMessage(Packet packet) {
+        ByteBuf buf = packet.getBuffer();
+
+        int firstSlot = buf.readUnsignedShort();
+
+        int id = readLEInt(buf);
+        int widgetId = id >> 16;
+        int componentId = id & 0xffff;
+
+        int secondSlot = readShortA(buf);
+        int mode = readByteS(buf);
+
+        return new SwapItemMessage(widgetId, componentId, firstSlot, secondSlot, mode);
+    }
+
+
+    /**
      * Registers all of the message encoders.
      *
      * @param codec The message codec.
@@ -195,6 +237,8 @@ public class GameMessageCodecInitializer implements MessageCodecInitializer {
         codec.registerMessageEncoder(SetInterfaceMessage.class, this::encodeSetInterfaceMessage);
         codec.registerMessageEncoder(PrintMessage.class, this::encodePrintMessage);
         codec.registerMessageEncoder(SetInterfaceHiddenMessage.class, this::encodeSetInterfaceHiddenMessage);
+        codec.registerMessageEncoder(RefreshInventoryMessage.class, this::encodeRefreshInventoryMessage);
+        codec.registerMessageEncoder(UpdateInventoryMessage.class, this::encodeUpdateInventoryMessage);
 
         // Register the synchronization message encoders
         codec.registerMessageEncoder(PlayerSynchronizationMessage.class, new PlayerSynchronizationMessageEncoder());
@@ -308,6 +352,72 @@ public class GameMessageCodecInitializer implements MessageCodecInitializer {
         builder.writeByteN(message.isHidden() ? 1 : 0);
         builder.writeShort(0);
         builder.writeLEInt(message.getWidgetId() << 16 | message.getComponentId());
+        return builder.build();
+    }
+
+    /**
+     *
+     * @param allocator
+     * @param outgoingPackets
+     * @param message
+     * @return
+     */
+    private Packet encodeRefreshInventoryMessage(ByteBufAllocator allocator, PacketMetaList outgoingPackets, RefreshInventoryMessage message) {
+        PacketBuilder builder = PacketBuilder.create(outgoingPackets.get("refresh_inventory"), allocator);
+        builder.writeInt(message.getWidgetId() << 16 | message.getComponentId());
+        builder.writeShort(message.getId());
+
+        Inventory inventory = message.getInventory();
+        builder.writeShort(inventory.capacity());
+        for(int slot = 0; slot < inventory.capacity(); slot++) {
+            Item item = inventory.get(slot);
+            if(item != null) {
+                if(item.getAmount() >= 255) {
+                    builder.writeByteS(255);
+                    builder.writeInt(item.getAmount());
+                } else {
+                    builder.writeByteS(item.getAmount());
+                }
+                builder.writeShort(item.getId() + 1);
+            } else {
+                builder.writeByteS(0);
+                builder.writeShort(0);
+            }
+        }
+        return builder.build();
+    }
+
+    /**
+     *
+     * @param allocator
+     * @param outgoingPackets
+     * @param message
+     * @return
+     */
+    private Packet encodeUpdateInventoryMessage(ByteBufAllocator allocator, PacketMetaList outgoingPackets, UpdateInventoryMessage message) {
+        PacketBuilder builder = PacketBuilder.create(outgoingPackets.get("update_inventory"), allocator);
+        builder.writeInt(message.getWidgetId() << 16 | message.getComponentId());
+        builder.writeShort(message.getId());
+
+        Inventory inventory = message.getInventory();
+        for(int slot : message.getSlots()) {
+            builder.writeSmart(slot);
+
+            Item item = inventory.get(slot);
+            if(item == null) {
+                builder.writeShort(0);
+                continue;
+            } else {
+                builder.writeShort(item.getId() + 1);
+                if(item.getAmount() >= 255) {
+                    builder.writeByte(255);
+                    builder.writeInt(item.getAmount());
+                } else {
+                    builder.writeByte(item.getAmount());
+                }
+            }
+        }
+
         return builder.build();
     }
 }

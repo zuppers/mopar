@@ -1,5 +1,6 @@
-package io.mopar.game.event;
+package io.mopar.game.event.player;
 
+import io.mopar.game.event.PlayerEvent;
 import io.mopar.game.model.Player;
 
 /**

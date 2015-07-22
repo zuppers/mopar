@@ -47,6 +47,15 @@ public class ByteBufUtil {
     }
 
     /**
+     *
+     * @param buf
+     * @return
+     */
+    public static int readLEInt(ByteBuf buf) {
+        return buf.readUnsignedByte() + (buf.readUnsignedByte() << 8) + (buf.readUnsignedByte() << 16) + (buf.readUnsignedByte() << 24) ;
+    }
+
+    /**
      * Reads a string.
      *
      * @param buf The buffer to read the string from.

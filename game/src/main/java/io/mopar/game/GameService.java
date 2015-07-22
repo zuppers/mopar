@@ -6,10 +6,10 @@ import io.mopar.core.asset.AssetLoader;
 import io.mopar.game.action.ActionBindings;
 import io.mopar.core.lua.LuaScriptEngine;
 import io.mopar.core.profile.ProfileCodec;
-import io.mopar.game.event.Event;
-import io.mopar.game.event.EventBindings;
-import io.mopar.game.event.PlayerCreatedEvent;
-import io.mopar.game.event.PlayerDisplayUpdateEvent;
+import io.mopar.game.event.*;
+import io.mopar.game.event.player.PlayerCommandEvent;
+import io.mopar.game.event.player.PlayerCreatedEvent;
+import io.mopar.game.event.player.PlayerDisplayUpdateEvent;
 import io.mopar.game.lua.*;
 import io.mopar.game.model.*;
 import io.mopar.game.model.Route.Point;
@@ -174,7 +174,7 @@ public class GameService extends Service {
      * @param callback The response callback.
      */
     public void chat(int playerId, ChatMessage message, Callback<ChatResponse> callback) {
-        submit(new ChatRequest(playerId, message), callback);
+        submit(new PublicChatRequest(playerId, message), callback);
     }
 
     /**
@@ -190,6 +190,32 @@ public class GameService extends Service {
     public void buttonPressed(int playerId, int widgetId, int componentId, int childId, int option,
                               Callback<ButtonActionResponse> callback) {
         submit(new ButtonActionRequest(playerId, widgetId, componentId, childId, option), callback);
+    }
+
+    /**
+     *
+     * @param playerId
+     * @param widgetId
+     * @param componentId
+     * @param firstSlot
+     * @param secondSlot
+     * @param mode
+     * @param callback
+     */
+    public void swapItem(int playerId, int widgetId, int componentId, int firstSlot, int secondSlot,
+                         int mode, Callback<SwapItemResponse> callback) {
+        submit(new SwapItemActionRequest(playerId, widgetId, componentId, firstSlot, secondSlot, mode), callback);
+    }
+
+    /**
+     *
+     * @param playerId
+     * @param name
+     * @param arguments
+     * @param callback
+     */
+    public void commandEntered(int playerId, String name, String[] arguments, Callback<CommandResponse> callback) {
+        submit(new CommandRequest(playerId, name, arguments), callback);
     }
 
     /**
@@ -213,14 +239,6 @@ public class GameService extends Service {
         submit(new EvalScriptRequest(script), callback);
     }
 
-    /**
-     * Dispatches an event.
-     *
-     * @param event the event to dispatch.
-     */
-    public void dispatch(Event event) {
-        eventBindings.handle(event);
-    }
 
     /**
      * Initializer method; initializes the script engine.
@@ -244,18 +262,30 @@ public class GameService extends Service {
         registerRequestHandler(NewPlayerRequest.class, this::handleNewPlayerRequest);
         registerRequestHandler(RemovePlayerRequest.class, this::handleRemovePlayerRequest);
         registerRequestHandler(RoutePlayerRequest.class, this::handleRoutePlayerRequest);
-        registerRequestHandler(ChatRequest.class, this::handleChatRequest);
+        registerRequestHandler(PublicChatRequest.class, this::handlePublicChatRequest);
         registerRequestHandler(UpdateDisplayRequest.class, this::handleUpdateDisplayRequest);
+        registerRequestHandler(CommandRequest.class, this::handleCommandRequest);
 
-        // Bind all of the menu action request handlers
+        // Bind all of the action request handlers
         registerRequestHandler(PlayerMenuActionRequest.class, this::handlePlayerActionRequest);
         registerRequestHandler(ButtonActionRequest.class, this::handleButtonActionRequest);
+        registerRequestHandler(SwapItemActionRequest.class, this::handleSwapItemRequest);
 
         // Bind all of the script request handlers
         registerRequestHandler(EvalScriptRequest.class, this::handleEvalScriptRequest);
+        registerRequestHandler(LoadScriptRequest.class, this::handleLoadScriptRequest);
 
         // Bind all of the service request handlers
         registerRequestHandler(GetWorldTimeRequest.class, this::handleGetWorldTimeRequest);
+    }
+
+    /**
+     * Dispatches an event.
+     *
+     * @param event the event to dispatch.
+     */
+    private void dispatchEvent(Event event) {
+        eventBindings.handle(event);
     }
 
     /**
@@ -316,7 +346,7 @@ public class GameService extends Service {
 
         if(mode != player.getDisplayMode()) {
             player.setDisplayMode(request.getDisplayMode());
-            dispatch(new PlayerDisplayUpdateEvent(player));
+            dispatchEvent(new PlayerDisplayUpdateEvent(player));
         }
 
         callback.call(new UpdateDisplayResponse());
@@ -420,22 +450,59 @@ public class GameService extends Service {
     }
 
     /**
-     * Handles a request to publish a chat message.
+     *
+     * @param request
+     * @param callback
+     */
+    private void handleSwapItemRequest(SwapItemActionRequest request, Callback callback) {
+        Player player = world.getPlayer(request.getPlayerId());
+        if(player == null) {
+            callback.call(new SwapItemResponse());
+        }
+
+        if(!actionBindings.callSwapItemAction(player, request.getWidgetId(), request.getComponentId(),
+                request.getFirstSlot(), request.getSecondSlot(), request.getMode())) {
+            logger.info("No binding for interface swap item, id: " + request.getWidgetId() + ", comp: " + request.getComponentId());
+            callback.call(new SwapItemResponse());
+            return;
+        }
+
+        callback.call(new SwapItemResponse());
+    }
+
+    /**
+     * Handles a request to publish a public chat message..
      *
      * @param request The request.
      * @param callback The response callback.
      */
-    private void handleChatRequest(ChatRequest request, Callback callback) {
+    private void handlePublicChatRequest(PublicChatRequest request, Callback callback) {
         Player player = world.getPlayer(request.getPlayerId());
         if(player == null) {
             callback.call(new ChatResponse(ChatResponse.PLAYER_DOES_NOT_EXIST));
             return;
         }
 
-        // Set the players public chat message
-        player.setChatMessage(request.getMessage());
+        player.setPublicChatMessage(request.getMessage());
 
         callback.call(new ChatResponse(ChatResponse.OK));
+    }
+
+    /**
+     *
+     * @param request
+     * @param callback
+     */
+    private void handleCommandRequest(CommandRequest request, Callback callback) {
+        Player player = world.getPlayer(request.getPlayerId());
+        if(player == null) {
+            callback.call(new CommandResponse());
+            return;
+        }
+
+        dispatchEvent(new PlayerCommandEvent(player, request.getName(), request.getArguments()));
+
+        callback.call(new CommandResponse());
     }
 
     /**

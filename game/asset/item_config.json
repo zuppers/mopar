@@ -1,0 +1,13 @@
+[
+  {
+    "id" : 0,
+    "name" : "toolkit",
+    "stackable" : false
+  },
+
+  {
+    "id"        : 995,
+    "name"      : "coins",
+    "stackable" : true
+  }
+]

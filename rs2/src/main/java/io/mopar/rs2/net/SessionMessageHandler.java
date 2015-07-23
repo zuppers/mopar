@@ -2,6 +2,7 @@ package io.mopar.rs2.net;
 
 import io.mopar.core.msg.Message;
 import io.netty.channel.ChannelHandlerContext;
+import io.netty.channel.ChannelPromise;
 import io.netty.channel.SimpleChannelInboundHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,11 +33,17 @@ public class SessionMessageHandler extends SimpleChannelInboundHandler<Message> 
 
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
-        session.close();
+        ctx.close();
     }
 
     @Override
     protected void messageReceived(ChannelHandlerContext ctx, Message message) throws Exception {
         session.dispatch(message);
+    }
+
+
+    @Override
+    public void channelInactive(ChannelHandlerContext ctx) throws Exception {
+        session.close();
     }
 }

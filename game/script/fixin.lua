@@ -16,3 +16,9 @@ function wrap(t, f)
         f(t, ...)
     end
 end
+
+-- Inherits the members from a supertype
+function inherit(module, super)
+    setmetatable(module, { __index = super })
+    module._super = super
+end

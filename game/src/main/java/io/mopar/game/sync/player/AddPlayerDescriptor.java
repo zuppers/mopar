@@ -4,6 +4,7 @@ import io.mopar.game.model.Player;
 import io.mopar.game.model.Position;
 import io.mopar.game.model.Step;
 import io.mopar.game.sync.PlayerDescriptor;
+import io.mopar.game.sync.block.AppearanceUpdateBlock;
 
 /**
  * @author Hadyn Fitzgerald
@@ -42,6 +43,10 @@ public class AddPlayerDescriptor extends PlayerDescriptor {
         lastStep = player.getLastStep();
         if(lastStep == null) {
             lastStep = Step.NORTH;
+        }
+
+        if(!hasUpdateBlock(AppearanceUpdateBlock.class)) {
+            addUpdateBlock(AppearanceUpdateBlock.create(player));
         }
     }
 

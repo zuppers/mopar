@@ -84,7 +84,13 @@
 
   {
     "id" : 387,
-    "name" : "equipment"
+    "name" : "equipment",
+    "components" : [
+      {
+        "id"   : 28,
+        "name" : "container"
+      }
+    ]
   },
 
   {

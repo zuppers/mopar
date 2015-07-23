@@ -7,6 +7,7 @@ import io.mopar.login.res.LoginResponse;
 import io.mopar.rs2.Application;
 import io.mopar.rs2.ApplicationService;
 import io.mopar.rs2.file.FileSessionContext;
+import io.mopar.rs2.game.msg.InterfaceItemOptionMessage;
 import io.mopar.rs2.login.LoginApplicationService;
 import io.mopar.rs2.msg.StatusMessage;
 import io.mopar.rs2.msg.game.*;
@@ -75,6 +76,8 @@ public class GameApplicationService extends ApplicationService<GameService> {
         registerMessageHandler(CommandMessage.class, this::handleCommandMessage);
         registerMessageHandler(SessionClosedMessage.class, this::handleSessionClosed);
         registerMessageHandler(SwapItemMessage.class, this::handleSwapItemMessage);
+        registerMessageHandler(ItemOptionMessage.class, this::handleItemOptionMessage);
+        registerMessageHandler(InterfaceItemOptionMessage.class, this::handleInterfaceItemOptionMessage);
 
         app.registerMessageHandler(LoginStatusCheck.class, this::handleLoginStatusCheck);
         app.registerMessageHandler(LoginRequestMessage.class, this::handleLoginRequest);
@@ -110,6 +113,7 @@ public class GameApplicationService extends ApplicationService<GameService> {
         incomingPackets.add(new PacketMetaData(77, "route_target", PacketMetaData.VAR_BYTE_LENGTH));
         incomingPackets.add(new PacketMetaData(78, "npc_option_2", 2));
         incomingPackets.add(new PacketMetaData(79, "swap_items", 12));
+        incomingPackets.add(new PacketMetaData(81, "inter_item_option_1", 8));
         incomingPackets.add(new PacketMetaData(93, "heartbeat", 0));
         incomingPackets.add(new PacketMetaData(98, "settings", 4));
         incomingPackets.add(new PacketMetaData(110, "load_scene", 0));
@@ -117,7 +121,7 @@ public class GameApplicationService extends ApplicationService<GameService> {
         incomingPackets.add(new PacketMetaData(177, "packet_check", 2));
         incomingPackets.add(new PacketMetaData(184, "interfaces_closed", 0));
         incomingPackets.add(new PacketMetaData(215, "route_ground", PacketMetaData.VAR_BYTE_LENGTH));
-        incomingPackets.add(new PacketMetaData(231, "swap_item", 9));
+        incomingPackets.add(new PacketMetaData(231, "switch_items", 9));
         incomingPackets.add(new PacketMetaData(237, "chat", PacketMetaData.VAR_BYTE_LENGTH));
         incomingPackets.add(new PacketMetaData(243, "screen_info", 6));
         incomingPackets.add(new PacketMetaData(254, "loc_option_1", 6));
@@ -168,7 +172,7 @@ public class GameApplicationService extends ApplicationService<GameService> {
      */
     private void handleRouteMessage(Session session, RouteMessage message) {
         PlayerSessionContext ctx = session.get(PlayerSessionContext.class);
-        service.route(ctx.getPlayer().getId(), message.getRoute(), (res) -> {
+        service.handleRoute(ctx.getPlayer().getId(), message.getRoute(), (res) -> {
         });
     }
 
@@ -178,7 +182,7 @@ public class GameApplicationService extends ApplicationService<GameService> {
      * @param message
      */
     private void handleScreenInfoMessage(Session session, ScreenInfoMessage message) {
-        service.updateDisplay(session.get(PlayerSessionContext.class).getPlayerId(), message.getDisplayMode(), (res) -> {
+        service.updatePlayerDisplay(session.get(PlayerSessionContext.class).getPlayerId(), message.getDisplayMode(), (res) -> {
         });
     }
 
@@ -188,7 +192,7 @@ public class GameApplicationService extends ApplicationService<GameService> {
      * @param message
      */
     private void handleChatMessage(Session session, ChatMessage message) {
-        service.chat(session.get(PlayerSessionContext.class).getPlayerId(), message, (res) -> {
+        service.handlePublicChatMessage(session.get(PlayerSessionContext.class).getPlayerId(), message, (res) -> {
         });
     }
 
@@ -198,7 +202,7 @@ public class GameApplicationService extends ApplicationService<GameService> {
      * @param message
      */
     private void handleButtonOptionMessage(Session session, ButtonOptionMessage message) {
-        service.buttonPressed(session.get(PlayerSessionContext.class).getPlayerId(), message.getWidgetId(), message
+        service.handleButtonMenuAction(session.get(PlayerSessionContext.class).getPlayerId(), message.getWidgetId(), message
                 .getComponentId(), message.getChildId(), message.getOption(), (res) -> {
         });
     }
@@ -208,10 +212,27 @@ public class GameApplicationService extends ApplicationService<GameService> {
      * @param session
      * @param message
      */
+    private void handleItemOptionMessage(Session session, ItemOptionMessage message) {
+        service.handleItemMenuAction(session.get(PlayerSessionContext.class).getPlayerId(), message.getWidgetId(),
+                message.getComponentId(), message.getItemId(), message.getSlot(), message.getOption(), (res) -> {
+                });
+    }
+
+    private void handleInterfaceItemOptionMessage(Session session, InterfaceItemOptionMessage message) {
+        service.handleInterfaceItemMenuAction(session.get(PlayerSessionContext.class).getPlayerId(), message.getWidgetId(),
+                message.getComponentId(), message.getItemId(), message.getSlot(), message.getOption(), (res) -> {
+                });
+    }
+
+    /**
+     *
+     * @param session
+     * @param message
+     */
     private void handleCommandMessage(Session session, CommandMessage message) {
-        service.commandEntered(session.get(PlayerSessionContext.class).getPlayerId(), message.getName(),
+        service.handleCommandAction(session.get(PlayerSessionContext.class).getPlayerId(), message.getName(),
                 message.getArguments(), (res) -> {
-        });
+                });
     }
 
     /**
@@ -220,9 +241,9 @@ public class GameApplicationService extends ApplicationService<GameService> {
      * @param message
      */
     private void handleSwapItemMessage(Session session, SwapItemMessage message) {
-        service.swapItem(session.get(PlayerSessionContext.class).getPlayerId(), message.getWidgetId(),
+        service.handleItemSwapAction(session.get(PlayerSessionContext.class).getPlayerId(), message.getWidgetId(),
                 message.getComponentId(), message.getFirstSlot(), message.getSecondSlot(), message.getMode(), (res) -> {
-        });
+                });
     }
 
     /**
@@ -271,6 +292,10 @@ public class GameApplicationService extends ApplicationService<GameService> {
             res.getPlayer().setPosition(new Position(3222, 3222));
             res.getPlayer().setDisplayMode(request.getDisplayMode());
             res.getPlayer().rebuildScene();
+
+            res.getPlayer().setUsername(request.getUsername());
+
+            res.getPlayer().setAppearanceUpdated(true);
         });
     }
 }

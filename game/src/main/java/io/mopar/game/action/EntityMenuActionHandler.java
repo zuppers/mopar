@@ -5,6 +5,6 @@ import io.mopar.game.model.Player;
 /**
  * @author Hadyn Fitzgerald
  */
-public interface EntityMenuAction<T> {
+public interface EntityMenuActionHandler<T> {
     void handle(Player player, T entity, int option);
 }

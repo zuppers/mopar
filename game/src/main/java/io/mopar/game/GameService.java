@@ -7,7 +7,6 @@ import io.mopar.game.action.ActionBindings;
 import io.mopar.core.lua.LuaScriptEngine;
 import io.mopar.core.profile.ProfileCodec;
 import io.mopar.game.event.*;
-import io.mopar.game.event.player.PlayerCommandEvent;
 import io.mopar.game.event.player.PlayerCreatedEvent;
 import io.mopar.game.event.player.PlayerDisplayUpdateEvent;
 import io.mopar.game.lua.*;
@@ -22,6 +21,7 @@ import org.slf4j.LoggerFactory;
 
 import javax.script.ScriptException;
 import java.io.IOException;
+import java.util.Arrays;
 
 /**
  * @author Hadyn Fitzgerald
@@ -156,24 +156,22 @@ public class GameService extends Service {
     }
 
     /**
-     * Routes a player.
      *
      * @param playerId the player id.
      * @param route the route.
      * @param callback The response callback.
      */
-    public void route(int playerId, Route route, Callback<RoutePlayerResponse> callback) {
+    public void handleRoute(int playerId, Route route, Callback<RoutePlayerResponse> callback) {
         submit(new RoutePlayerRequest(playerId, route), callback);
     }
 
     /**
-     * Updates the players chat.
      *
      * @param playerId The player id.
      * @param message The message.
      * @param callback The response callback.
      */
-    public void chat(int playerId, ChatMessage message, Callback<ChatResponse> callback) {
+    public void handlePublicChatMessage(int playerId, ChatMessage message, Callback<ChatResponse> callback) {
         submit(new PublicChatRequest(playerId, message), callback);
     }
 
@@ -187,8 +185,8 @@ public class GameService extends Service {
      * @param option the option.
      * @param callback the response callback.
      */
-    public void buttonPressed(int playerId, int widgetId, int componentId, int childId, int option,
-                              Callback<ButtonActionResponse> callback) {
+    public void handleButtonMenuAction(int playerId, int widgetId, int componentId, int childId, int option,
+                                       Callback<ButtonActionResponse> callback) {
         submit(new ButtonActionRequest(playerId, widgetId, componentId, childId, option), callback);
     }
 
@@ -202,20 +200,34 @@ public class GameService extends Service {
      * @param mode
      * @param callback
      */
-    public void swapItem(int playerId, int widgetId, int componentId, int firstSlot, int secondSlot,
-                         int mode, Callback<SwapItemResponse> callback) {
-        submit(new SwapItemActionRequest(playerId, widgetId, componentId, firstSlot, secondSlot, mode), callback);
+    public void handleItemSwapAction(int playerId, int widgetId, int componentId, int firstSlot, int secondSlot,
+                                     int mode, Callback<SwapItemResponse> callback) {
+        submit(new SwitchItemActionRequest(playerId, widgetId, componentId, firstSlot, secondSlot, mode), callback);
+    }
+
+    /**
+     * Submits a item menu action.
+     *
+     * @param playerId the player id.
+     * @param widgetId the widget id.
+     * @param componentId the component id.
+     * @param itemId the item id.
+     * @param slot the slot in the inventory.
+     * @param callback the response callback.
+     */
+    public void handleItemMenuAction(int playerId, int widgetId, int componentId, int itemId, int slot, int option, Callback<ItemMenuActionResponse> callback) {
+        submit(new ItemMenuActionRequest(playerId, widgetId, componentId, itemId, slot, option), callback);
     }
 
     /**
      *
      * @param playerId
-     * @param name
+     * @param command
      * @param arguments
-     * @param callback
+     * @param callback the response callback.
      */
-    public void commandEntered(int playerId, String name, String[] arguments, Callback<CommandResponse> callback) {
-        submit(new CommandRequest(playerId, name, arguments), callback);
+    public void handleCommandAction(int playerId, String command, String[] arguments, Callback<CommandResponse> callback) {
+        submit(new CommandActionRequest(playerId, command, arguments), callback);
     }
 
     /**
@@ -225,12 +237,12 @@ public class GameService extends Service {
      * @param displayMode The display mode.
      * @param callback The response callback.
      */
-    public void updateDisplay(int playerId, int displayMode, Callback<UpdateDisplayResponse> callback) {
+    public void updatePlayerDisplay(int playerId, int displayMode, Callback<UpdateDisplayResponse> callback) {
         submit(new UpdateDisplayRequest(playerId, displayMode), callback);
     }
 
     /**
-     * Helper method; evaluates a script.
+     * Evaluates a script.
      *
      * @param script The script to evaluate.
      * @param callback The response callback.
@@ -239,12 +251,12 @@ public class GameService extends Service {
         submit(new EvalScriptRequest(script), callback);
     }
 
-
     /**
      * Initializer method; initializes the script engine.
      */
     private void initScriptEngine() {
         Coerce.register(Player.class, (plr) -> new PlayerComposite(plr));
+        Coerce.register(Item.class, (itm) -> new ItemComposite(itm));
 
         // Register all of the modules
         scriptEngine.put(new ActionsLuaModule(actionBindings));
@@ -264,12 +276,14 @@ public class GameService extends Service {
         registerRequestHandler(RoutePlayerRequest.class, this::handleRoutePlayerRequest);
         registerRequestHandler(PublicChatRequest.class, this::handlePublicChatRequest);
         registerRequestHandler(UpdateDisplayRequest.class, this::handleUpdateDisplayRequest);
-        registerRequestHandler(CommandRequest.class, this::handleCommandRequest);
 
         // Bind all of the action request handlers
         registerRequestHandler(PlayerMenuActionRequest.class, this::handlePlayerActionRequest);
         registerRequestHandler(ButtonActionRequest.class, this::handleButtonActionRequest);
-        registerRequestHandler(SwapItemActionRequest.class, this::handleSwapItemRequest);
+        registerRequestHandler(SwitchItemActionRequest.class, this::handleSwitchItemRequest);
+        registerRequestHandler(ItemMenuActionRequest.class, this::handleItemMenuActionRequest);
+        registerRequestHandler(CommandActionRequest.class, this::handleCommandRequest);
+        registerRequestHandler(InterfaceItemMenuActionRequest.class, this::handleInterfaceItemMenuActionRequest);
 
         // Bind all of the script request handlers
         registerRequestHandler(EvalScriptRequest.class, this::handleEvalScriptRequest);
@@ -326,6 +340,21 @@ public class GameService extends Service {
     }
 
     /**
+     * Handles a remove player request.
+     *
+     * @param request The request.
+     * @param callback The callback.
+     */
+    private void handleRemovePlayerRequest(RemovePlayerRequest request, Callback callback) {
+        if(!world.removePlayer(request.getPlayerId())) {
+            callback.call(new RemovePlayerResponse(RemovePlayerResponse.PLAYER_DOES_NOT_EXIST));
+            return;
+        }
+
+        callback.call(new RemovePlayerResponse(RemovePlayerResponse.OK));
+    }
+
+    /**
      * Handles a display update request.
      *
      * @param request The request.
@@ -353,21 +382,6 @@ public class GameService extends Service {
     }
 
     /**
-     * Handles a remove player request.
-     *
-     * @param request The request.
-     * @param callback The callback.
-     */
-    private void handleRemovePlayerRequest(RemovePlayerRequest request, Callback callback) {
-        if(!world.removePlayer(request.getPlayerId())) {
-            callback.call(new RemovePlayerResponse(RemovePlayerResponse.PLAYER_DOES_NOT_EXIST));
-            return;
-        }
-
-        callback.call(new RemovePlayerResponse(RemovePlayerResponse.OK));
-    }
-
-    /**
      * Handles a button action request.
      *
      * @param request The request.
@@ -380,8 +394,9 @@ public class GameService extends Service {
             return;
         }
 
-        if(!actionBindings.callButtonMenuAction(player, request.getWidgetId(), request.getComponentId(), request.getChildId(), request.getOption())) {
-            logger.info("No binding for button id: " + request.getWidgetId() + ", comp: " + request.getComponentId() + ", " +
+        if(!actionBindings.callButtonMenuAction(player, request.getWidgetId(), request.getComponentId(),
+                request.getChildId(), request.getOption())) {
+            logger.info("No binding for button menu action, id: " + request.getWidgetId() + ", comp: " + request.getComponentId() + ", " +
                     "option: " + request.getOption() + (request.getChildId() != -1 ? ", child: " + request.getChildId() : ""));
             callback.call(new ButtonActionResponse());
             return;
@@ -454,15 +469,16 @@ public class GameService extends Service {
      * @param request
      * @param callback
      */
-    private void handleSwapItemRequest(SwapItemActionRequest request, Callback callback) {
+    private void handleSwitchItemRequest(SwitchItemActionRequest request, Callback callback) {
         Player player = world.getPlayer(request.getPlayerId());
         if(player == null) {
             callback.call(new SwapItemResponse());
+            return;
         }
 
-        if(!actionBindings.callSwapItemAction(player, request.getWidgetId(), request.getComponentId(),
+        if(!actionBindings.callSwitchItemAction(player, request.getWidgetId(), request.getComponentId(),
                 request.getFirstSlot(), request.getSecondSlot(), request.getMode())) {
-            logger.info("No binding for interface swap item, id: " + request.getWidgetId() + ", comp: " + request.getComponentId());
+            logger.info("No binding for interface switch item, id: " + request.getWidgetId() + ", comp: " + request.getComponentId());
             callback.call(new SwapItemResponse());
             return;
         }
@@ -471,7 +487,44 @@ public class GameService extends Service {
     }
 
     /**
-     * Handles a request to publish a public chat message..
+     *
+     * @param request
+     * @param callback
+     */
+    private void handleItemMenuActionRequest(ItemMenuActionRequest request, Callback callback) {
+        Player player = world.getPlayer(request.getPlayerId());
+        if(player == null) {
+            callback.call(new ItemMenuActionResponse());
+            return;
+        }
+
+        if(!actionBindings.callItemAction(player, request.getWidgetId(), request.getComponentId(), request.getItemId(), request.getSlot(), request.getOption())) {
+            logger.info("No binding for item menu action " + request.getWidgetId() + ", " + request.getComponentId() + ", " + request.getItemId());
+            callback.call(new ItemMenuActionResponse());
+            return;
+        }
+
+        callback.call(new ItemMenuActionResponse());
+    }
+
+    private void handleInterfaceItemMenuActionRequest(InterfaceItemMenuActionRequest request, Callback callback) {
+        Player player = world.getPlayer(request.getPlayerId());
+        if(player == null) {
+            callback.call(new InterfaceItemMenuActionResponse());
+            return;
+        }
+
+        if(!actionBindings.callInterfaceItemAction(player, request.getWidgetId(), request.getComponentId(), request.getItemId(), request.getSlot(), request.getOption())) {
+            logger.info("No binding for interface item menu action " + request.getWidgetId() + ", " + request.getComponentId() + ", " + request.getItemId());
+            callback.call(new InterfaceItemMenuActionResponse());
+            return;
+        }
+
+        callback.call(new InterfaceItemMenuActionResponse());
+    }
+
+    /**
+     * Handles a request to publish a public submitPublicChat message..
      *
      * @param request The request.
      * @param callback The response callback.
@@ -493,14 +546,18 @@ public class GameService extends Service {
      * @param request
      * @param callback
      */
-    private void handleCommandRequest(CommandRequest request, Callback callback) {
+    private void handleCommandRequest(CommandActionRequest request, Callback callback) {
         Player player = world.getPlayer(request.getPlayerId());
         if(player == null) {
             callback.call(new CommandResponse());
             return;
         }
 
-        dispatchEvent(new PlayerCommandEvent(player, request.getName(), request.getArguments()));
+        if(!actionBindings.callCommandAction(player, request.getName(), request.getArguments())) {
+            logger.info("No binding for command, name: " + request.getName() + ", args: " + Arrays.toString(request.getArguments()));
+            callback.call(new CommandResponse());
+            return;
+        }
 
         callback.call(new CommandResponse());
     }
@@ -552,5 +609,9 @@ public class GameService extends Service {
      */
     private void handleGetWorldTimeRequest(GetWorldTimeRequest request, Callback callback) {
         callback.call(new GetWorldTimeResponse(world.getTime()));
+    }
+
+    public void handleInterfaceItemMenuAction(int playerId, int widgetId, int componentId, int itemId, int slot, int option, Callback<InterfaceItemMenuActionResponse> callback) {
+        submit(new InterfaceItemMenuActionRequest(playerId, widgetId, componentId, itemId, slot, option), callback);
     }
 }

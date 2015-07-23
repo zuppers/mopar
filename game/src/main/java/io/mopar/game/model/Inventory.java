@@ -42,6 +42,34 @@ public class Inventory {
     /**
      * Adds an item.
      *
+     * @param item the item.
+     * @param stack flag for if the item should append to the current stack. This will however not add more
+     *               than the maximum amount allowed amount {@link Integer#MAX_VALUE} to the stack.
+     */
+    public void add(Item item, boolean stack) {
+        if (stack) {
+            int slot = slotOf(item.getId());
+            int id = item.getId();
+            int amount = item.getAmount();
+            if(slot != -1) {
+                Item itm = items[slot];
+                if(item.getAmount() + itm.getAmount() < 0) {
+                    amount = Integer.MAX_VALUE - itm.getAmount();
+                } else {
+                    amount += itm.getAmount();
+                }
+            } else {
+                slot = freeSlot();
+            }
+            set(slot, new Item(id, amount));
+        } else {
+            items[freeSlot()] = item;
+        }
+    }
+
+    /**
+     * Adds an item.
+     *
      * @param id the item id.
      * @param amount the amount to add.
      * @param stack flag for if the item should append to the current stack. This will however not add more
@@ -74,6 +102,7 @@ public class Inventory {
             }
         }
     }
+
 
     /**
      * Sets a slot.
@@ -111,6 +140,19 @@ public class Inventory {
             return null;
         }
         return items[slot];
+    }
+
+    /**
+     *
+     * @param slot
+     * @return
+     */
+    public int getId(int slot) {
+        Item item = get(slot);
+        if(item == null) {
+            return -1;
+        }
+        return item.getId();
     }
 
     /**
@@ -162,6 +204,15 @@ public class Inventory {
     }
 
     /**
+     *
+     * @param slot
+     * @return
+     */
+    public boolean empty(int slot) {
+        return get(slot) == null;
+    }
+
+    /**
      * Gets the amount of space the inventory has for an item. If the item is marked as stackable,
      * and a stack of the item exists returns the minimum of either {@link Integer#MAX_VALUE} minus
      * the stack amount or the specified amount. If the item is not marked as stackable gets the minimum value
@@ -189,6 +240,20 @@ public class Inventory {
             }
         }
         return amount;
+    }
+
+    /**
+     *
+     * @param item
+     * @param size
+     * @param stack
+     * @return
+     */
+    public boolean accept(Item item, int size, boolean stack) {
+        if(slotOf(item.getId()) != -1) {
+            return true;
+        }
+        return freeSlot() < size;
     }
 
     /**
@@ -260,6 +325,15 @@ public class Inventory {
             }
         }
         return items.length;
+    }
+
+    /**
+     *
+     * @param itemId
+     * @return
+     */
+    private boolean contains(int itemId) {
+        return contains(itemId, 1);
     }
 
     /**

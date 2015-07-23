@@ -1,7 +1,9 @@
 package io.mopar.game.lua;
 
+import io.mopar.core.lua.Coerce;
 import io.mopar.game.model.Player;
 import org.luaj.vm2.LuaTable;
+import org.luaj.vm2.LuaValue;
 
 /**
  * @author Hadyn Fitzgerald
@@ -25,23 +27,77 @@ public class PlayerComposite extends MobileComposite {
 
     /**
      *
-     * @param inventory
+     * @param inv
      * @param item
-     * @param amount
+     * @param stack
      */
-    public void inv_add(LuaTable inventory, LuaTable item, int amount) {
-        inv_add(inventory.get("id").checkint(), item.get("id").checkint(), amount, item.get("stackable").checkboolean());
+    public void add_item(LuaTable inv, ItemComposite item, boolean stack) {
+        add_item(inv.get("id").checkint(), item, stack);
     }
 
     /**
      *
      * @param id
-     * @param itemId
-     * @param amount
-     * @param stackable
+     * @param item
+     * @param stack
      */
-    public void inv_add(int id, int itemId, int amount, boolean stackable) {
-        player.addItem(id, itemId, amount, stackable);
+    public void add_item(int id, ItemComposite item, boolean stack) {
+        player.addItem(id, item.getItem(), stack);
+    }
+
+    /**
+     * Gives the player an item.
+     *
+     * @param inv the inventory table.
+     * @param item the item configuration table.
+     * @param amount the amount to give.
+     */
+    public void give_item(LuaTable inv, LuaTable item, int amount) {
+        give_item(inv.get("id").checkint(), item.get("id").checkint(), amount, item.get("stackable").checkboolean());
+    }
+
+    /**
+     * Gives the player an item.
+     *
+     * @param id the inventory id.
+     * @param itemId the item id.
+     * @param amount the amount to give.
+     * @param stack flag for if the items to give should stack in the inventory.
+     */
+    public void give_item(int id, int itemId, int amount, boolean stack) {
+        player.giveItem(id, itemId, amount, stack);
+    }
+
+    /**
+     *
+     * @param table
+     * @param slot
+     * @return
+     */
+    public LuaValue get_item(LuaTable table, int slot) {
+        return get_item(table.get("id").checkint(), slot);
+    }
+
+    /**
+     *
+     * @param source
+     * @param dest
+     * @param slot
+     * @param stack
+     */
+    public void move_item(LuaTable source, LuaTable dest, int slot, boolean stack, boolean shift) {
+        player.moveItem(source.get("id").checkint(), dest.get("id").checkint(), slot, stack, shift);
+    }
+
+    /**
+     *
+     * @param srcInv
+     * @param destInv
+     * @param firstSlot
+     * @param secondSlot
+     */
+    public void swap_items(LuaTable srcInv, LuaTable destInv, int firstSlot, int secondSlot, boolean stack, boolean shift) {
+        player.swapItems(srcInv.get("id").checkint(), destInv.get("id").checkint(), firstSlot, secondSlot, stack, shift);
     }
 
     /**
@@ -51,8 +107,8 @@ public class PlayerComposite extends MobileComposite {
      * @param second
      * @param mode
      */
-    public void inv_swap(LuaTable inventory, int first, int second, int mode) {
-        inv_swap(inventory.get("id").checkint(), first, second, mode);
+    public void switch_items(LuaTable inventory, int first, int second, int mode) {
+        switch_items(inventory.get("id").checkint(), first, second, mode);
     }
 
     /**
@@ -62,8 +118,29 @@ public class PlayerComposite extends MobileComposite {
      * @param second
      * @param mode
      */
-    public void inv_swap(int id, int first, int second, int mode) {
+    public void switch_items(int id, int first, int second, int mode) {
         player.swapItem(id, first, second, mode);
+    }
+
+    /**
+     *
+     * @param id
+     * @param slot
+     * @return
+     */
+    public LuaValue get_item(int id, int slot) {
+        return Coerce.coerceToLua(player.getItem(id, slot));
+    }
+
+    /**
+     *
+     * @param inv
+     * @param composite
+     * @param stack
+     * @return
+     */
+    public boolean accept_item(LuaTable inv, ItemComposite composite, boolean stack) {
+        return player.acceptItem(inv.get("id").checkint(), composite.getItem(), inv.get("size").checkint(), stack);
     }
 
     /**
@@ -82,8 +159,8 @@ public class PlayerComposite extends MobileComposite {
      * @param inventory
      * @param inter
      */
-    public void inv_clear(LuaTable inventory, LuaTable inter) {
-        inv_clear(inventory.get("id").checkint(), inter.get("parent_id").checkint(), inter.get("id").checkint());
+    public void clear_inv(LuaTable inventory, LuaTable inter) {
+        clear_inv(inventory.get("id").checkint(), inter.get("parent_id").checkint(), inter.get("id").checkint());
     }
 
     /**
@@ -92,7 +169,7 @@ public class PlayerComposite extends MobileComposite {
      * @param widgetId
      * @param componentId
      */
-    public void inv_clear(int id, int widgetId, int componentId) {
+    public void clear_inv(int id, int widgetId, int componentId) {
         player.clearInventory(id, widgetId, componentId);
     }
 
@@ -101,8 +178,8 @@ public class PlayerComposite extends MobileComposite {
      * @param inventory
      * @param inter
      */
-    public void inv_refresh(LuaTable inventory, LuaTable inter) {
-        inv_refresh(inventory.get("id").checkint(), inter.get("parent_id").checkint(), inter.get("id").checkint());
+    public void refresh_inv(LuaTable inventory, LuaTable inter) {
+        refresh_inv(inventory.get("id").checkint(), inter.get("parent_id").checkint(), inter.get("id").checkint());
     }
 
     /**
@@ -111,7 +188,7 @@ public class PlayerComposite extends MobileComposite {
      * @param widgetId
      * @param componentId
      */
-    public void inv_refresh(int id, int widgetId, int componentId) {
+    public void refresh_inv(int id, int widgetId, int componentId) {
         player.refreshInventory(id, widgetId, componentId);
     }
 
@@ -120,8 +197,8 @@ public class PlayerComposite extends MobileComposite {
      * @param inventory the inventory table.
      * @param inter the interface table.
      */
-    public void inv_update(LuaTable inventory, LuaTable inter) {
-        inv_update(inventory.get("id").checkint(), inter.get("parent_id").checkint(), inter.get("id").checkint());
+    public void update_inv(LuaTable inventory, LuaTable inter) {
+        update_inv(inventory.get("id").checkint(), inter.get("parent_id").checkint(), inter.get("id").checkint());
     }
 
     /**
@@ -130,8 +207,15 @@ public class PlayerComposite extends MobileComposite {
      * @param widgetId the widget id.
      * @param componentId the component id.
      */
-    public void inv_update(int id, int widgetId, int componentId) {
+    public void update_inv(int id, int widgetId, int componentId) {
         player.updateInventory(id, widgetId, componentId);
+    }
+
+    /**
+     *
+     */
+    public void update_appearance() {
+        player.setAppearanceUpdated(true);
     }
 
     /**
@@ -182,7 +266,13 @@ public class PlayerComposite extends MobileComposite {
     }
 
     /**
-     * Prints text to the players chat box.
+     *
+     * @return
+     */
+    public int rights() { return player.getRights(); }
+
+    /**
+     * Prints text to the players submitPublicChat box.
      *
      * @param text the text to print.
      */

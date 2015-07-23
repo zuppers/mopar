@@ -5,16 +5,14 @@ import io.mopar.game.model.Player;
 /**
  * @author Hadyn Fitzgerald
  */
-public interface SwapItemAction {
+public interface SwitchItemMenuAction {
 
     /**
      *
      * @param player
-     * @param widgetId
-     * @param componentId
      * @param firstSlot
      * @param secondSlot
      * @param mode
      */
-    void handle(Player player, int widgetId, int componentId, int firstSlot, int secondSlot, int mode);
+    void handle(Player player, int firstSlot, int secondSlot, int mode);
 }

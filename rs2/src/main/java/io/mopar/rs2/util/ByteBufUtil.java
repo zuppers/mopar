@@ -51,8 +51,26 @@ public class ByteBufUtil {
      * @param buf
      * @return
      */
+    public static int readLEShort(ByteBuf buf) {
+        return buf.readUnsignedByte() + (buf.readUnsignedByte() << 8);
+    }
+
+    /**
+     *
+     * @param buf
+     * @return
+     */
     public static int readLEInt(ByteBuf buf) {
         return buf.readUnsignedByte() + (buf.readUnsignedByte() << 8) + (buf.readUnsignedByte() << 16) + (buf.readUnsignedByte() << 24) ;
+    }
+
+    /**
+     *
+     * @param buf
+     * @return
+     */
+    public static int readMEInt(ByteBuf buf) {
+        return  + (buf.readUnsignedByte() << 8) + buf.readUnsignedByte() + (buf.readUnsignedByte() << 24) + (buf.readUnsignedByte() << 16);
     }
 
     /**

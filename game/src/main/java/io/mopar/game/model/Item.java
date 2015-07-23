@@ -53,11 +53,12 @@ public class Item {
         return amount;
     }
 
-    public Item add(int amt) {
-        return new Item(id, amount + amt);
-    }
-
-    public Item take(int amt) {
-        return new Item(id, amount - amt);
+    /**
+     *
+     * @param i
+     * @return
+     */
+    public Item take(int i) {
+        return new Item(id, amount - i);
     }
 }

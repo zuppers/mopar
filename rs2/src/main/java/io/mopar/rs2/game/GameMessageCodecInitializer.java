@@ -5,6 +5,7 @@ import io.mopar.game.model.Item;
 import io.mopar.game.model.Position;
 import io.mopar.game.model.Scene;
 import io.mopar.game.msg.*;
+import io.mopar.rs2.game.msg.InterfaceItemOptionMessage;
 import io.mopar.rs2.msg.MessageCodec;
 import io.mopar.rs2.msg.MessageCodecInitializer;
 import io.mopar.rs2.msg.game.*;
@@ -63,13 +64,17 @@ public class GameMessageCodecInitializer implements MessageCodecInitializer {
         codec.registerMessageDecoder(incomingPackets.getId("interfaces_closed"), this::decodeClosedInterfacesMessage);
         codec.registerMessageDecoder(incomingPackets.getId("chat"), this::decodeChatMessage);
         codec.registerMessageDecoder(incomingPackets.getId("command"), this::decodeCommandMessage);
-        codec.registerMessageDecoder(incomingPackets.getId("swap_item"), this::decodeSwapItemMessage);
+        codec.registerMessageDecoder(incomingPackets.getId("switch_items"), this::decodeSwapItemMessage);
 
         for(int i = 1; i <= 1; i++) {
             final int optionId = i;                                                                     // Err...k
             codec.registerMessageDecoder(incomingPackets.getId("button_option_" + i), (packet) ->
                     decodeButtonOptionMessage(packet, optionId));
         }
+
+        codec.registerMessageDecoder(incomingPackets.getId("item_option_1"), this::decodeItemOptionOneMessage);
+        codec.registerMessageDecoder(incomingPackets.getId("inter_item_option_1"), this::decodeInterfaceItemOptionOneMessage);
+
 
         codec.registerMessageDecoder(incomingPackets.getId("route_ground"), (packet) -> decodeRouteMessage(packet, false));
         codec.registerMessageDecoder(incomingPackets.getId("route_target"), (packet) -> decodeRouteMessage(packet, false));
@@ -174,7 +179,7 @@ public class GameMessageCodecInitializer implements MessageCodecInitializer {
     }
 
     /**
-     * Decodes a chat message.
+     * Decodes a submitPublicChat message.
      *
      * @param packet the packet to decode.
      * @return the decoded message.
@@ -222,6 +227,30 @@ public class GameMessageCodecInitializer implements MessageCodecInitializer {
         int mode = readByteS(buf);
 
         return new SwapItemMessage(widgetId, componentId, firstSlot, secondSlot, mode);
+    }
+
+    private ItemOptionMessage decodeItemOptionOneMessage(Packet packet) {
+        ByteBuf buf = packet.getBuffer();
+
+        int itemId = readLEShort(buf);
+        int slot = readShortA(buf);
+        int id = readMEInt(buf);
+
+        int widgetId = id >> 16;
+        int componentId = id & 0xffff;
+        return new ItemOptionMessage(widgetId, componentId, itemId, slot, 1);
+    }
+
+    private InterfaceItemOptionMessage decodeInterfaceItemOptionOneMessage(Packet packet) {
+        ByteBuf buf = packet.getBuffer();
+
+        int itemId = readShortA(buf);
+        int slot = buf.readUnsignedShort();
+        int id = readMEInt(buf);
+
+        int widgetId = id >> 16;
+        int componentId = id & 0xffff;
+        return new InterfaceItemOptionMessage(widgetId, componentId, itemId, slot, 1);
     }
 
 

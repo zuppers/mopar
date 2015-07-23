@@ -90,4 +90,8 @@ public class LoginRequestMessage extends Message {
     public int[] getCipherKeys() {
         return cipherKeys;
     }
+
+    public long getUsername() {
+        return username;
+    }
 }

@@ -5,7 +5,7 @@ import io.mopar.core.Request;
 /**
  * @author Hadyn Fitzgerald
  */
-public class SwapItemActionRequest extends Request {
+public class SwitchItemActionRequest extends Request {
 
     private int playerId;
     private int widgetId;
@@ -14,7 +14,7 @@ public class SwapItemActionRequest extends Request {
     private int secondSlot;
     private int mode;
 
-    public SwapItemActionRequest(int playerId, int widgetId, int componentId, int firstSlot, int secondSlot, int mode) {
+    public SwitchItemActionRequest(int playerId, int widgetId, int componentId, int firstSlot, int secondSlot, int mode) {
         this.playerId = playerId;
         this.widgetId = widgetId;
         this.componentId = componentId;

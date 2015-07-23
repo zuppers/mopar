@@ -1,6 +1,7 @@
 package io.mopar.game.sync;
 
 import io.mopar.game.model.Player;
+import io.mopar.game.sync.block.AppearanceUpdateBlock;
 import io.mopar.game.sync.block.ChatUpdateBlock;
 import io.mopar.game.sync.player.IdlePlayerDescriptor;
 import io.mopar.game.sync.player.RunningPlayerDescriptor;
@@ -21,6 +22,10 @@ public abstract class PlayerDescriptor extends Descriptor<Player> {
 
         if(player.hasPublicChatMessage()) {
             addUpdateBlock(new ChatUpdateBlock(player.getPublicChatMessage()));
+        }
+
+        if(player.getAppearanceUpdated()) {
+            addUpdateBlock(AppearanceUpdateBlock.create(player));
         }
     }
 

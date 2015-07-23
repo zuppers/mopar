@@ -9,21 +9,21 @@ import io.mopar.game.sync.UpdateBlock;
 public class ChatUpdateBlock extends UpdateBlock {
 
     /**
-     * The chat message.
+     * The submitPublicChat message.
      */
     private ChatMessage message;
 
     /**
      * Constructs a new {@link ChatUpdateBlock};
      *
-     * @param message the chat message.
+     * @param message the submitPublicChat message.
      */
     public ChatUpdateBlock(ChatMessage message) {
         this.message = message;
     }
 
     /**
-     * Gets the chat message.
+     * Gets the submitPublicChat message.
      *
      * @return the message.
      */

@@ -10,7 +10,7 @@ public class ChatMessage extends Message {
     public static final int HUFFMAN_ENCODING = 0;
 
     /**
-     * The chat encoding.
+     * The submitPublicChat encoding.
      */
     private int encoding;
 

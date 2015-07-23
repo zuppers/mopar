@@ -2,8 +2,9 @@ local variable  = require('variable')
 local varbit    = require('varbit')
 
 local display   = lazy('ui/display')
-local inventory = lazy('inventory')
-local interface = lazy('interface')
+
+local backpack  = require('inv/backpack')
+local equipment = require('inv/equipment')
 
 local module = {
 
@@ -33,17 +34,21 @@ setmetatable(module, {
     end
 })
 
+-- Handle for when a player is created
 event:on(event.player_created, function(plr)
+
     -- Print the whale-cum
     plr:print('Welcome to Moparscape.')
 
-    -- Refresh all of the inventories
-    plr:inv_refresh(inventory.backpack, interface.backpack.container)
+    -- Refresh the inventories
+    backpack:refresh(plr)
+    equipment:refresh(plr)
 
-    -- Open up the screen for the players current display mode
+    -- Open up the screen for the current display mode
     display:open_screen(plr, plr:display_mode())
 end)
 
+-- TODO Figure out what we may eventually do with this
 event:on(event.player_display_updated, function(plr)
     display:open_screen(plr, plr:display_mode())
 end)

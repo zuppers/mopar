@@ -28,10 +28,47 @@ public class ActionsLuaModule implements LuaModule {
     /**
      *
      * @param inter
+     * @param option
      * @param closure
      */
-    public void on_swap(LuaTable inter, LuaClosure closure) {
-        on_swap(inter.get("parent_id").checkint(), inter.get("id").checkint(), closure);
+    public void on_inter_item_option(LuaTable inter, int option, LuaClosure closure) {
+        bindings.registerInterfaceItemMenuAction((player, itemId, slot) -> closure.invoke(new LuaValue[]{
+                Coerce.coerceToLua(player),
+                Coerce.coerceToLua(itemId),
+                Coerce.coerceToLua(slot)
+        }), inter.get("parent_id").checkint(), inter.get("id").checkint(), option);
+    }
+
+    /**
+     *
+     * @param inter
+     * @param item
+     * @param opt
+     * @param closure
+     */
+    public void on_item_option(LuaTable inter, LuaTable item, int opt, LuaClosure closure) {
+        bindings.registerItemMenuAction((player, itemId, slot) -> closure.invoke(new LuaValue[]{
+                Coerce.coerceToLua(player), Coerce.coerceToLua(itemId), Coerce.coerceToLua(slot)
+        }), inter.get("parent_id").checkint(), inter.get("id").checkint(), item.get("id").checkint(), opt);
+    }
+
+    /**
+     *
+     * @param name
+     * @param closure
+     */
+    public void on_command(String name, LuaClosure closure) {
+        bindings.registerCommandAction((plr, cmd, args) -> closure.call(Coerce.coerceToLua(plr),
+                Coerce.coerceToLua(cmd), Coerce.coerceToLua(args)), name);
+    }
+
+    /**
+     *
+     * @param inter
+     * @param closure
+     */
+    public void on_switch_item(LuaTable inter, LuaClosure closure) {
+        on_switch_item(inter.get("parent_id").checkint(), inter.get("id").checkint(), closure);
     }
 
     /**
@@ -40,12 +77,10 @@ public class ActionsLuaModule implements LuaModule {
      * @param componentId
      * @param function
      */
-    public void on_swap(int widgetId, int componentId, LuaClosure function) {
-        bindings.registerSwapItemAction((plr, widget, comp, first, second, mode) ->
+    public void on_switch_item(int widgetId, int componentId, LuaClosure function) {
+        bindings.registerSwapItemAction((plr, first, second, mode) ->
                 function.invoke(new LuaValue[]{
                         Coerce.coerceToLua(plr),
-                        Coerce.coerceToLua(widget),
-                        Coerce.coerceToLua(comp),
                         Coerce.coerceToLua(first),
                         Coerce.coerceToLua(second),
                         Coerce.coerceToLua(mode)
@@ -69,13 +104,13 @@ public class ActionsLuaModule implements LuaModule {
      */
     public void on_button(int widgetId, int componentId, int option, LuaFunction closure) {
         bindings.registerButtonMenuAction(((plr, widget, comp, child, opt) ->
-                        closure.invoke(new LuaValue[] {
-                                Coerce.coerceToLua(plr),
-                                Coerce.coerceToLua(widgetId),
-                                Coerce.coerceToLua(componentId),
-                                Coerce.coerceToLua(child),
-                                Coerce.coerceToLua(opt)
-                        })), widgetId, componentId, option);
+                closure.invoke(new LuaValue[]{
+                        Coerce.coerceToLua(plr),
+                        Coerce.coerceToLua(widgetId),
+                        Coerce.coerceToLua(componentId),
+                        Coerce.coerceToLua(child),
+                        Coerce.coerceToLua(opt)
+                })), widgetId, componentId, option);
     }
 
     /**

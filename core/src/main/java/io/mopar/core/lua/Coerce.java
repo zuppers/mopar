@@ -39,15 +39,19 @@ public class Coerce {
      */
     @SuppressWarnings("unchecked")
     public static LuaValue coerceToLua(Object value) {
-        if(value.getClass().isArray()) {
-            return coerceArray((Object[]) value);
-        }
+        if(!Objects.isNull(value)) {
+            if (value.getClass().isArray()) {
+                return coerceArray((Object[]) value);
+            }
 
-        CompositeFactory factory = factories.get(value.getClass());
-        if(factory != null) {
-            return CoerceJavaToLua.coerce(factory.create(value));
+            CompositeFactory factory = factories.get(value.getClass());
+            if (factory != null) {
+                return CoerceJavaToLua.coerce(factory.create(value));
+            }
+            return CoerceJavaToLua.coerce(value);
+        } else {
+            return LuaValue.NIL;
         }
-        return CoerceJavaToLua.coerce(value);
     }
 
     /**

@@ -3,6 +3,7 @@ package io.mopar.game.model;
 import io.mopar.core.msg.Message;
 import io.mopar.core.msg.MessageListener;
 import io.mopar.game.msg.*;
+import org.luaj.vm2.LuaValue;
 
 import java.util.*;
 
@@ -10,6 +11,11 @@ import java.util.*;
  * @author Hadyn Fitzgerald
  */
 public class Player extends Mobile {
+
+    /**
+     * The username.
+     */
+    private long username;
 
     /**
      * The inventories.
@@ -22,6 +28,16 @@ public class Player extends Mobile {
     private List<MessageListener> messageListeners = new ArrayList<>();
 
     /**
+     * The appearance.
+     */
+    private Appearance appearance = new Appearance();
+
+    /**
+     *
+     */
+    private boolean appearanceUpdated;
+
+    /**
      * The display mode.
      */
     private int displayMode;
@@ -32,14 +48,31 @@ public class Player extends Mobile {
     private Scene scene = new Scene();
 
     /**
-     * The chat message.
+     * The submitPublicChat message.
      */
     private ChatMessage publicChatMessage;
+
 
     /**
      * Constructs a new {@link Player};
      */
     public Player() {}
+
+    /**
+     *
+     * @param username
+     */
+    public void setUsername(long username) {
+        this.username = username;
+    }
+
+    /**
+     *
+     * @return
+     */
+    public long getUsername() {
+        return username;
+    }
 
     /**
      * Sets the display mode.
@@ -69,28 +102,80 @@ public class Player extends Mobile {
     }
 
     /**
-     * Adds an item to an inventory.
+     *
+     * @param bool
+     */
+    public void setAppearanceUpdated(boolean bool) {
+        this.appearanceUpdated = bool;
+    }
+
+    /**
+     *
+     * @return
+     */
+    public Appearance getAppearance() {
+        return appearance;
+    }
+
+    /**
+     * Gets if the appearance was updated.
+     *
+     * @return if the appearnace was updated.
+     */
+    public boolean getAppearanceUpdated() {
+        return appearanceUpdated;
+
+    }
+
+    /**
+     *
+     * @param id
+     * @param item
+     * @param stack
+     */
+    public void addItem(int id, Item item, boolean stack) {
+        Inventory inventory = getInventory(id);
+        inventory.add(item, stack);
+    }
+
+    /**
+     *
+     * @param id
+     * @param item
+     * @param size
+     * @param stack
+     * @return
+     */
+    public boolean acceptItem(int id, Item item, int size, boolean stack) {
+        if(!hasInventory(id)) {
+            return size > 0;
+        }
+        Inventory inventory = inventories.get(id);
+        return inventory.accept(item, size, stack);
+    }
+
+    /**
+     * Helper method; adds an item to an inventory.
      *
      * @param id the inventory id.
      * @param itemId the item id.
      * @param amount the amount of the item.
      * @param stack if the item should stack.
      */
-    public void addItem(int id, int itemId, int amount, boolean stack) {
+    public void giveItem(int id, int itemId, int amount, boolean stack) {
         Inventory inventory = getInventory(id);
         inventory.add(itemId, amount, stack);
     }
 
     /**
-     * Moves an item from one inventory to another.
-     *
-     * @param srcId the source inventory id.
+     * Helper method; moves an item from one inventory to another.
+     *  @param srcId the source inventory id.
      * @param destId the destination inventory id.
      * @param slot the source inventory slot.
-     * @param shift if the items should shift after removal from the source inventory.
      * @param stack if the item should stack on addition to the destination inventory.
+     * @param shift if the items should shift after removal from the source inventory.
      */
-    public void moveItem(int srcId, int destId, int slot, boolean shift, boolean stack) {
+    public void moveItem(int srcId, int destId, int slot, boolean stack, boolean shift) {
         if(!hasInventory(srcId)) {
             return;
         }
@@ -103,7 +188,7 @@ public class Player extends Mobile {
     }
 
     /**
-     * Gets the count of an item in an inventory.
+     * Helper method; gets the count of an item in an inventory.
      *
      * @param id the inventory id.
      * @param itemId the item id.
@@ -117,22 +202,69 @@ public class Player extends Mobile {
     }
 
     /**
+     * Helper method, swaps items in an inventory.
      *
-     * @param id
-     * @param first
-     * @param second
-     * @param mode
+     * @param id the inventory id.
+     * @param firstSlot the first slot.
+     * @param secondSlot the second slot.
+     * @param mode the swap mode.
      */
-    public void swapItem(int id, int first, int second, int mode) {
+    public void swapItem(int id, int firstSlot, int secondSlot, int mode) {
         if(!hasInventory(id)) {
             return;
         }
         Inventory inventory = inventories.get(id);
-        inventory.swap(first, second, mode);
+        inventory.swap(firstSlot, secondSlot, mode);
     }
 
     /**
-     * Removes an item from an inventory.
+     *
+     * @param sourceId
+     * @param destId
+     * @param firstSlot
+     * @param secondSlot
+     * @param stack
+     * @param shift
+     */
+    public void swapItems(int sourceId, int destId, int firstSlot, int secondSlot, boolean stack, boolean shift) {
+        if(!hasInventory(sourceId)) {
+            return;
+        }
+        Inventory source = inventories.get(sourceId);
+        Item item = source.remove(firstSlot, shift);
+
+        Inventory dest = getInventory(destId);
+        Item replace = dest.get(secondSlot);
+        if(replace != null && replace.getId() == item.getId() && stack) {
+            int amount = item.getAmount();
+            if(item.getAmount() + replace.getAmount() < 0) {
+                amount = Integer.MAX_VALUE - replace.getAmount();
+                source.set(firstSlot, new Item(item.getId(), item.getAmount() - amount));
+            } else {
+                amount += replace.getAmount();
+            }
+            dest.set(secondSlot, new Item(item.getId(), amount));
+        } else {
+            source.set(firstSlot, replace);
+            dest.set(secondSlot, item);
+        }
+    }
+
+    /**
+     *
+     * @param id
+     * @param slot
+     * @return
+     */
+    public Item getItem(int id, int slot) {
+        if(!hasInventory(id)) {
+            return null;
+        }
+        return inventories.get(id).get(slot);
+    }
+
+    /**
+     * Helper method; removes an item from an inventory.
      *
      * @param id the inventory id.
      * @param itemId the item id.
@@ -192,7 +324,6 @@ public class Player extends Mobile {
         send(new RefreshInventoryMessage(getInventory(id), id, widgetId, componentId));
     }
 
-
     /**
      * Clears an inventory.
      *
@@ -212,7 +343,7 @@ public class Player extends Mobile {
      * @param id the inventory id.
      * @return the inventory for the id.
      */
-    private Inventory getInventory(int id) {
+    public Inventory getInventory(int id) {
         Inventory inventory = inventories.getOrDefault(id, new Inventory());
         inventories.putIfAbsent(id, inventory);
         return inventory;
@@ -229,28 +360,28 @@ public class Player extends Mobile {
     }
 
     /**
+     * Sets the public submitPublicChat message.
      *
-     * @param message
+     * @param message the public submitPublicChat message.
      */
     public void setPublicChatMessage(ChatMessage message) {
         this.publicChatMessage = message;
         setUpdated(true);
     }
 
-
     /**
-     * Gets the public chat message.
+     * Gets the public submitPublicChat message.
      *
-     * @return the public chat message.
+     * @return the public submitPublicChat message.
      */
     public ChatMessage getPublicChatMessage() {
         return publicChatMessage;
     }
 
     /**
-     * Gets if the public chat message is set.
+     * Gets if the public submitPublicChat message is set.
      *
-     * @return if the public chat mess is set.
+     * @return if the public submitPublicChat mess is set.
      */
     public boolean hasPublicChatMessage() {
         return publicChatMessage != null;
@@ -344,6 +475,8 @@ public class Player extends Mobile {
      */
     public void reset() {
         publicChatMessage = null;
+        appearanceUpdated = false;
         super.reset();
     }
+
 }

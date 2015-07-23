@@ -1,10 +1,12 @@
 package io.mopar.rs2.game;
 
+import io.mopar.game.model.Appearance;
 import io.mopar.game.model.Position;
 import io.mopar.game.model.Step;
 import io.mopar.game.msg.ChatMessage;
 import io.mopar.game.msg.PlayerSynchronizationMessage;
 import io.mopar.game.sync.*;
+import io.mopar.game.sync.block.AppearanceUpdateBlock;
 import io.mopar.game.sync.block.ChatUpdateBlock;
 import io.mopar.game.sync.player.*;
 import io.mopar.rs2.msg.MessageEncoder;
@@ -14,7 +16,6 @@ import io.mopar.rs2.net.packet.PacketMetaList;
 import io.netty.buffer.ByteBufAllocator;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Queue;
 
@@ -53,6 +54,7 @@ public class PlayerSynchronizationMessageEncoder implements MessageEncoder<Playe
         register(RemovedPlayerDescriptor.class, this::encodeRemoveDescriptor);
 
         register(ChatUpdateBlock.class, this::encodeChatUpdateBlock);
+        register(AppearanceUpdateBlock.class, this::encodeAppearanceUpdateBlock);
     }
 
     /**
@@ -141,6 +143,10 @@ public class PlayerSynchronizationMessageEncoder implements MessageEncoder<Playe
             flags |= 0x80;
         }
 
+        if(descriptor.hasUpdateBlock(AppearanceUpdateBlock.class)) {
+            flags |= 0x4;
+        }
+
         if(flags > 0xff) {
             flags |= 0x10;
             builder.writeLEShort(flags);
@@ -149,6 +155,7 @@ public class PlayerSynchronizationMessageEncoder implements MessageEncoder<Playe
         }
 
         encodeBlock(descriptor.getUpdateBlock(ChatUpdateBlock.class), builder);
+        encodeBlock(descriptor.getUpdateBlock(AppearanceUpdateBlock.class), builder);
     }
 
     /**
@@ -276,5 +283,129 @@ public class PlayerSynchronizationMessageEncoder implements MessageEncoder<Playe
         byte[] bytes = message.getBytes();
         builder.writeByte(bytes.length);
         builder.writeBytesReverse(bytes);
+    }
+
+    /**
+     *
+     * @param block
+     * @param builder
+     */
+    private void encodeAppearanceUpdateBlock(AppearanceUpdateBlock block, PacketBuilder builder) {
+        int start = builder.writerIndex();
+        builder.writeByte(0);
+
+        int flags = block.isMale() ? 1 : 0;
+        builder.writeByte(flags);                       // Flags
+        builder.writeByte(-1);
+        builder.writeByte(-1);
+
+        // Helmet
+        if(block.hasHelmet()) {
+            builder.writeShort(0x8000 | block.getHelmetId());
+        } else {
+            builder.writeByte(0);
+        }
+
+        // Cape
+        if(block.hasCape()) {
+            builder.writeShort(0x8000 | block.getCapeId());
+        } else {
+            builder.writeByte(0);
+        }
+
+        // Neck
+        if(block.hasNecklace()) {
+            builder.writeShort(0x8000 | block.getNecklaceId());
+        } else {
+            builder.writeByte(0);
+        }
+
+        // Weapon
+        if(block.hasWeapon()) {
+            builder.writeShort(0x8000 | block.getWeaponId());
+        } else {
+            builder.writeByte(0);
+        }
+
+        // Body
+        if(block.hasChest()) {
+            builder.writeShort(0x8000 | block.getChestId());
+        } else if(block.hasBodyStyle()) {
+            builder.writeShort(0x100 | block.getBodyStyle());
+        } else {
+            builder.writeByte(0);
+        }
+
+        // Shield
+        if(block.hasShield()) {
+            builder.writeShort(0x8000 | block.getShieldId());
+        } else {
+            builder.writeByte(0);
+        }
+
+        // Arms
+        if(block.hasArmsStyle()) {
+            builder.writeShort(0x100 | block.getArmsStyle());
+        } else {
+            builder.writeByte(0);
+        }
+
+        // Legs
+        if(block.hasPants()) {
+            builder.writeShort(0x8000 | block.getPantsId());
+        } else if(block.hasLegsStyle()) {
+            builder.writeShort(0x100 | block.getLegsStyle());
+        } else {
+            builder.writeByte(0);
+        }
+
+        // Head
+        if(block.hasHeadStyle()) {
+            builder.writeShort(0x100 | block.getHeadStyle());
+        } else {
+            builder.writeByte(0);
+        }
+
+        // Hands
+        if(block.hasGloves()) {
+            builder.writeShort(0x8000 | block.getGlovesId());
+        } else if(block.hasHandsStyle()) {
+            builder.writeShort(0x100 | block.getHandsStyle());
+        } else {
+            builder.writeByte(0);
+        }
+
+        // Feet
+        if(block.hasShoes()) {
+            builder.writeShort(0x8000 | block.getShoesId());
+        } else if(block.hasHandsStyle()) {
+            builder.writeShort(0x100 | block.getFeetStyle());
+        } else {
+            builder.writeByte(0);
+        }
+
+        // Beard
+        if(block.hasBeardStyle()) {
+            builder.writeShort(0x100 | block.getBeardStyle());
+        } else {
+            builder.writeByte(0);
+        }
+
+        for (int i = 0; i < 5; i++) {
+            builder.writeByte(0);
+        }
+
+        builder.writeShort(block.getStance());
+        builder.writeLong(block.getName());
+        builder.writeByte(block.getCombatLevel());
+
+        // Need to research what these exactly do
+        builder.writeByte(0);
+        builder.writeByte(0);
+        builder.writeByte(0);
+
+        // Write the length of the block
+        int len = builder.writerIndex() - start - 1;
+        builder.putByteA(start, len);
     }
 }

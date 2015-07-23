@@ -5,12 +5,12 @@ import io.mopar.core.Request;
 /**
  * @author Hadyn Fitzgerald
  */
-public class CommandRequest extends Request {
+public class CommandActionRequest extends Request {
     private int playerId;
     private String name;
     private String[] arguments;
 
-    public CommandRequest(int playerId, String name, String[] arguments) {
+    public CommandActionRequest(int playerId, String name, String[] arguments) {
         this.playerId = playerId;
         this.name = name;
         this.arguments = arguments;

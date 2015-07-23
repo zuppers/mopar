@@ -22,6 +22,20 @@ public class PacketBuilder {
             0xfffffff, 0x1fffffff, 0x3fffffff, 0x7fffffff,
             -1 };
 
+    public int writerIndex() {
+        return buf.writerIndex();
+    }
+
+    public PacketBuilder putByteA(int pos, int i) {
+        buf.setByte(pos, i + 128);
+        return this;
+    }
+
+    public PacketBuilder writeLong(long l) {
+        buf.writeLong(l);
+        return this;
+    }
+
 
     enum AccessMode {BYTE_ACCESS, BIT_ACCESS}
 

@@ -479,4 +479,7 @@ public class Player extends Mobile {
         super.reset();
     }
 
+    public void playSong(int id) {
+        send(new SongMessage(id));
+    }
 }

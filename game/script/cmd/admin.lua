@@ -6,6 +6,11 @@ local items     = lazy('items')
 
 local backpack  = lazy('inv/backpack')
 
+action:on_command('song', command:for_admin(function(plr, cmd, args)
+    local id = tonumber(args[1])
+    plr:play_song(id)
+end))
+
 --[[
     item id [amount]
 

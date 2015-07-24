@@ -46,6 +46,9 @@ event:on(event.player_created, function(plr)
 
     -- Open up the screen for the current display mode
     display:open_screen(plr, plr:display_mode())
+
+    -- TODO: Fix dis
+    plr:play_song(-1)
 end)
 
 -- TODO Figure out what we may eventually do with this

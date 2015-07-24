@@ -218,6 +218,10 @@ public class PlayerComposite extends MobileComposite {
         player.setAppearanceUpdated(true);
     }
 
+    public void play_song(int id) {
+        player.playSong(id);
+    }
+
     /**
      *
      *

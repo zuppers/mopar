@@ -206,6 +206,19 @@ public class PacketBuilder {
      * @param i
      * @return
      */
+    public PacketBuilder writeMEInt(int i) {
+        buf.writeByte((byte) (i >> 8));
+        buf.writeByte((byte)  i);
+        buf.writeByte((byte) (i >> 24));
+        buf.writeByte((byte) (i >> 16));
+        return this;
+    }
+
+    /**
+     *
+     * @param i
+     * @return
+     */
     public PacketBuilder writeIMEInt(int i) {
         buf.writeByte((byte) (i >> 16));
         buf.writeByte((byte) (i >> 24));

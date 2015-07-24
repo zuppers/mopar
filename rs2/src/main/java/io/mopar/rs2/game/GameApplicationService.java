@@ -133,14 +133,18 @@ public class GameApplicationService extends ApplicationService<GameService> {
      * @param outgoingPackets The outgoing packet list.
      */
     private void registerOutgoingPackets(PacketMetaList outgoingPackets) {
+        outgoingPackets.add(new PacketMetaData(4, "song", 2));
         outgoingPackets.add(new PacketMetaData(21, "set_interface_hidden", 7));
         outgoingPackets.add(new PacketMetaData(22, "update_inventory", PacketMetaData.VAR_SHORT_LENGTH));
+        outgoingPackets.add(new PacketMetaData(60, "variable_b", 3));
         outgoingPackets.add(new PacketMetaData(70, "print", PacketMetaData.VAR_BYTE_LENGTH));
         outgoingPackets.add(new PacketMetaData(105, "refresh_inventory", PacketMetaData.VAR_SHORT_LENGTH));
         outgoingPackets.add(new PacketMetaData(145, "set_root_interface", 5));
         outgoingPackets.add(new PacketMetaData(155, "set_interface", 9));
         outgoingPackets.add(new PacketMetaData(162, "rebuild_scene", PacketMetaData.VAR_SHORT_LENGTH));
+        outgoingPackets.add(new PacketMetaData(165, "access_options", 14));
         outgoingPackets.add(new PacketMetaData(225, "player_update", PacketMetaData.VAR_SHORT_LENGTH));
+        outgoingPackets.add(new PacketMetaData(226, "variable_i", 3));
     }
 
     /**
@@ -293,7 +297,9 @@ public class GameApplicationService extends ApplicationService<GameService> {
             res.getPlayer().setDisplayMode(request.getDisplayMode());
             res.getPlayer().rebuildScene();
 
+            // varbit - 4393 : Loop
             res.getPlayer().setUsername(request.getUsername());
+            res.getPlayer().send(new AccessOptionsMessage(187, 1, 0, 520, 0b10));
 
             res.getPlayer().setAppearanceUpdated(true);
         });

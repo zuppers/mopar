@@ -268,6 +268,9 @@ public class GameMessageCodecInitializer implements MessageCodecInitializer {
         codec.registerMessageEncoder(SetInterfaceHiddenMessage.class, this::encodeSetInterfaceHiddenMessage);
         codec.registerMessageEncoder(RefreshInventoryMessage.class, this::encodeRefreshInventoryMessage);
         codec.registerMessageEncoder(UpdateInventoryMessage.class, this::encodeUpdateInventoryMessage);
+        codec.registerMessageEncoder(SetVariableMessage.class, this::encodeSetVariableMessage);
+        codec.registerMessageEncoder(AccessOptionsMessage.class, this::encodeAccessOptionsMessage);
+        codec.registerMessageEncoder(SongMessage.class, this::encodeSongMessage);
 
         // Register the synchronization message encoders
         codec.registerMessageEncoder(PlayerSynchronizationMessage.class, new PlayerSynchronizationMessageEncoder());
@@ -447,6 +450,50 @@ public class GameMessageCodecInitializer implements MessageCodecInitializer {
             }
         }
 
+        return builder.build();
+    }
+
+    /**
+     *
+     * @param allocator
+     * @param outgoingPackets
+     * @param message
+     * @return
+     */
+    private Packet encodeSetVariableMessage(ByteBufAllocator allocator, PacketMetaList outgoingPackets, SetVariableMessage message) {
+        if(message.getValue() >= -128 && message.getValue() < 128) {
+            PacketBuilder builder = PacketBuilder.create(outgoingPackets.get("variable_b"), allocator);
+            builder.writeShortA(message.getId());
+            builder.writeByteN(message.getValue());
+            return builder.build();
+        } else {
+            PacketBuilder builder = PacketBuilder.create(outgoingPackets.get("variable_i"), allocator);
+            builder.writeInt(message.getValue());
+            builder.writeShortA(message.getId());
+            return builder.build();
+        }
+    }
+
+    private Packet encodeAccessOptionsMessage(ByteBufAllocator allocator, PacketMetaList outgoingPackets, AccessOptionsMessage message) {
+        PacketBuilder builder = PacketBuilder.create(outgoingPackets.get("access_options"), allocator);
+        builder.writeLEShort(0);
+        builder.writeLEShort(message.getEnd());
+        builder.writeInt(message.getWidgetId() << 16 | message.getComponentId());
+        builder.writeShortA(message.getStart());
+        builder.writeMEInt(message.getFlags());
+        return builder.build();
+    }
+
+    /**
+     *
+     * @param allocator
+     * @param outgoingPackets
+     * @param message
+     * @return
+     */
+    private Packet encodeSongMessage(ByteBufAllocator allocator, PacketMetaList outgoingPackets, SongMessage message) {
+        PacketBuilder builder = PacketBuilder.create(outgoingPackets.get("song"), allocator);
+        builder.writeLEShortA(message.getId());
         return builder.build();
     }
 }

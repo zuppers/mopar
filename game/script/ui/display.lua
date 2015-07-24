@@ -3,7 +3,7 @@ local interface = lazy('interface')
 
 require('ui/settings')
 require('ui/orbs')
-require('ui/songs')
+require('ui/music_player')
 
 local module = {
 

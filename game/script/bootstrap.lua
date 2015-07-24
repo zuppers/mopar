@@ -4,10 +4,12 @@ local interface = require('interface')
 local inventory = require('inventory')
 local items     = require('items')
 local command   = require('command')
+local songs     = require('songs')
 
--- Load the inventory and item configurations
+-- Load the configurations
 inventory:load_config('inventory_config.json')
 items:load_config('item_config.json')
+songs:load_config('song_config.json')
 
 -- Load the interface configurations and scripts
 interface:load('interface_config.json')

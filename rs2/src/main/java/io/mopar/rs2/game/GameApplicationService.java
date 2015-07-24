@@ -143,8 +143,9 @@ public class GameApplicationService extends ApplicationService<GameService> {
         outgoingPackets.add(new PacketMetaData(155, "set_interface", 9));
         outgoingPackets.add(new PacketMetaData(162, "rebuild_scene", PacketMetaData.VAR_SHORT_LENGTH));
         outgoingPackets.add(new PacketMetaData(165, "access_options", 14));
+        outgoingPackets.add(new PacketMetaData(171, "interface_text", PacketMetaData.VAR_SHORT_LENGTH));
         outgoingPackets.add(new PacketMetaData(225, "player_update", PacketMetaData.VAR_SHORT_LENGTH));
-        outgoingPackets.add(new PacketMetaData(226, "variable_i", 3));
+        outgoingPackets.add(new PacketMetaData(226, "variable_i", 6 ));
     }
 
     /**
@@ -299,7 +300,14 @@ public class GameApplicationService extends ApplicationService<GameService> {
 
             // varbit - 4393 : Loop
             res.getPlayer().setUsername(request.getUsername());
-            res.getPlayer().send(new AccessOptionsMessage(187, 1, 0, 520, 0b10));
+            int[] configs = new int[]{
+                    20, 21, 22, 23, 24, 25, 298, 311, 346, 414, 464, 598, 662, 721, 906, 1009, 1104, 1136, 1180, 1202
+            };
+            for(int config : configs) {
+                res.getPlayer().send(new SetVariableMessage(config, 0xffffffff));
+            }
+            // option 1
+            res.getPlayer().send(new AccessOptionsMessage(187, 1, 0, 646, 0b10));
 
             res.getPlayer().setAppearanceUpdated(true);
         });

@@ -482,4 +482,8 @@ public class Player extends Mobile {
     public void playSong(int id) {
         send(new SongMessage(id));
     }
+
+    public void setInterfaceText(int widgetId, int componentId, String text) {
+        send(new SetInterfaceTextMessage(widgetId, componentId, text));
+    }
 }

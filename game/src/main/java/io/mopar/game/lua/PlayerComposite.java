@@ -239,6 +239,10 @@ public class PlayerComposite extends MobileComposite {
         player.setRootInterface(widgetId);
     }
 
+    public void set_interface_text(LuaTable component, String text) {
+        player.setInterfaceText(component.get("parent_id").checkint(), component.get("id").checkint(), text);
+    }
+
     /**
      *
      * @param component

@@ -8,11 +8,17 @@ import io.mopar.file.req.StreamFileRequest;
 import io.mopar.file.res.CreateSessionResponse;
 import io.mopar.file.res.RemoveSessionResponse;
 import io.mopar.file.res.StreamFileResponse;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.io.IOException;
 
 /**
  * @author Hadyn Fitzgerald
  */
 public class FileService extends Service {
+
+    private static final Logger logger = LoggerFactory.getLogger(FileService.class);
 
     /**
      * The maximum amount of sessions allowed.
@@ -91,24 +97,31 @@ public class FileService extends Service {
                         session.setCurrentRequest(session.poll());
                     }
 
-                    FileRequest request = session.getCurrentRequest();
+                    try {
+                        FileRequest request = session.getCurrentRequest();
 
-                    // Get the length of the file in chunks
-                    int length = fileProvider.chunkedLength(request.getVolumeId(), request.getFileId());
+                        // Get the length of the file in chunks
+                        int length = fileProvider.chunkedLength(request.getVolumeId(), request.getFileId());
 
-                    // Write out the next chunk for the request
-                    request.write(fileProvider.getChunk(request.getVolumeId(), request.getFileId(), request.incrementChunk(), request.isPriority()));
-                    writtenChunks++;
+                        // Write out the next chunk for the request
+                        request.write(fileProvider.getChunk(request.getVolumeId(), request.getFileId(), request.incrementChunk(), request.isPriority()));
+                        writtenChunks++;
 
-                    if (request.getChunk() >= length) {
+                        if (request.getChunk() >= length) {
+                            session.setCurrentRequest(null);
+                            request.close();
+                        } else {
+                            active = true;
+                        }
+
+                        if (count >= sessions.size()) {
+                            break;
+                        }
+                    } catch (Throwable t) {
+                        FileRequest current = session.getCurrentRequest();
+                        logger.error("Issue with serving file " + current.getVolumeId() + ", " + current.getFileId(), t);
                         session.setCurrentRequest(null);
-                        request.close();
-                    } else {
-                        active = true;
-                    }
-
-                    if (count >= sessions.size()) {
-                        break;
+                        continue;
                     }
                 }
             }

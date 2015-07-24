@@ -271,6 +271,7 @@ public class GameMessageCodecInitializer implements MessageCodecInitializer {
         codec.registerMessageEncoder(SetVariableMessage.class, this::encodeSetVariableMessage);
         codec.registerMessageEncoder(AccessOptionsMessage.class, this::encodeAccessOptionsMessage);
         codec.registerMessageEncoder(SongMessage.class, this::encodeSongMessage);
+        codec.registerMessageEncoder(SetInterfaceTextMessage.class, this::encodeSetInterfaceTextMessage);
 
         // Register the synchronization message encoders
         codec.registerMessageEncoder(PlayerSynchronizationMessage.class, new PlayerSynchronizationMessageEncoder());
@@ -474,6 +475,13 @@ public class GameMessageCodecInitializer implements MessageCodecInitializer {
         }
     }
 
+    /**
+     *
+     * @param allocator
+     * @param outgoingPackets
+     * @param message
+     * @return
+     */
     private Packet encodeAccessOptionsMessage(ByteBufAllocator allocator, PacketMetaList outgoingPackets, AccessOptionsMessage message) {
         PacketBuilder builder = PacketBuilder.create(outgoingPackets.get("access_options"), allocator);
         builder.writeLEShort(0);
@@ -494,6 +502,21 @@ public class GameMessageCodecInitializer implements MessageCodecInitializer {
     private Packet encodeSongMessage(ByteBufAllocator allocator, PacketMetaList outgoingPackets, SongMessage message) {
         PacketBuilder builder = PacketBuilder.create(outgoingPackets.get("song"), allocator);
         builder.writeLEShortA(message.getId());
+        return builder.build();
+    }
+
+    /**
+     *
+     * @param allocator
+     * @param outgoingPackets
+     * @param message
+     * @return
+     */
+    private Packet encodeSetInterfaceTextMessage(ByteBufAllocator allocator, PacketMetaList outgoingPackets, SetInterfaceTextMessage message) {
+        PacketBuilder builder = PacketBuilder.create(outgoingPackets.get("interface_text"), allocator);
+        builder.writeIMEInt(message.getWidgetId() << 16 | message.getComponentId());
+        builder.writeJstr(message.getText());
+        builder.writeShortA(0);
         return builder.build();
     }
 }

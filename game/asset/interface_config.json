@@ -32,7 +32,18 @@
 
   {
     "id" : 187,
-    "name" : "music"
+    "name" : "music",
+    "components" : [
+      {
+       "id" : 1,
+        "name" : "list"
+      },
+
+      {
+        "id" : 14,
+        "name" : "title"
+      }
+    ]
   },
 
   {

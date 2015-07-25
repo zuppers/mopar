@@ -44,5 +44,6 @@ public class PacketEncoder extends MessageToByteEncoder<Packet> {
                 break;
         }
         buf.writeBytes(buffer);
+        buffer.release();
     }
 }

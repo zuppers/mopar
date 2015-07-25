@@ -1,6 +1,7 @@
 package io.mopar.rs2;
 
 import io.mopar.cache.FileSystem;
+import io.mopar.core.Service;
 import io.mopar.core.asset.AssetLoader;
 import io.mopar.core.asset.StaticFileAssetLoader;
 import io.mopar.core.msg.Message;
@@ -232,11 +233,12 @@ public class Application {
         app.use(new WorldApplicationService(new WorldService()));
         app.use(new LoginApplicationService(new LoginService()));
 
-        GameService gameService = GameServiceBuilder.create()
+        GameService game = GameServiceBuilder.create()
                 .assetLoader(new StaticFileAssetLoader("game/asset"))
                 .build();
-        gameService.eval("require 'bootstrap'", (res) -> {});
-        app.use(new GameApplicationService(gameService));
+        game.eval("require 'bootstrap'", (res) -> {});
+
+        app.use(new GameApplicationService(game));
         app.start(40001);
     }
 }

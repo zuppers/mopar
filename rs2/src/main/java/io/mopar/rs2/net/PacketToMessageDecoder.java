@@ -2,6 +2,7 @@ package io.mopar.rs2.net;
 
 import io.mopar.rs2.msg.MessageCodec;
 import io.mopar.rs2.net.packet.Packet;
+import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.MessageToMessageDecoder;
 
@@ -29,5 +30,7 @@ public class PacketToMessageDecoder extends MessageToMessageDecoder<Packet> {
     @Override
     protected void decode(ChannelHandlerContext ctx, Packet packet, List<Object> out) throws Exception {
         out.add(codec.decodeMessage(packet));
+        ByteBuf buf = packet.getBuffer();
+        buf.release();
     }
 }

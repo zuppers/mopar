@@ -307,7 +307,7 @@ public class GameApplicationService extends ApplicationService<GameService> {
                 res.getPlayer().send(new SetVariableMessage(config, 0xffffffff));
             }
             // option 1
-            res.getPlayer().send(new AccessOptionsMessage(187, 1, 0, 646, 0b10));
+            res.getPlayer().send(new AccessOptionMessage(187, 1, 0, 646, 0b10));
 
             res.getPlayer().setAppearanceUpdated(true);
         });

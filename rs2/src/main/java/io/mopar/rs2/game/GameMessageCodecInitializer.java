@@ -12,7 +12,6 @@ import io.mopar.rs2.msg.game.*;
 import io.mopar.rs2.net.packet.Packet;
 import io.mopar.rs2.net.packet.PacketBuilder;
 import io.mopar.rs2.net.packet.PacketMetaList;
-import io.mopar.rs2.util.ByteBufUtil;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufAllocator;
 import org.slf4j.Logger;
@@ -269,8 +268,8 @@ public class GameMessageCodecInitializer implements MessageCodecInitializer {
         codec.registerMessageEncoder(RefreshInventoryMessage.class, this::encodeRefreshInventoryMessage);
         codec.registerMessageEncoder(UpdateInventoryMessage.class, this::encodeUpdateInventoryMessage);
         codec.registerMessageEncoder(SetVariableMessage.class, this::encodeSetVariableMessage);
-        codec.registerMessageEncoder(AccessOptionsMessage.class, this::encodeAccessOptionsMessage);
-        codec.registerMessageEncoder(SongMessage.class, this::encodeSongMessage);
+        codec.registerMessageEncoder(AccessOptionMessage.class, this::encodeAccessOptionsMessage);
+        codec.registerMessageEncoder(PlaySongMessage.class, this::encodeSongMessage);
         codec.registerMessageEncoder(SetInterfaceTextMessage.class, this::encodeSetInterfaceTextMessage);
 
         // Register the synchronization message encoders
@@ -482,7 +481,7 @@ public class GameMessageCodecInitializer implements MessageCodecInitializer {
      * @param message
      * @return
      */
-    private Packet encodeAccessOptionsMessage(ByteBufAllocator allocator, PacketMetaList outgoingPackets, AccessOptionsMessage message) {
+    private Packet encodeAccessOptionsMessage(ByteBufAllocator allocator, PacketMetaList outgoingPackets, AccessOptionMessage message) {
         PacketBuilder builder = PacketBuilder.create(outgoingPackets.get("access_options"), allocator);
         builder.writeLEShort(0);
         builder.writeLEShort(message.getEnd());
@@ -499,7 +498,7 @@ public class GameMessageCodecInitializer implements MessageCodecInitializer {
      * @param message
      * @return
      */
-    private Packet encodeSongMessage(ByteBufAllocator allocator, PacketMetaList outgoingPackets, SongMessage message) {
+    private Packet encodeSongMessage(ByteBufAllocator allocator, PacketMetaList outgoingPackets, PlaySongMessage message) {
         PacketBuilder builder = PacketBuilder.create(outgoingPackets.get("song"), allocator);
         builder.writeLEShortA(message.getId());
         return builder.build();

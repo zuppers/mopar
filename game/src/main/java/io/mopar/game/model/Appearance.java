@@ -92,4 +92,8 @@ public class Appearance {
     public boolean isVisible(int slot) {
         return visible[slot];
     }
+
+    public void setVisible(int id, boolean active) {
+        visible[id] = active;
+    }
 }

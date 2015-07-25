@@ -111,6 +111,10 @@ public class PlayerComposite extends MobileComposite {
         switch_items(inventory.get("id").checkint(), first, second, mode);
     }
 
+    public void set_feature_visible(int id, boolean visible) {
+        player.setFeatureVisible(id, visible);
+    }
+
     /**
      *
      * @param id

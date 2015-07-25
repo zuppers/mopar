@@ -3,7 +3,6 @@ package io.mopar.game.model;
 import io.mopar.core.msg.Message;
 import io.mopar.core.msg.MessageListener;
 import io.mopar.game.msg.*;
-import org.luaj.vm2.LuaValue;
 
 import java.util.*;
 
@@ -480,10 +479,14 @@ public class Player extends Mobile {
     }
 
     public void playSong(int id) {
-        send(new SongMessage(id));
+        send(new PlaySongMessage(id));
     }
 
     public void setInterfaceText(int widgetId, int componentId, String text) {
         send(new SetInterfaceTextMessage(widgetId, componentId, text));
+    }
+
+    public void setFeatureVisible(int id, boolean active) {
+        appearance.setVisible(id, active);
     }
 }

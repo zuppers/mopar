@@ -121,12 +121,12 @@ public class GameService extends Service {
         for(int i = 0; i < elapsed; i++) {
             if((loopCycle++ % step == 0)) {
                 world.update();
-            }
 
-            // Every 5 minutes automatically save all of the players
-            if(world.getTime() % 500 == 0) {
-                logger.info("Automatically saving player profiles");
-                savePlayers();
+                // Every 5 minutes automatically save all of the players
+                if(world.getTime() % 500 == 0) {
+                    logger.info("Automatically saving player profiles");
+                    savePlayers();
+                }
             }
         }
     }

@@ -46,7 +46,7 @@ public class MessageToPacketEncoder extends MessageToMessageEncoder<Message> {
         try {
             out.add(codec.encodeMessage(ctx.alloc(), outgoingPackets, message));
         } catch (Throwable t) {
-            logger.error("Uncaught exception encountered", t);
+            logger.error("Uncaught exception encountered while encoding message", t);
         }
     }
 }

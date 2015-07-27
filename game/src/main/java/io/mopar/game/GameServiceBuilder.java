@@ -1,7 +1,7 @@
 package io.mopar.game;
 
+import io.mopar.account.ProfileSerializer;
 import io.mopar.core.asset.AssetLoader;
-import io.mopar.core.profile.ProfileCodec;
 
 /**
  * @author Hadyn Fitzgerald
@@ -14,13 +14,12 @@ public class GameServiceBuilder {
     private GameService service = new GameService();
 
     /**
-     * Sets the profile codec.
      *
-     * @param profileCodec
+     * @param serializer
      * @return
      */
-    public GameServiceBuilder profileCodec(ProfileCodec profileCodec) {
-        service.setProfileCodec(profileCodec);
+    public GameServiceBuilder profileSerialize(ProfileSerializer serializer) {
+        service.setProfileSerializer(serializer);
         return this;
     }
 

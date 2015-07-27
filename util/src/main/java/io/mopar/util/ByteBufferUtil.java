@@ -24,7 +24,7 @@ public class ByteBufferUtil {
     public static void putMedium(ByteBuffer buffer, int value) {
         buffer.put((byte) (value >> 16));
         buffer.put((byte) (value >>  8));
-        buffer.put((byte)  value);
+        buffer.put((byte) value);
     }
 
     /**
@@ -40,4 +40,14 @@ public class ByteBufferUtil {
      * Prevent instantiation;
      */
     private ByteBufferUtil() {}
+
+    public static void putSmart(ByteBuffer buffer, int i) {
+        if(i >= -128 && i < 128) {
+             buffer.put((byte) i);
+        } else if(i >= 128 && i <= 32767) {
+            buffer.putShort((short) (0x8000 | i));
+        } else {
+            throw new IllegalStateException("Bad value");
+        }
+    }
 }

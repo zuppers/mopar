@@ -3,6 +3,9 @@ package io.mopar.game.model;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * @author Hadyn Fitzgerald
  */
@@ -29,6 +32,11 @@ public class World {
     private EntityList<Player> players = new EntityList<>(PLAYER_CAPACITY);
 
     /**
+     *
+     */
+    private Map<Long, Player> playersByUid = new HashMap<>();
+
+    /**
      * The NPCs.
      */
     private EntityList<NPC> npcs = new EntityList<>(NPC_CAPACITY);
@@ -42,7 +50,6 @@ public class World {
      * The current time.
      */
     private int time;
-
     /**
      * Adds a player to the world.
      *
@@ -50,7 +57,24 @@ public class World {
      * @return If the player was successfully added.
      */
     public boolean addPlayer(Player player) {
+
+        // Check if there are any players registered under the given player's user id
+        // we cannot have two players with the same name, so this will cause to fail
+        if(playersByUid.containsKey(player.getUsername())) {
+            return false;
+        }
+
+        playersByUid.put(player.getUsername(), player);
         return players.add(player);
+    }
+
+    /**
+     *
+     * @param uid
+     * @return
+     */
+    public boolean hasPlayer(long uid) {
+        return playersByUid.containsKey(uid);
     }
 
     /**
@@ -71,7 +95,12 @@ public class World {
      *          a player that exists.
      */
     public boolean removePlayer(int playerId) {
-        return players.remove(playerId) != null;
+        Player player = players.remove(playerId);
+        if(player == null) {
+            return false;
+        }
+        playersByUid.remove(player.getUsername());
+        return true;
     }
 
     /**
@@ -176,5 +205,13 @@ public class World {
      */
     public int getTime() {
         return time;
+    }
+
+    public boolean playerExists(int playerId) {
+        return players.get(playerId) != null;
+    }
+
+    public int getAmountPlayers() {
+        return players.size();
     }
 }

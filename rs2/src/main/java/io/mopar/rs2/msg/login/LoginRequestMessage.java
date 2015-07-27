@@ -43,55 +43,70 @@ public class LoginRequestMessage extends Message {
     public LoginRequestMessage() {}
 
     /**
+     * Sets the username.
      *
-     * @param username
+     * @param username the username.
      */
     public void setUsername(long username) {
         this.username = username;
     }
 
     /**
+     * Gets the username.
      *
-     * @param password
-     * @return
+     * @return the username.
+     */
+    public long getUsername() {
+        return username;
+    }
+
+    /**
+     * Sets the password.
+     *
+     * @param password the password.
+     * @return the password.
      */
     public void setPassword(String password) {
         this.password = password;
     }
 
     /**
+     * Sets the display mode.
      *
-     * @param displayMode
+     * @param displayMode the display mode.
      */
     public void setDisplayMode(int displayMode) {
         this.displayMode = displayMode;
     }
 
     /**
+     * Gets the display mode.
      *
-     * @return
+     * @return the display mode.
      */
     public int getDisplayMode() {
         return displayMode;
     }
 
     /**
+     * Sets the cipher keys.
      *
-     * @param cipherKeys
+     * @param cipherKeys the cipher keys.
      */
     public void setCipherKeys(int[] cipherKeys) {
         this.cipherKeys = cipherKeys;
     }
 
     /**
+     * Gets the cipher keys.
      *
-     * @return
+     * @return the cipher keys.
      */
     public int[] getCipherKeys() {
         return cipherKeys;
     }
 
-    public long getUsername() {
-        return username;
+    public String getPassword() {
+        return password;
     }
 }

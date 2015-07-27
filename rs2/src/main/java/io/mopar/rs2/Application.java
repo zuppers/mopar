@@ -1,16 +1,24 @@
 package io.mopar.rs2;
 
+import com.amazonaws.regions.Region;
+import com.amazonaws.regions.Regions;
+import com.amazonaws.services.s3.transfer.TransferManager;
+import com.amazonaws.services.simpledb.AmazonSimpleDBAsync;
+import com.amazonaws.services.simpledb.AmazonSimpleDBAsyncClient;
+import io.mopar.account.AccountService;
+import io.mopar.account.ServiceProfileSerializer;
+import io.mopar.account.aws.AmazonAccountServiceHandler;
 import io.mopar.cache.FileSystem;
 import io.mopar.core.Service;
 import io.mopar.core.asset.AssetLoader;
+import io.mopar.core.asset.AssetLoaderException;
 import io.mopar.core.asset.StaticFileAssetLoader;
 import io.mopar.core.msg.Message;
 import io.mopar.file.DiskFileProvider;
 import io.mopar.game.GameService;
 import io.mopar.game.GameServiceBuilder;
-import io.mopar.login.LoginService;
+import io.mopar.rs2.account.AccountApplicationService;
 import io.mopar.rs2.game.GameApplicationService;
-import io.mopar.rs2.login.LoginApplicationService;
 import io.mopar.rs2.msg.*;
 import io.mopar.rs2.net.ServerChannelInitializer;
 import io.mopar.rs2.net.packet.PacketMetaList;
@@ -19,6 +27,8 @@ import io.mopar.file.FileServiceBuilder;
 import io.mopar.rs2.world.WorldApplicationService;
 import io.mopar.world.WorldService;
 import io.netty.bootstrap.ServerBootstrap;
+import io.netty.channel.Channel;
+import io.netty.channel.ChannelFuture;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 import org.slf4j.Logger;
@@ -27,11 +37,16 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.SocketAddress;
+import java.net.URISyntaxException;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.Executor;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ThreadFactory;
 
 /**
  * @author Hadyn Fitzgerald
@@ -47,6 +62,11 @@ public class Application {
      * The services.
      */
     private Map<Class<? extends ApplicationService>, ApplicationService> services = new HashMap<>();
+
+    /**
+     *
+     */
+    private Channel channel;
 
     /**
      * The default message dispatcher.
@@ -185,6 +205,17 @@ public class Application {
     }
 
     /**
+     *
+     * @param uri
+     * @throws AssetLoaderException
+     * @throws URISyntaxException
+     * @return
+     */
+    public byte[] loadAsset(String uri) throws AssetLoaderException, URISyntaxException {
+        return assetLoader.load(uri);
+    }
+
+    /**
      * Starts the server.
      *
      * @param port The local port to bind.
@@ -207,15 +238,25 @@ public class Application {
             ServerBootstrap bootstrap = new ServerBootstrap();
             NioEventLoopGroup parentGroup = new NioEventLoopGroup();
             NioEventLoopGroup childGroup = new NioEventLoopGroup();
-            bootstrap.channel(NioServerSocketChannel.class)
+            ChannelFuture sync = bootstrap.channel(NioServerSocketChannel.class)
                     .group(parentGroup, childGroup)
                     .childHandler(new ServerChannelInitializer(this))
                     .bind(address)
                     .sync();
+            channel = sync.channel();
             logger.info("Server started on " + address);
         } catch (InterruptedException ex) {
             throw new IOException("Failed to bind the server address " + address, ex);
         }
+    }
+
+    public void shutdown() {
+
+        // Close the application server channel
+        channel.close();
+
+        // Start each of the services
+        services.forEach(($_, service) -> service.stop());
     }
 
     public static void main(String... args) throws IOException {
@@ -224,6 +265,12 @@ public class Application {
         Application app = new Application();
         app.setAssetLoader(new StaticFileAssetLoader("rs2/asset"));
 
+        // Create a shutdown hook for when a stop is requested
+        Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+            logger.info("Stop requested, shutting application down");
+            app.shutdown();
+        }));
+
         app.register(new DefaultCodecInitializer());
 
         app.use(new FileApplicationService(FileServiceBuilder.create()
@@ -231,12 +278,25 @@ public class Application {
                 .build()));
 
         app.use(new WorldApplicationService(new WorldService()));
-        app.use(new LoginApplicationService(new LoginService()));
 
         GameService game = GameServiceBuilder.create()
                 .assetLoader(new StaticFileAssetLoader("game/asset"))
                 .build();
-        game.eval("require 'bootstrap'", (res) -> {});
+        game.eval("require 'bootstrap'", (res) -> {
+        });
+
+        AccountService accountService = new AccountService();
+
+        AmazonSimpleDBAsync dbClient = new AmazonSimpleDBAsyncClient();
+        dbClient.setRegion(Region.getRegion(Regions.US_EAST_1));
+
+        TransferManager transferManager = new TransferManager();
+
+        accountService.setHandler(new AmazonAccountServiceHandler(dbClient, transferManager));
+
+        app.use(new AccountApplicationService(accountService));
+
+        game.setProfileSerializer(new ServiceProfileSerializer(accountService));
 
         app.use(new GameApplicationService(game));
         app.start(40001);

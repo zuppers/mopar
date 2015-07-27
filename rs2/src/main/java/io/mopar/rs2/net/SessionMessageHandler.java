@@ -32,18 +32,18 @@ public class SessionMessageHandler extends SimpleChannelInboundHandler<Message> 
     }
 
     @Override
-    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
-        ctx.close();
-    }
-
-    @Override
     protected void messageReceived(ChannelHandlerContext ctx, Message message) throws Exception {
         session.dispatch(message);
     }
 
+    @Override
+    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
+        session.close();
+    }
 
     @Override
     public void channelInactive(ChannelHandlerContext ctx) throws Exception {
-        session.close();
+        logger.info("Channel inactive " + ctx.channel().remoteAddress());
+        session.dispatch(new SessionClosedMessage());
     }
 }

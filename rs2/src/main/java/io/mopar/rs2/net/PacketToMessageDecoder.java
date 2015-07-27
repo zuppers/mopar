@@ -30,6 +30,8 @@ public class PacketToMessageDecoder extends MessageToMessageDecoder<Packet> {
     @Override
     protected void decode(ChannelHandlerContext ctx, Packet packet, List<Object> out) throws Exception {
         out.add(codec.decodeMessage(packet));
+
+        // Release the buffer
         ByteBuf buf = packet.getBuffer();
         buf.release();
     }

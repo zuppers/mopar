@@ -1,0 +1,204 @@
+[
+  {
+    "id" : 3,
+    "name" : "npc_option_1",
+    "length" : 2
+  },
+
+  {
+    "id" : 10,
+    "name" : "button_option_2",
+    "length" : 4
+  },
+
+  {
+    "id" : 20,
+    "name" : "rebuilt_scene",
+    "length" : 4
+  },
+
+  {
+    "id" : 21,
+    "name" : "camera_moved",
+    "length" : 4
+  },
+
+  {
+    "id" : 22,
+    "name" : "focus_changed",
+    "length" : 1
+  },
+
+  {
+    "id" : 23,
+    "name" : "enter_amount",
+    "length" : 4
+  },
+
+  {
+    "id" : 27,
+    "name" : "item_on_item",
+    "length" : 16
+  },
+
+  {
+    "id" : 30,
+    "name" : "npc_option_4",
+    "length" : 2
+  },
+
+  {
+    "id" : 34,
+    "name" : "add_ignore",
+    "length" : 8
+  },
+
+  {
+    "id" : 39,
+    "name" : "route_minimap",
+    "length" : -1
+  },
+
+  {
+    "id" : 44,
+    "name" : "command",
+    "length" : -1
+  },
+
+  {
+    "id" : 53,
+    "name" : "button_option_9",
+    "length" : 6
+  },
+
+  {
+    "id" : 55,
+    "name" : "item_option_1",
+    "length" : 8
+  },
+
+  {
+    "id" : 57,
+    "name" : "remove_friend",
+    "length" : 8
+  },
+
+  {
+    "id" : 64,
+    "name" : "button_option_8",
+    "length" : 6
+  },
+  {
+    "id": 66,
+    "name": "ground_option_1",
+    "length": 6
+  },
+
+  {
+    "id" : 68,
+    "name" : "player_option_1",
+    "length" : 2
+  },
+
+  {
+    "id" : 71,
+    "name" : "player_option_2",
+    "length" : 2
+  },
+
+  {
+    "id" : 75,
+    "name" : "click",
+    "length" : 6
+  },
+
+  {
+    "id" : 77,
+    "name" : "route_target",
+    "length" : -1
+  },
+
+  {
+    "id" : 78,
+    "name" : "npc_option_2",
+    "length" : 2
+  },
+
+  {
+    "id" : 79,
+    "name" : "swap_items",
+    "length" : 12
+  },
+
+  {
+    "id" : 81,
+    "name" : "inter_item_option_1",
+    "length" : 8
+  },
+
+  {
+    "id" : 93,
+    "name" : "heartbeat",
+    "length" : 0
+  },
+
+  {
+    "id" : 98,
+    "name" : "settings",
+    "length" : 4
+  },
+
+  {
+    "id" : 110,
+    "name" : "load_scene",
+    "length" : 0
+  },
+
+  {
+    "id" : 155,
+    "name" : "button_option_1",
+    "length" : 6
+  },
+
+  {
+    "id" : 177,
+    "name" : "packet_check",
+    "length" : 2
+  },
+
+  {
+    "id" : 184,
+    "name" : "interfaces_closed",
+    "length" : 0
+  },
+
+  {
+    "id" : 215,
+    "name" : "route_ground",
+    "length" : -1
+  },
+
+  {
+    "id" : 231,
+    "name" : "switch_items",
+    "length" : 9
+  },
+
+  {
+    "id" : 237,
+    "name" : "chat",
+    "length" : -1
+  },
+
+  {
+    "id" : 243,
+    "name" : "screen_info",
+    "length" : 6
+  },
+
+  {
+    "id" : 254,
+    "name" : "loc_option_1",
+    "length" : 6
+  }
+]

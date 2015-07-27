@@ -1,5 +1,6 @@
 package io.mopar.game.model;
 
+import io.mopar.account.Profile;
 import io.mopar.core.msg.Message;
 import io.mopar.core.msg.MessageListener;
 import io.mopar.game.msg.*;
@@ -488,5 +489,13 @@ public class Player extends Mobile {
 
     public void setFeatureVisible(int id, boolean active) {
         appearance.setVisible(id, active);
+    }
+
+    public Profile toProfile() {
+        Profile profile = new Profile(username);
+        profile.setX(getPosition().getX());
+        profile.setY(getPosition().getY());
+        profile.setPlane(getPosition().getPlane());
+        return profile;
     }
 }

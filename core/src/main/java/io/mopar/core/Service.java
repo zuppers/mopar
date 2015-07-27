@@ -159,6 +159,7 @@ public abstract class Service implements Runnable {
     public void shutdown() {
         synchronized (this) {
             stopRequested = true;
+            notifyAll();
         }
         executor.shutdown();
         while(!executor.isTerminated()) {

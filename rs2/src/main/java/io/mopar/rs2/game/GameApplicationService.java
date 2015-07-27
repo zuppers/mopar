@@ -1,14 +1,18 @@
 package io.mopar.rs2.game;
 
+import com.google.gson.JsonElement;
+import com.google.gson.JsonParser;
+import io.mopar.account.res.LoginResponse;
+import io.mopar.core.asset.AssetLoader;
 import io.mopar.game.GameService;
 import io.mopar.game.model.Position;
 import io.mopar.game.msg.*;
-import io.mopar.login.res.LoginResponse;
+import io.mopar.game.res.NewPlayerResponse;
 import io.mopar.rs2.Application;
 import io.mopar.rs2.ApplicationService;
+import io.mopar.rs2.account.AccountApplicationService;
 import io.mopar.rs2.file.FileSessionContext;
 import io.mopar.rs2.game.msg.InterfaceItemOptionMessage;
-import io.mopar.rs2.login.LoginApplicationService;
 import io.mopar.rs2.msg.StatusMessage;
 import io.mopar.rs2.msg.game.*;
 import io.mopar.rs2.msg.login.LoginRequestMessage;
@@ -23,6 +27,11 @@ import io.mopar.rs2.net.packet.PacketMetaList;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.URISyntaxException;
+
 /**
  * @author Hadyn Fitzgerald
  */
@@ -36,7 +45,7 @@ public class GameApplicationService extends ApplicationService<GameService> {
     /**
      * The login service.
      */
-    private LoginApplicationService loginService;
+    private AccountApplicationService accountService;
 
     /**
      * Constructs a new {@link GameApplicationService};
@@ -62,11 +71,20 @@ public class GameApplicationService extends ApplicationService<GameService> {
             logger.error("Failed to load the landscape key table", ex);
         }
 
+        AssetLoader assetLoader = app.getAssetLoader();
+        try {
+            InputStreamReader reader = new InputStreamReader(new ByteArrayInputStream(assetLoader.load("game/incoming-packets.json")));
+            JsonParser parser = new JsonParser();
+            JsonElement element = parser.parse(reader);
+            app.getIncomingPackets().parse(element.getAsJsonArray());
+        } catch (URISyntaxException | IOException ex) {
+            logger.error("Failed to load incoming packets", ex);
+        }
+
         // Register the message codec initializer
         app.register(new GameMessageCodecInitializer(table));
 
         // Register the incoming and outgoing packets for the service
-        registerIncomingPackets(app.getIncomingPackets());
         registerOutgoingPackets(app.getOutgoingPackets());
 
         registerMessageHandler(RouteMessage.class, this::handleRouteMessage);
@@ -82,49 +100,7 @@ public class GameApplicationService extends ApplicationService<GameService> {
         app.registerMessageHandler(LoginStatusCheck.class, this::handleLoginStatusCheck);
         app.registerMessageHandler(LoginRequestMessage.class, this::handleLoginRequest);
 
-        loginService = app.getService(LoginApplicationService.class);
-    }
-
-    /**
-     * Registers the incoming packets.
-     *
-     * @param incomingPackets The incoming packet list.
-     */
-    private void registerIncomingPackets(PacketMetaList incomingPackets) {
-        incomingPackets.add(new PacketMetaData(3, "npc_option_1", 2));
-        incomingPackets.add(new PacketMetaData(10, "button_option_2", 4));
-        incomingPackets.add(new PacketMetaData(20, "rebuilt_scene", 4));
-        incomingPackets.add(new PacketMetaData(21, "camera_moved", 4));
-        incomingPackets.add(new PacketMetaData(22, "focus_changed", 1));
-        incomingPackets.add(new PacketMetaData(23, "enter_amount", 4));
-        incomingPackets.add(new PacketMetaData(27, "item_on_item", 16));
-        incomingPackets.add(new PacketMetaData(30, "npc_option_4", 2));
-        incomingPackets.add(new PacketMetaData(34, "add_ignore", 8));
-        incomingPackets.add(new PacketMetaData(39, "route_minimap", PacketMetaData.VAR_BYTE_LENGTH));
-        incomingPackets.add(new PacketMetaData(44, "command", PacketMetaData.VAR_BYTE_LENGTH));
-        incomingPackets.add(new PacketMetaData(53, "button_option_9", 6));
-        incomingPackets.add(new PacketMetaData(55, "item_option_1", 8));
-        incomingPackets.add(new PacketMetaData(57, "remove_friend", 8));
-        incomingPackets.add(new PacketMetaData(64, "button_option_8", 6));
-        incomingPackets.add(new PacketMetaData(66, "ground_item_option_1", 6));
-        incomingPackets.add(new PacketMetaData(68, "player_option_1", 2));
-        incomingPackets.add(new PacketMetaData(71, "player_option_2", 2));
-        incomingPackets.add(new PacketMetaData(75, "click", 6));
-        incomingPackets.add(new PacketMetaData(77, "route_target", PacketMetaData.VAR_BYTE_LENGTH));
-        incomingPackets.add(new PacketMetaData(78, "npc_option_2", 2));
-        incomingPackets.add(new PacketMetaData(79, "swap_items", 12));
-        incomingPackets.add(new PacketMetaData(81, "inter_item_option_1", 8));
-        incomingPackets.add(new PacketMetaData(93, "heartbeat", 0));
-        incomingPackets.add(new PacketMetaData(98, "settings", 4));
-        incomingPackets.add(new PacketMetaData(110, "load_scene", 0));
-        incomingPackets.add(new PacketMetaData(155, "button_option_1", 6));
-        incomingPackets.add(new PacketMetaData(177, "packet_check", 2));
-        incomingPackets.add(new PacketMetaData(184, "interfaces_closed", 0));
-        incomingPackets.add(new PacketMetaData(215, "route_ground", PacketMetaData.VAR_BYTE_LENGTH));
-        incomingPackets.add(new PacketMetaData(231, "switch_items", 9));
-        incomingPackets.add(new PacketMetaData(237, "chat", PacketMetaData.VAR_BYTE_LENGTH));
-        incomingPackets.add(new PacketMetaData(243, "screen_info", 6));
-        incomingPackets.add(new PacketMetaData(254, "loc_option_1", 6));
+        accountService = app.getService(AccountApplicationService.class);
     }
 
     /**
@@ -166,8 +142,7 @@ public class GameApplicationService extends ApplicationService<GameService> {
      * @param request The message.
      */
     private void handleLoginRequest(Session session, LoginRequestMessage request) {
-        // TODO(sinisoul): Where do I put this? Do I handle it from the application service or?
-        loginService.getService().login(res -> handleLoginResponse(session, request, res));
+        accountService.login(request.getUsername(), request.getPassword(), res -> handleLoginResponse(session, request, res));
     }
 
     /**
@@ -177,8 +152,7 @@ public class GameApplicationService extends ApplicationService<GameService> {
      */
     private void handleRouteMessage(Session session, RouteMessage message) {
         PlayerSessionContext ctx = session.get(PlayerSessionContext.class);
-        service.handleRoute(ctx.getPlayer().getId(), message.getRoute(), (res) -> {
-        });
+        service.handleRoute(ctx.getPlayerId(), message.getRoute(), (res) -> {});
     }
 
     /**
@@ -268,7 +242,31 @@ public class GameApplicationService extends ApplicationService<GameService> {
      * @param response The response.
      */
     private void handleLoginResponse(Session session, LoginRequestMessage request, LoginResponse response) {
-        service.createPlayer(res -> {
+        switch (response.getStatus()) {
+            // Ignore this, just to acknowledge that the request was accepted
+            case LoginResponse.ACCEPTED:
+                return;
+
+            // Notify the client that the provided credentials were invalid
+            case LoginResponse.INVALID_USER_OR_PASS:
+            case LoginResponse.INTERNAL_ERROR:
+                session.writeAndFlush(StatusMessage.INVALID_USER_OR_PASS);
+                session.close();
+                return;
+
+        }
+
+        service.createPlayer(request.getUsername(), response.getProfile(), res -> {
+            switch (res.getStatus()) {
+                case NewPlayerResponse.FULL:
+                    session.writeAndFlush(StatusMessage.FULL);
+                    session.close();
+                    return;
+                case NewPlayerResponse.ALREADY_ONLINE:
+                    session.writeAndFlush(StatusMessage.ALREADY_ONLINE);
+                    session.close();
+                    return;
+            }
 
             // TODO(sinisoul: This most likely will not fix the problem. Hurr.
             if(session.get(FileSessionContext.class) != null) {
@@ -294,12 +292,10 @@ public class GameApplicationService extends ApplicationService<GameService> {
             }
             session.pipeline().get(PacketEncoder.class).initCipher(cipherKeys);
 
-            res.getPlayer().setPosition(new Position(3222, 3222));
             res.getPlayer().setDisplayMode(request.getDisplayMode());
             res.getPlayer().rebuildScene();
 
             // varbit - 4393 : Loop
-            res.getPlayer().setUsername(request.getUsername());
             int[] configs = new int[]{
                     20, 21, 22, 23, 24, 25, 298, 311, 346, 414, 464, 598, 662, 721, 906, 1009, 1104, 1136, 1180, 1202
             };

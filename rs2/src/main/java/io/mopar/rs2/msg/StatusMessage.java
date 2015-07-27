@@ -13,14 +13,23 @@ public class StatusMessage extends Message {
     public static final StatusMessage OK = new StatusMessage(0, "status_ok");
 
     /**
-     * The full status message for when a new service session failed to register.
+     *
      */
-    public static final StatusMessage FULL = new StatusMessage(3, "status_full");
+    public static final StatusMessage INVALID_USER_OR_PASS = new StatusMessage(3, "status_invalid_user_or_pass");
+
 
     /**
      * The out of date status message for when there was a client build mismatch.
      */
     public static final StatusMessage OUT_OF_DATE = new StatusMessage(6, "status_out_of_date");
+
+
+    /**
+     * The full status message for when a new service session failed to register.
+     */
+    public static final StatusMessage FULL = new StatusMessage(7, "status_full");
+    public static final StatusMessage CONTINUE = new StatusMessage(2, "status_continue");
+    public static final StatusMessage ALREADY_ONLINE = new StatusMessage(5, "status_already_online");
 
     /**
      * The status id.

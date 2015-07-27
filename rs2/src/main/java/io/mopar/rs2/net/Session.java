@@ -2,6 +2,7 @@ package io.mopar.rs2.net;
 
 import io.mopar.core.msg.Message;
 import io.mopar.rs2.msg.MessageDispatcher;
+import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelPipeline;
 import io.netty.channel.socket.SocketChannel;
@@ -95,6 +96,14 @@ public class Session {
     }
 
     /**
+     *
+     * @return
+     */
+    public Channel channel() {
+        return channel;
+    }
+
+    /**
      * Writes and flushes the message to the channel pipeline.
      *
      * @param message The message to write.
@@ -125,18 +134,9 @@ public class Session {
      * Closes the session.
      */
     public void close() {
-        synchronized (this) {
-            if (!closed) {
-                // Dispatch a message indicating that the session has been closed
-                // TODO(sini): Should I attach a reason in the form of an exception?
-                dispatch(new SessionClosedMessage());
-
-                // Close the channel
-                channel.close();
-
-                // Mark the session as closed
-                closed = true;
-            }
+        if(!channel.isOpen()) {
+            return;
         }
+        channel.close();
     }
 }

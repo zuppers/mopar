@@ -1,0 +1,19 @@
+[
+  {
+    "id" : 36,
+    "name" : "registration_request",
+    "length" : -1
+  },
+
+  {
+    "id" : 147,
+    "name" : "validate_personal_details",
+    "length" : 6
+  },
+
+  {
+    "id" : 186,
+    "name" : "query_username",
+    "length" : 8
+  }
+]

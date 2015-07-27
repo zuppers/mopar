@@ -69,8 +69,9 @@ public class PacketDecoder extends ByteToMessageDecoder {
     }
 
     /**
+     * Initializes the cipher.
      *
-     * @param keys
+     * @param keys the cipher keys.
      */
     public void initCipher(int[] keys) {
         cipher = new ISAACCipher(keys);

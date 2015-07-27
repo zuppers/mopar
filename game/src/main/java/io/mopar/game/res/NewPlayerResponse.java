@@ -11,6 +11,7 @@ public class NewPlayerResponse extends Response {
     public static final int OK = 0;
     public static final int FULL = 1;
     public static final int INVALID_PROFILE = 2;
+    public static final int ALREADY_ONLINE = 3;
 
     /**
      * The status.

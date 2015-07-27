@@ -47,6 +47,13 @@ public abstract class ApplicationService<T extends Service> {
     }
 
     /**
+     * Stops the service.
+     */
+    public void stop() {
+        service.shutdown();
+    }
+
+    /**
      * Registers a message handler.
      *
      * @param type The message type.
@@ -65,4 +72,6 @@ public abstract class ApplicationService<T extends Service> {
     public T getService() {
         return service;
     }
+
+
 }

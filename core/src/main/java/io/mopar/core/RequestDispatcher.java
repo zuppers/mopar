@@ -28,7 +28,7 @@ public class RequestDispatcher {
     private Queue<PendingRequest> pendingRequests = new ArrayDeque<>();
 
     /**
-     * The flag for if new requestuests should be rejected.
+     * The flag for if new requests should be rejected.
      */
     private boolean rejectRequests;
 
@@ -54,7 +54,7 @@ public class RequestDispatcher {
                 continue;
             }
 
-            // Check that the request was answered, TODO: Thrown runtime exception?
+            // Check that the request was answered
             if(!pendingRequest.isAnswered()) {
                 logger.warn("Request as not answered after handling, {}", pendingRequest.getRequestType().getSimpleName());
             }

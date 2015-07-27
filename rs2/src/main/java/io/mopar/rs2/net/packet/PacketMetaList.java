@@ -1,5 +1,10 @@
 package io.mopar.rs2.net.packet;
 
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonSyntaxException;
+
 import java.util.*;
 
 /**
@@ -34,6 +39,34 @@ public class PacketMetaList {
      */
     public boolean contains(int id) {
         return meta.containsKey(id);
+    }
+
+    /**
+     * Parses a JSON element.
+     *
+     * @param element the element to parse.
+     */
+    public void parse(JsonElement element) {
+        if(!element.isJsonArray()) {
+            throw new IllegalArgumentException("Expecting element to be JSON array");
+        }
+
+        JsonArray array = element.getAsJsonArray();
+
+        for(JsonElement ele : array) {
+            if(!ele.isJsonObject()) {
+                throw new RuntimeException("Expecting array element to be JSON object");
+            }
+
+            // Extract the packet meta data from the JSON object
+            JsonObject obj = ele.getAsJsonObject();
+            int id = obj.get("id").getAsInt();
+            String name = obj.get("name").getAsString();
+            int length = obj.get("length").getAsInt();
+
+            // Append the meta data
+            add(new PacketMetaData(id, name, length));
+        }
     }
 
     /**
@@ -100,5 +133,4 @@ public class PacketMetaList {
         }
         return data.getId();
     }
-
 }

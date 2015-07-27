@@ -246,7 +246,7 @@ public class PacketBuilder {
      * @return This instance of the packet builder for chaining.
      */
     public PacketBuilder writeSmart(int i) {
-        if(i < 128) {
+        if(i >= -128 && i < 128) {
             buf.writeByte(i);
         } else if(i >= 128 && i <= 32767) {
            buf.writeShort(0x8000 | i);

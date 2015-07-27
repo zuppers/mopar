@@ -1,11 +1,12 @@
 package io.mopar.game;
 
+import io.mopar.account.Profile;
+import io.mopar.account.ProfileSerializer;
 import io.mopar.core.*;
 import io.mopar.core.lua.Coerce;
 import io.mopar.core.asset.AssetLoader;
 import io.mopar.game.action.ActionBindings;
 import io.mopar.core.lua.LuaScriptEngine;
-import io.mopar.core.profile.ProfileCodec;
 import io.mopar.game.event.*;
 import io.mopar.game.event.player.PlayerCreatedEvent;
 import io.mopar.game.event.player.PlayerDisplayUpdateEvent;
@@ -20,8 +21,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.script.ScriptException;
-import java.io.IOException;
 import java.util.Arrays;
+import java.util.concurrent.Phaser;
 
 /**
  * @author Hadyn Fitzgerald
@@ -47,11 +48,6 @@ public class GameService extends Service {
      * The action bindings.
      */
     private ActionBindings actionBindings = new ActionBindings();
-
-    /**
-     * The codec for decoding and encoding player profiles.
-     */
-    private ProfileCodec profileCodec = new ProfileCodec();
 
     /**
      * The asset loader, by default we use the dummy asset loader.
@@ -87,6 +83,7 @@ public class GameService extends Service {
      * The current loop cycle.
      */
     private int loopCycle = 0;
+    private ProfileSerializer profileSerializer;
 
     /**
      * Constructs a new {@link GameService};
@@ -94,20 +91,19 @@ public class GameService extends Service {
     public GameService() {}
 
     /**
-     * Sets the profile codec.
-     *
-     * @param profileCodec The profile codec.
-     */
-    public void setProfileCodec(ProfileCodec profileCodec) {
-        this.profileCodec = profileCodec;
-    }
-
-    /**
      * Sets the asset loader.
      *
      * @param assetLoader The asset loader.
      */
     public void setAssetLoader(AssetLoader assetLoader) { this.assetLoader = assetLoader; }
+
+    /**
+     *
+     * @param serializer
+     */
+    public void setProfileSerializer(ProfileSerializer serializer) {
+        this.profileSerializer = serializer;
+    }
 
     @Override
     public void setup() {
@@ -126,23 +122,47 @@ public class GameService extends Service {
             if((loopCycle++ % step == 0)) {
                 world.update();
             }
+
+            // Every 5 minutes automatically save all of the players
+            if(world.getTime() % 500 == 0) {
+                logger.info("Automatically saving player profiles");
+                savePlayers();
+            }
         }
     }
 
     @Override
     public void teardown() {
-
         // Update the world one last time before tearing down the service
         world.update();
+
+        savePlayers();
+    }
+
+    public void savePlayers() {
+        Phaser phaser = new Phaser();
+
+        // Save all of the player in the game
+
+        phaser.bulkRegister(world.getAmountPlayers());
+        for(Player player : world.getPlayers()) {
+            profileSerializer.save(player.toProfile(), (res) -> phaser.arrive());
+        }
+
+        phaser.arriveAndAwaitAdvance();
     }
 
     /**
      * Creates a new player.
      *
+     * @param uid
+     * @param profile
      * @param callback The response callback.
      */
-    public void createPlayer(Callback<NewPlayerResponse> callback) {
-        submit(new NewPlayerRequest(), callback);
+    public void createPlayer(long uid, Profile profile, Callback<NewPlayerResponse> callback) {
+        NewPlayerRequest request = new NewPlayerRequest(uid);
+        request.setProfile(profile);
+        submit(request, callback);
     }
 
     /**
@@ -310,18 +330,11 @@ public class GameService extends Service {
      */
     private void handleNewPlayerRequest(NewPlayerRequest request, Callback callback) {
         Player player = new Player();
+        player.setUsername(request.getUsername());
 
-        // If the request includes the player profile, decode the player profile and update the player with
-        // the decoded profile.
-        if(request.hasProfileData()) {
-            try {
-                Profile profile = profileCodec.decode(request.getEncoding(), request.getProfileData());
-
-            } catch (IOException ex) {
-                logger.error("Failed to decode the provided player profile", ex);
-                callback.call(new NewPlayerResponse(NewPlayerResponse.INVALID_PROFILE));
-                return;
-            }
+        if(world.hasPlayer(player.getUsername())) {
+            callback.call(new NewPlayerResponse(NewPlayerResponse.ALREADY_ONLINE));
+            return;
         }
 
         // Attempt to add the player to the world, if it is full then we cannot go any further.
@@ -330,13 +343,18 @@ public class GameService extends Service {
             return;
         }
 
+        if(request.hasProfile()) {
+            Profile profile = request.getProfile();
+            player.setPosition(new Position(profile.getX(), profile.getY(), profile.getPlane()));
+        }
+
         // Callback that the request was successful
         NewPlayerResponse response = new NewPlayerResponse(NewPlayerResponse.OK);
         response.setPlayer(player);
         callback.call(response);
 
-        // TODO: Clean this up better
-        eventBindings.handle(new PlayerCreatedEvent(player));
+        // Dispatch an event signaling that the player was created
+        dispatchEvent(new PlayerCreatedEvent(player));
     }
 
     /**
@@ -346,11 +364,15 @@ public class GameService extends Service {
      * @param callback The callback.
      */
     private void handleRemovePlayerRequest(RemovePlayerRequest request, Callback callback) {
-        if(!world.removePlayer(request.getPlayerId())) {
+        if(!world.playerExists(request.getPlayerId())) {
             callback.call(new RemovePlayerResponse(RemovePlayerResponse.PLAYER_DOES_NOT_EXIST));
             return;
         }
 
+        Player player = world.getPlayer(request.getPlayerId());
+        profileSerializer.save(player.toProfile(), (res) -> {});
+
+        world.removePlayer(request.getPlayerId());
         callback.call(new RemovePlayerResponse(RemovePlayerResponse.OK));
     }
 

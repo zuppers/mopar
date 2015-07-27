@@ -13,7 +13,7 @@ public abstract class Entity {
     /**
      * The position.
      */
-    private Position position = new Position();
+    private Position position = new Position(3222, 3222);
 
     /**
      * Updated flag.

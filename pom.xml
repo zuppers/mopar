@@ -17,8 +17,6 @@
         <module>file</module>
         <module>world</module>
         <module>game</module>
-        <module>login</module>
-        <module>profile</module>
         <module>account</module>
     </modules>
 

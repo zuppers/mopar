@@ -140,16 +140,17 @@ public class GameService extends Service {
     }
 
     public void savePlayers() {
-        Phaser phaser = new Phaser();
+        if(world.getAmountPlayers() > 0) {
+            Phaser phaser = new Phaser();
 
-        // Save all of the player in the game
+            // Save all of the player in the game
+            phaser.bulkRegister(world.getAmountPlayers());
+            for (Player player : world.getPlayers()) {
+                profileSerializer.save(player.toProfile(), (res) -> phaser.arrive());
+            }
 
-        phaser.bulkRegister(world.getAmountPlayers());
-        for(Player player : world.getPlayers()) {
-            profileSerializer.save(player.toProfile(), (res) -> phaser.arrive());
+            phaser.arriveAndAwaitAdvance();
         }
-
-        phaser.arriveAndAwaitAdvance();
     }
 
     /**

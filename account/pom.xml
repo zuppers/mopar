@@ -22,5 +22,11 @@
             <groupId>org.mindrot</groupId>
             <artifactId>jbcrypt</artifactId>
         </dependency>
+
+        <dependency>
+            <groupId>io.mopar</groupId>
+            <artifactId>util</artifactId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
     </dependencies>
 </project>

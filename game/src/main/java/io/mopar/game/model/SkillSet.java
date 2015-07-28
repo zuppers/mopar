@@ -47,4 +47,20 @@ public class SkillSet {
     public double getExperience(int i) {
         return exp[i];
     }
+
+    public void setExperience(int id, double experience) {
+        exp[id] = experience;
+    }
+
+    public void giveExp(int skill, double amount) {
+        double curr = getExperience(skill);
+        if(curr + amount > 200_000_000D) {
+            amount = 200_000_000 - curr;
+        }
+        int prev = getLevel(skill);
+        exp[skill] += amount;
+        int currl = getLevel(skill);
+
+        stats[skill] += currl - prev;
+    }
 }

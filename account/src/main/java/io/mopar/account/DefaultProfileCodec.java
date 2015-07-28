@@ -13,6 +13,7 @@ public class DefaultProfileCodec implements ProfileCodec {
     private static final int chk_EOF    = 0x00;
     private static final int chk_COORD  = 0x01;
     private static final int chk_INV    = 0x02;
+    private static final int chk_SKILL  = 0x03;
 
     @Override
     public Profile decode(byte[] bytes) throws MalformedProfileException {
@@ -54,6 +55,15 @@ public class DefaultProfileCodec implements ProfileCodec {
                 }
                 break;
 
+                case chk_SKILL: {
+                    SkillModel skill = new SkillModel();
+                    skill.setId(bb.get() & 0xff);
+                    skill.setStat(bb.get() & 0xff);
+                    skill.setExperience(bb.getInt());
+                    profile.addSkill(skill);
+                }
+                break;
+
                 case chk_INV: {
                     InventoryModel inventory = new InventoryModel();
                     inventory.setId(bb.getShort() & 0xffff);
@@ -75,6 +85,7 @@ public class DefaultProfileCodec implements ProfileCodec {
                     }
                     profile.addInventory(inventory);
                 }
+                break;
             }
         }
 
@@ -122,6 +133,15 @@ public class DefaultProfileCodec implements ProfileCodec {
             length += 2 * items.size();
         }
 
+        // Skill chunk
+        for(SkillModel skill : profile.getSkills()) {
+            // chk      : int8
+            // id       : int8
+            // stat     : int8
+            // exp      : int32
+            length += 1 + 1 + 1 + 4;
+        }
+
         // EOF chunk
         length += 1;
 
@@ -142,6 +162,16 @@ public class DefaultProfileCodec implements ProfileCodec {
         // Put the coord chunk
         bb.put((byte) chk_COORD);
         bb.putInt((profile.getPlane() & 0x3) << 28 | (profile.getX() & 0x3fff) << 14 | (profile.getY() & 0x3fff));
+
+        // Put the skill chunks
+        for(SkillModel skill : profile.getSkills()) {
+            bb.put((byte) chk_SKILL);
+            bb.put((byte) skill.getId());
+            bb.put((byte) skill.getStat());
+
+            Double experience = Double.valueOf(skill.getExperience());
+            bb.putInt(experience.intValue());
+        }
 
         // Put the inventory chunks
         for(InventoryModel inventory : profile.getInventories()) {

@@ -5,11 +5,33 @@ local interface = lazy('interface')
 local items     = lazy('items')
 
 local backpack  = lazy('inv/backpack')
+local skills    = lazy('skills')
 
+--[[ ]]
+
+action:on_command('givexp', command:for_admin(function(plr, cmd, args)
+    local id        = tonumber(args[1])
+    local amount    = tonumber(args[2])
+    plr:give_exp(id, amount)
+end))
+
+--[[]]
+action:on_command('master', command:for_admin(function(plr, cmd, args)
+    for i=0, skills.count do
+        plr:give_exp(i, 200000000)
+    end
+end))
+
+--[[
+    song id
+
+        Plays a song.
+ ]]
 action:on_command('song', command:for_admin(function(plr, cmd, args)
     local id = tonumber(args[1])
     plr:play_song(id)
 end))
+
 
 --[[
     item id [amount]

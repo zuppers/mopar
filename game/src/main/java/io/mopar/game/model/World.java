@@ -50,6 +50,14 @@ public class World {
      * The current time.
      */
     private int time;
+
+    public World() {
+        NPC npc = new NPC();
+        npc.setType(81);
+        npc.setPosition(new Position(3222, 3222));
+        npcs.add(npc);
+    }
+
     /**
      * Adds a player to the world.
      *
@@ -143,6 +151,7 @@ public class World {
         // Update the player scene graphs
         for(Player player : players) {
             player.updateLocalPlayers(players);
+            player.updateLocalNpcs(npcs);
 
             // Its anal about this for some reason
             if(player.getRebuildScene()) {

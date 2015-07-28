@@ -21,6 +21,11 @@ public class Scene {
     private MobileSceneGraph<Player> localPlayers = new MobileSceneGraph<>(World.PLAYER_CAPACITY);
 
     /**
+     * The local npcs.
+     */
+    private MobileSceneGraph<NPC> localNpcs = new MobileSceneGraph<>(World.NPC_CAPACITY);
+
+    /**
      * The position.
      */
     private Position position;
@@ -43,6 +48,16 @@ public class Scene {
     public void updateLocalPlayers(EntityList<Player> players, Position currentPosition) {
         checkBuilt();
         localPlayers.update(players, position, currentPosition, LENGTH >> 1, VISIBLE_DISTANCE);
+    }
+
+    /**
+     *
+     * @param npcs
+     * @param currentPosition
+     */
+    public void updateLocalNpcs(EntityList<NPC> npcs, Position currentPosition) {
+        checkBuilt();
+        localNpcs.update(npcs, position, currentPosition, LENGTH >> 1, VISIBLE_DISTANCE);
     }
 
     /**
@@ -82,4 +97,11 @@ public class Scene {
     public MobileSceneGraph<Player> getLocalPlayers() {
         return localPlayers;
     }
+
+    /**
+     * Gets the local npcs.
+     *
+     * @return the local npcs.
+     */
+    public MobileSceneGraph<NPC> getLocalNpcs() { return localNpcs; }
 }

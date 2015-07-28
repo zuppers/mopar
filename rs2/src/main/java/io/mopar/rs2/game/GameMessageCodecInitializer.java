@@ -87,6 +87,7 @@ public class GameMessageCodecInitializer implements MessageCodecInitializer {
         codec.registerMessageDecoder(incomingPackets.getId("click"), this::decodeBlankMessage);
         codec.registerMessageDecoder(incomingPackets.getId("loc_option_1"), this::decodeBlankMessage);
         codec.registerMessageDecoder(incomingPackets.getId("settings"), this::decodeBlankMessage);
+        codec.registerMessageDecoder(incomingPackets.getId("obj_option_unk"), this::decodeBlankMessage);
     }
 
     /**
@@ -275,6 +276,7 @@ public class GameMessageCodecInitializer implements MessageCodecInitializer {
 
         // Register the synchronization message encoders
         codec.registerMessageEncoder(PlayerSynchronizationMessage.class, new PlayerSynchronizationMessageEncoder());
+        codec.registerMessageEncoder(NpcSynchronizationMessage.class, new NpcSynchronizationMessageEncoder());
     }
 
     /**

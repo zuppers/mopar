@@ -1,9 +1,6 @@
 package io.mopar.game;
 
-import io.mopar.account.InventoryModel;
-import io.mopar.account.ItemModel;
-import io.mopar.account.Profile;
-import io.mopar.account.ProfileSerializer;
+import io.mopar.account.*;
 import io.mopar.core.*;
 import io.mopar.core.lua.Coerce;
 import io.mopar.core.asset.AssetLoader;
@@ -349,6 +346,12 @@ public class GameService extends Service {
         if(request.hasProfile()) {
             Profile profile = request.getProfile();
             player.setPosition(new Position(profile.getX(), profile.getY(), profile.getPlane()));
+
+            for(SkillModel skill : profile.getSkills()) {
+                SkillSet skills = player.getSkills();
+                skills.setStat(skill.getId(), skill.getStat());
+                skills.setExperience(skill.getId(), skill.getExperience());
+            }
 
             for(InventoryModel inventory : profile.getInventories()) {
                 Inventory inv = player.getInventory(inventory.getId());

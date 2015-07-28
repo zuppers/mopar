@@ -111,6 +111,7 @@ public class GameApplicationService extends ApplicationService<GameService> {
         outgoingPackets.add(new PacketMetaData(4, "song", 2));
         outgoingPackets.add(new PacketMetaData(21, "set_interface_hidden", 7));
         outgoingPackets.add(new PacketMetaData(22, "update_inventory", PacketMetaData.VAR_SHORT_LENGTH));
+        outgoingPackets.add(new PacketMetaData(32, "npc_update", PacketMetaData.VAR_SHORT_LENGTH));
         outgoingPackets.add(new PacketMetaData(38, "update_skill", 6));
         outgoingPackets.add(new PacketMetaData(60, "variable_b", 3));
         outgoingPackets.add(new PacketMetaData(70, "print", PacketMetaData.VAR_BYTE_LENGTH));

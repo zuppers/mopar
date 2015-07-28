@@ -222,6 +222,10 @@ public class PlayerComposite extends MobileComposite {
         player.setAppearanceUpdated(true);
     }
 
+    public void give_exp(int skill, double amount) {
+        player.giveExp(skill, amount);
+    }
+
     public void play_song(int id) {
         player.playSong(id);
     }

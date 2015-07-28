@@ -3,6 +3,7 @@ package io.mopar.game.model;
 import io.mopar.account.InventoryModel;
 import io.mopar.account.ItemModel;
 import io.mopar.account.Profile;
+import io.mopar.account.SkillModel;
 import io.mopar.core.msg.Message;
 import io.mopar.core.msg.MessageListener;
 import io.mopar.game.msg.*;
@@ -475,6 +476,12 @@ public class Player extends Mobile {
         messageListeners.forEach(listener -> listener.handle(message));
     }
 
+    public void giveExp(int skill, double amount) {
+        skills.giveExp(skill, amount);
+        Double d = Double.valueOf(skills.getExperience(skill));
+        send(new UpdateSkillMessage(skill, d.intValue(), skills.getStat(skill)));
+    }
+
     public void refreshSkills() {
         for(int i = 0; i < Skills.COUNT; i++) {
             send(new UpdateSkillMessage(i, Double.valueOf(skills.getExperience(i)).intValue(), skills.getStat(i)));
@@ -510,6 +517,15 @@ public class Player extends Mobile {
         profile.setY(getPosition().getY());
         profile.setPlane(getPosition().getPlane());
 
+        for(int i = 0; i < Skills.COUNT; i++) {
+            SkillModel skill = new SkillModel();
+            skill.setId(i);
+            skill.setStat(skills.getStat(i));
+            skill.setExperience(skills.getExperience(i));
+
+            profile.addSkill(skill);
+        }
+
         for(Entry<Integer, Inventory> entry : inventories.entrySet()) {
             Inventory inventory = entry.getValue();
 
@@ -532,5 +548,14 @@ public class Player extends Mobile {
         }
 
         return profile;
+    }
+
+    public SkillSet getSkills() {
+        return skills;
+    }
+
+    public void updateLocalNpcs(EntityList<NPC> npcs) {
+        scene.updateLocalNpcs(npcs, getPosition());
+        send(NpcSynchronizationMessage.create(this));
     }
 }

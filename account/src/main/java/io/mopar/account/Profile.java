@@ -29,6 +29,11 @@ public class Profile {
     private int plane;
 
     /**
+     * The skill models.
+     */
+    private List<SkillModel> skills = new ArrayList<>();
+
+    /**
      * The inventory models.
      */
     private List<InventoryModel> inventories = new ArrayList<>();
@@ -106,6 +111,22 @@ public class Profile {
      */
     public int getPlane() {
         return plane;
+    }
+
+    /**
+     *
+     * @param skill
+     */
+    public void addSkill(SkillModel skill) {
+        skills.add(skill);
+    }
+
+    /**
+     *
+     * @return
+     */
+    public List<SkillModel> getSkills() {
+        return skills;
     }
 
     /**

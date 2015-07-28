@@ -90,14 +90,15 @@ public class AmazonAccountServiceHandler implements AccountServiceHandler {
                         logger.info("Finished downloading profile from server; user: " + Base37.decode(request.getUid()));
 
                         try {
+                            // Read the file into memory and then decode the profile
                             byte[] bytes = Files.readAllBytes(path);
                             Profile profile = codec.decode(bytes);
 
                             LoadProfileResponse response = new LoadProfileResponse(LoadProfileResponse.OK);
                             response.setProfile(profile);
                             callback.call(response);
-                        } catch (IOException e) {
-                            logger.error("Encountered I/O exception while trying to decode profile", e);
+                        } catch (IOException ex) {
+                            logger.error("Encountered I/O exception while trying to decode profile", ex);
                             callback.call(new LoadProfileResponse(LoadProfileResponse.INTERNAL_ERROR));
                         }
                     }
@@ -149,7 +150,7 @@ public class AmazonAccountServiceHandler implements AccountServiceHandler {
                 @Override
                 public void progressChanged(ProgressEvent progressEvent) {
                     if(progressEvent.getEventType() == ProgressEventType.TRANSFER_COMPLETED_EVENT) {
-                        logger.info("Profile upload completed");
+                        logger.info("Profile upload completed, user: " + Base37.decode(request.getProfile().getUid()));
                         profiles.remove(profile.getUid());
                         callback.call(new SaveProfileResponse(SaveProfileResponse.OK));
                     }

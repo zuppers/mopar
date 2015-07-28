@@ -173,6 +173,12 @@
   },
 
   {
+    "id" : 194,
+    "name" : "obj_option_unk",
+    "length" : 6
+  },
+
+  {
     "id" : 215,
     "name" : "route_ground",
     "length" : -1

@@ -1,5 +1,7 @@
 package io.mopar.game;
 
+import io.mopar.account.InventoryModel;
+import io.mopar.account.ItemModel;
 import io.mopar.account.Profile;
 import io.mopar.account.ProfileSerializer;
 import io.mopar.core.*;
@@ -124,8 +126,10 @@ public class GameService extends Service {
 
                 // Every 5 minutes automatically save all of the players
                 if(world.getTime() % 500 == 0) {
-                    logger.info("Automatically saving player profiles");
-                    savePlayers();
+                    if(world.getAmountPlayers() > 0) {
+                        logger.info("Automatically saving player profiles");
+                        savePlayers();
+                    }
                 }
             }
         }
@@ -140,17 +144,15 @@ public class GameService extends Service {
     }
 
     public void savePlayers() {
-        if(world.getAmountPlayers() > 0) {
-            //Phaser phaser = new Phaser();
+        //Phaser phaser = new Phaser();
 
-            // Save all of the player in the game
-            //phaser.bulkRegister(world.getAmountPlayers());
-            for (Player player : world.getPlayers()) {
-                profileSerializer.save(player.toProfile(), (res) -> {}/*phaser.arrive()*/);
-            }
-
-            //phaser.arriveAndAwaitAdvance();
+        // Save all of the player in the game
+        //phaser.bulkRegister(world.getAmountPlayers());
+        for (Player player : world.getPlayers()) {
+            profileSerializer.save(player.toProfile(), (res) -> {}/*phaser.arrive()*/);
         }
+
+        //phaser.arriveAndAwaitAdvance();
     }
 
     /**
@@ -347,6 +349,13 @@ public class GameService extends Service {
         if(request.hasProfile()) {
             Profile profile = request.getProfile();
             player.setPosition(new Position(profile.getX(), profile.getY(), profile.getPlane()));
+
+            for(InventoryModel inventory : profile.getInventories()) {
+                Inventory inv = player.getInventory(inventory.getId());
+                for(ItemModel item : inventory.getItems()) {
+                    inv.set(item.getSlot(), new Item(item.getId(), item.getAmount()));
+                }
+            }
         }
 
         // Callback that the request was successful

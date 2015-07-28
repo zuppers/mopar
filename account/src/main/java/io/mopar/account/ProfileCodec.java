@@ -1,7 +1,7 @@
 package io.mopar.account;
 
 /**
- * Created by hadyn on 7/27/2015.
+ * @author Hadyn Fitzgerald
  */
 public interface ProfileCodec {
 
@@ -12,6 +12,7 @@ public interface ProfileCodec {
     Profile decode(byte[] bytes) throws MalformedProfileException;
 
     /**
+     * Encodes a profile into the profile file format.
      *
      * @param profile
      * @return

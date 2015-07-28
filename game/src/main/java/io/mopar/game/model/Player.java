@@ -1,11 +1,14 @@
 package io.mopar.game.model;
 
+import io.mopar.account.InventoryModel;
+import io.mopar.account.ItemModel;
 import io.mopar.account.Profile;
 import io.mopar.core.msg.Message;
 import io.mopar.core.msg.MessageListener;
 import io.mopar.game.msg.*;
 
 import java.util.*;
+import java.util.Map.Entry;
 
 /**
  * @author Hadyn Fitzgerald
@@ -492,10 +495,34 @@ public class Player extends Mobile {
     }
 
     public Profile toProfile() {
-        Profile profile = new Profile(username);
+        Profile profile = new Profile();
+        profile.setUid(username);
+
         profile.setX(getPosition().getX());
         profile.setY(getPosition().getY());
         profile.setPlane(getPosition().getPlane());
+
+        for(Entry<Integer, Inventory> entry : inventories.entrySet()) {
+            Inventory inventory = entry.getValue();
+
+            InventoryModel model = new InventoryModel();
+            model.setId(entry.getKey());
+
+            for(int i = 0; i < inventory.capacity(); i++) {
+                Item item = inventory.get(i);
+                if(item == null) continue;
+
+                ItemModel itemModel = new ItemModel();
+                itemModel.setId(item.getId());
+                itemModel.setAmount(item.getAmount());
+                itemModel.setSlot(i);
+
+                model.addItem(itemModel);
+            }
+
+            profile.addInventory(model);
+        }
+
         return profile;
     }
 }

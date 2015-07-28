@@ -167,13 +167,9 @@ public class MobileSceneGraph<T extends Mobile> {
             int id = node.getId();
 
             if (node.isRemoved()) {
-                // If the player was not viewable remove it from the set, since it is of no interest now
-                if (!isVisible(node.getId())) {
-                    activeIds.remove(node.getId());
-                    iterator.remove();
-                }
+                activeIds.remove(node.getId());
+                iterator.remove();
                 setState(id, STATE_REMOVED);
-                size--;
                 continue;
             }
 

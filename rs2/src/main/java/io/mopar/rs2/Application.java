@@ -265,13 +265,14 @@ public class Application {
         Application app = new Application();
         app.setAssetLoader(new StaticFileAssetLoader("rs2/asset"));
 
+        // Register the default codec initializer
+        app.register(new DefaultCodecInitializer());
+
         // Create a shutdown hook for when a stop is requested
         Runtime.getRuntime().addShutdownHook(new Thread(() -> {
             logger.info("Stop requested, shutting application down");
             app.shutdown();
         }));
-
-        app.register(new DefaultCodecInitializer());
 
         app.use(new FileApplicationService(FileServiceBuilder.create()
                 .provider(new DiskFileProvider(fileSystem))
@@ -282,23 +283,24 @@ public class Application {
         GameService game = GameServiceBuilder.create()
                 .assetLoader(new StaticFileAssetLoader("game/asset"))
                 .build();
-        game.eval("require 'bootstrap'", (res) -> {
-        });
+        game.eval("require 'bootstrap'", (res) -> {});
+        app.use(new GameApplicationService(game));
 
         AccountService accountService = new AccountService();
 
+        // Create the amazon simple db client
         AmazonSimpleDBAsync dbClient = new AmazonSimpleDBAsyncClient();
         dbClient.setRegion(Region.getRegion(Regions.US_EAST_1));
 
+        // Initialize the account service handler
         TransferManager transferManager = new TransferManager();
-
         accountService.setHandler(new AmazonAccountServiceHandler(dbClient, transferManager));
 
         app.use(new AccountApplicationService(accountService));
 
+        // Set the profile serializer
         game.setProfileSerializer(new ServiceProfileSerializer(accountService));
 
-        app.use(new GameApplicationService(game));
         app.start(40001);
     }
 }

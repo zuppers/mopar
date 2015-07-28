@@ -5,7 +5,7 @@ import io.mopar.game.model.Item;
 import io.mopar.game.model.Position;
 import io.mopar.game.model.Scene;
 import io.mopar.game.msg.*;
-import io.mopar.rs2.game.msg.InterfaceItemOptionMessage;
+import io.mopar.rs2.msg.game.InterfaceItemOptionMessage;
 import io.mopar.rs2.msg.MessageCodec;
 import io.mopar.rs2.msg.MessageCodecInitializer;
 import io.mopar.rs2.msg.game.*;

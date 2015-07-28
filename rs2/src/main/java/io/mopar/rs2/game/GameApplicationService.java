@@ -280,7 +280,7 @@ public class GameApplicationService extends ApplicationService<GameService> {
             session.setDispatcher(dispatcher);
 
             // TODO(sinisoul): Flesh this out more instead of using it as a testing platform
-            session.writeAndFlush(new ProfileMessage()).awaitUninterruptibly();
+            session.writeAndFlush(new ProfileMessage(res.getPlayer().getId())).awaitUninterruptibly();
 
             res.getPlayer().addMessageListener(msg -> session.writeAndFlush(msg));
 

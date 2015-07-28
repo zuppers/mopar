@@ -25,7 +25,9 @@ public class Profile {
      */
     private int plane;
 
-    public Profile() {}
+    public Profile(long uid) {
+        this.uid = uid;
+    }
 
     public void setUid(long uid) {
         this.uid = uid;

@@ -271,6 +271,7 @@ public class GameMessageCodecInitializer implements MessageCodecInitializer {
         codec.registerMessageEncoder(AccessOptionMessage.class, this::encodeAccessOptionsMessage);
         codec.registerMessageEncoder(PlaySongMessage.class, this::encodeSongMessage);
         codec.registerMessageEncoder(SetInterfaceTextMessage.class, this::encodeSetInterfaceTextMessage);
+        codec.registerMessageEncoder(UpdateSkillMessage.class, this::encodeUpdateSkillMessage);
 
         // Register the synchronization message encoders
         codec.registerMessageEncoder(PlayerSynchronizationMessage.class, new PlayerSynchronizationMessageEncoder());
@@ -516,6 +517,21 @@ public class GameMessageCodecInitializer implements MessageCodecInitializer {
         builder.writeIMEInt(message.getWidgetId() << 16 | message.getComponentId());
         builder.writeJstr(message.getText());
         builder.writeShortA(0);
+        return builder.build();
+    }
+
+    /**
+     *
+     * @param allocator
+     * @param outgoingPackets
+     * @param message
+     * @return
+     */
+    private Packet encodeUpdateSkillMessage(ByteBufAllocator allocator, PacketMetaList outgoingPackets, UpdateSkillMessage message) {
+        PacketBuilder builder = PacketBuilder.create(outgoingPackets.get("update_skill"), allocator);
+        builder.writeByteA(message.getStat());
+        builder.writeMEInt(message.getExperience());
+        builder.writeByte(message.getId());
         return builder.build();
     }
 }

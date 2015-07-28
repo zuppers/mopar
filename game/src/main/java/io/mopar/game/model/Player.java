@@ -55,6 +55,8 @@ public class Player extends Mobile {
      */
     private ChatMessage publicChatMessage;
 
+    private SkillSet skills = new SkillSet();
+
 
     /**
      * Constructs a new {@link Player};
@@ -471,6 +473,12 @@ public class Player extends Mobile {
      */
     public void send(Message message) {
         messageListeners.forEach(listener -> listener.handle(message));
+    }
+
+    public void refreshSkills() {
+        for(int i = 0; i < Skills.COUNT; i++) {
+            send(new UpdateSkillMessage(i, Double.valueOf(skills.getExperience(i)).intValue(), skills.getStat(i)));
+        }
     }
 
     /**

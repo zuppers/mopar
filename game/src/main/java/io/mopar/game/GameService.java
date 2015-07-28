@@ -539,6 +539,11 @@ public class GameService extends Service {
         callback.call(new ItemMenuActionResponse());
     }
 
+    /**
+     *
+     * @param request
+     * @param callback
+     */
     private void handleInterfaceItemMenuActionRequest(InterfaceItemMenuActionRequest request, Callback callback) {
         Player player = world.getPlayer(request.getPlayerId());
         if(player == null) {
@@ -643,6 +648,16 @@ public class GameService extends Service {
         callback.call(new GetWorldTimeResponse(world.getTime()));
     }
 
+    /**
+     *
+     * @param playerId
+     * @param widgetId
+     * @param componentId
+     * @param itemId
+     * @param slot
+     * @param option
+     * @param callback
+     */
     public void handleInterfaceItemMenuAction(int playerId, int widgetId, int componentId, int itemId, int slot, int option, Callback<InterfaceItemMenuActionResponse> callback) {
         submit(new InterfaceItemMenuActionRequest(playerId, widgetId, componentId, itemId, slot, option), callback);
     }

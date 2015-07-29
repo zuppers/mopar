@@ -176,7 +176,7 @@ public class Position {
      * @return The offset position.
      */
     public Position offset(int dx, int dy) {
-        return new Position(x + dx, y + dy);
+        return new Position(x + dx, y + dy, plane);
     }
 
     /**

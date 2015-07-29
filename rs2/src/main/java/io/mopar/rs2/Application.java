@@ -298,6 +298,8 @@ public class Application {
 
         app.use(new AccountApplicationService(accountService));
 
+        System.out.println(~0xfffbffff);
+
         // Set the profile serializer
         game.setProfileSerializer(new ServiceProfileSerializer(accountService));
 

@@ -9,6 +9,15 @@ local skills    = lazy('skills')
 
 --[[ ]]
 
+action:on_command('tele', command:for_admin(function(plr, cmd, args)
+    local x     = tonumber(args[1])
+    local y     = tonumber(args[2])
+    local plane = args[3] and tonumber(args[3]) or 0
+    plr:tele(x, y, plane)
+end))
+
+--[[ ]]
+
 action:on_command('givexp', command:for_admin(function(plr, cmd, args)
     local id        = tonumber(args[1])
     local amount    = tonumber(args[2])

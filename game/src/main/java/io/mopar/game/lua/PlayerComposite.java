@@ -2,6 +2,7 @@ package io.mopar.game.lua;
 
 import io.mopar.core.lua.Coerce;
 import io.mopar.game.model.Player;
+import io.mopar.game.model.Position;
 import org.luaj.vm2.LuaTable;
 import org.luaj.vm2.LuaValue;
 
@@ -228,6 +229,16 @@ public class PlayerComposite extends MobileComposite {
 
     public void play_song(int id) {
         player.playSong(id);
+    }
+
+    /**
+     *
+     * @param x
+     * @param y
+     * @param plane
+     */
+    public void tele(int x, int y, int plane) {
+        player.teleport(new Position(x, y, plane));
     }
 
     /**

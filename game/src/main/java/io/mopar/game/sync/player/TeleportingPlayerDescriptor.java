@@ -20,6 +20,7 @@ public class TeleportingPlayerDescriptor extends PlayerDescriptor {
      */
     public TeleportingPlayerDescriptor(Player player, Position relative) {
         super(player);
+        this.position = player.getPosition();
         this.relative = relative;
     }
 

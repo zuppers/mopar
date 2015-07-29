@@ -5,6 +5,7 @@ import com.google.gson.JsonParser;
 import io.mopar.account.res.LoginResponse;
 import io.mopar.core.asset.AssetLoader;
 import io.mopar.game.GameService;
+import io.mopar.game.model.Position;
 import io.mopar.game.msg.*;
 import io.mopar.game.res.NewPlayerResponse;
 import io.mopar.rs2.Application;

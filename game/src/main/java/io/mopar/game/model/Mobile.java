@@ -1,5 +1,7 @@
 package io.mopar.game.model;
 
+import javafx.geometry.Pos;
+
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -233,6 +235,16 @@ public class Mobile extends Entity {
     }
 
     /**
+     *
+     * @param position
+     */
+    public void teleport(Position position) {
+        setPosition(position);
+        teleporting = true;
+        clearSteps();
+    }
+
+    /**
      * Gets if the mobile is teleporting.
      *
      * @return The teleporting flag.
@@ -246,5 +258,6 @@ public class Mobile extends Entity {
      */
     public void reset() {
         moving = false;
+        teleporting = false;
     }
 }

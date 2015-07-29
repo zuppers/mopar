@@ -189,7 +189,7 @@ public class Position {
     public boolean within(Position position, int distance) {
         int dx = position.x - x;
         int dy = position.y - y;
-        return dx <= distance - 1 && dx >= -distance && dy <= distance - 1 && dy >= -distance;
+        return dx <= distance - 1 && dx >= -distance && dy <= distance - 1 && dy >= -distance && position.getPlane() == plane;
     }
 
     @Override

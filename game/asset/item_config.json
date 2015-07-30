@@ -6,6 +6,77 @@
   },
 
   {
+    "id": 74,
+    "name": "khazard_helmet",
+    "stackable": false,
+    "equipable": true,
+    "equipment_data": {
+      "type": 0,
+      "class": 81
+    }
+  },
+
+  {
+    "id": 75,
+    "name": "khazard_armor",
+    "stackable": false,
+    "equipable": true,
+    "equipment_data": {
+      "type": 4,
+      "class": 9
+    }
+  },
+  {
+    "id": 86,
+    "name": "pendant_of_lucien",
+    "stackable": false,
+    "equipable": true,
+    "equipment_data": {
+      "type": 2,
+      "class": -1
+    }
+  },
+  {
+    "id": 87,
+    "name": "armadyl_pendant",
+    "stackable": false,
+    "equipable": true,
+    "equipment_data": {
+      "type": 2,
+      "class": -1
+    }
+  },
+  {
+    "id": 88,
+    "name": "boots_of_lightness",
+    "stackable": false,
+    "equipable": true,
+    "equipment_data": {
+      "type": 10,
+      "class": -1
+    }
+  },
+  {
+    "id": 89,
+    "name": "boots_of_lightness",
+    "stackable": false,
+    "equipable": true,
+    "equipment_data": {
+      "type": 10,
+      "class": -1
+    }
+  },
+  {
+    "id": 278,
+    "name": "cattleprod",
+    "stackable": false,
+    "equipable": true,
+    "equipment_data": {
+      "type": 3,
+      "class": 0
+    }
+  },
+  {
     "id"        : 995,
     "name"      : "coins",
     "stackable" : true
@@ -87,6 +158,96 @@
     }
   },
   {
+    "id": 426,
+    "name": "priest_gown_top",
+    "stackable": false,
+    "equipable": true,
+    "equipment_data": {
+      "type": 4,
+      "class": 22
+    }
+  },
+  {
+    "id": 428,
+    "name": "priest_gown_bottom",
+    "stackable": false,
+    "equipable": true,
+    "equipment_data": {
+      "type": 7,
+      "class": -1
+    }
+  },
+  {
+    "id": 430,
+    "name": "doctors_gown",
+    "stackable": false,
+    "equipable": true,
+    "equipment_data": {
+      "type": 4,
+      "class": 22
+    }
+  },
+  {
+    "id": 538,
+    "name": "druids_robe_bottom",
+    "stackable": false,
+    "equipable": true,
+    "equipment_data": {
+      "type": 7,
+      "class": -1
+    }
+  },
+  {
+    "id": 540,
+    "name": "druids_robe_top",
+    "stackable": false,
+    "equipable": true,
+    "equipment_data": {
+      "type": 4,
+      "class": 22
+    }
+  },
+  {
+    "id": 542,
+    "name": "monks_robe_bottom",
+    "stackable": false,
+    "equipable": true,
+    "equipment_data": {
+      "type": 7,
+      "class": -1
+    }
+  },
+  {
+    "id": 544,
+    "name": "monks_robe_top",
+    "stackable": false,
+    "equipable": true,
+    "equipment_data": {
+      "type": 4,
+      "class": 22
+    }
+  },
+  {
+    "id": 546,
+    "name": "shade_robe_top",
+    "stackable": false,
+    "equipable": true,
+    "equipment_data": {
+      "type": 4,
+      "class": 22
+    }
+  },
+  {
+    "id": 548,
+    "name": "shade_robe_bottom",
+    "stackable": false,
+    "equipable": true,
+    "equipment_data": {
+      "type": 7,
+      "class": -1
+    }
+  },
+  {
     "id": 552,
     "name": "ghostspeak_amulet",
     "stackable": false,
@@ -94,6 +255,16 @@
     "equipment_data": {
       "type": 2,
       "class": -1
+    }
+  },
+  {
+    "id": 577,
+    "name": "wizard_robe",
+    "stackable": false,
+    "equipable": true,
+    "equipment_data": {
+      "type": 4,
+      "class": 22
     }
   },
   {
@@ -107,12 +278,82 @@
     }
   },
   {
+    "id": 581,
+    "name": "black_robe",
+    "stackable": false,
+    "equipable": true,
+    "equipment_data": {
+      "type": 4,
+      "class": 22
+    }
+  },
+  {
     "id": 589,
     "name": "gnome_amulet",
     "stackable": false,
     "equipable": true,
     "equipment_data": {
       "type": 2,
+      "class": -1
+    }
+  },
+  {
+    "id": 616,
+    "name": "beads_of_the_dead",
+    "stackable": false,
+    "equipable": true,
+    "equipment_data": {
+      "type": 2,
+      "class": -1
+    }
+  },
+  {
+    "id": 626,
+    "name": "pink_boots",
+    "stackable": false,
+    "equipable": true,
+    "equipment_data": {
+      "type": 10,
+      "class": -1
+    }
+  },
+  {
+    "id": 628,
+    "name": "green_boots",
+    "stackable": false,
+    "equipable": true,
+    "equipment_data": {
+      "type": 10,
+      "class": -1
+    }
+  },
+  {
+    "id": 630,
+    "name": "blue_boots",
+    "stackable": false,
+    "equipable": true,
+    "equipment_data": {
+      "type": 10,
+      "class": -1
+    }
+  },
+  {
+    "id": 632,
+    "name": "cream_boots",
+    "stackable": false,
+    "equipable": true,
+    "equipment_data": {
+      "type": 10,
+      "class": -1
+    }
+  },
+  {
+    "id": 634,
+    "name": "turquoise_boots",
+    "stackable": false,
+    "equipable": true,
+    "equipment_data": {
+      "type": 10,
       "class": -1
     }
   },
@@ -607,6 +848,17 @@
     }
   },
   {
+    "id": 1005,
+    "name": "white_apron",
+    "stackable": false,
+    "equipable": true,
+    "equipment_data": {
+      "type": 4,
+      "class": 21
+    }
+  },
+
+  {
     "id": 1007,
     "name": "cape",
     "stackable": false,
@@ -623,6 +875,36 @@
     "equipable": true,
     "equipment_data": {
       "type": 2,
+      "class": -1
+    }
+  },
+  {
+    "id": 1011,
+    "name": "blue_skirt",
+    "stackable": false,
+    "equipable": true,
+    "equipment_data": {
+      "type": 7,
+      "class": -1
+    }
+  },
+  {
+    "id": 1013,
+    "name": "pink_skirt",
+    "stackable": false,
+    "equipable": true,
+    "equipment_data": {
+      "type": 7,
+      "class": -1
+    }
+  },
+  {
+    "id": 1015,
+    "name": "black_skirt",
+    "stackable": false,
+    "equipable": true,
+    "equipment_data": {
+      "type": 7,
       "class": -1
     }
   },
@@ -667,6 +949,16 @@
     }
   },
   {
+    "id": 1025,
+    "name": "eyepatch",
+    "stackable": false,
+    "equipable": true,
+    "equipment_data": {
+      "type": 0,
+      "class": 80
+    }
+  },
+  {
     "id": 1027,
     "name": "cape_4",
     "stackable": false,
@@ -694,6 +986,36 @@
     "equipment_data": {
       "type": 1,
       "class": -1
+    }
+  },
+  {
+    "id": 1033,
+    "name": "zamorak_robe_bottom",
+    "stackable": false,
+    "equipable": true,
+    "equipment_data": {
+      "type": 7,
+      "class": -1
+    }
+  },
+  {
+    "id": 1035,
+    "name": "zamorak_robe",
+    "stackable": false,
+    "equipable": true,
+    "equipment_data": {
+      "type": 4,
+      "class": 22
+    }
+  },
+  {
+    "id": 1037,
+    "name": "bunny_ears",
+    "stackable": false,
+    "equipable": true,
+    "equipment_data": {
+      "type": 0,
+      "class": 80
     }
   },
   {
@@ -764,6 +1086,16 @@
     "equipment_data": {
       "type": 0,
       "class": 80
+    }
+  },
+  {
+    "id": 1052,
+    "name": "cape_of_legends",
+    "stackable": false,
+    "equipable": true,
+    "equipment_data": {
+      "type": 1,
+      "class": -1
     }
   },
   {
@@ -969,6 +1301,36 @@
   {
     "id": 1093,
     "name": "rune_plateskirt",
+    "stackable": false,
+    "equipable": true,
+    "equipment_data": {
+      "type": 7,
+      "class": -1
+    }
+  },
+  {
+    "id": 1095,
+    "name": "leather_chaps",
+    "stackable": false,
+    "equipable": true,
+    "equipment_data": {
+      "type": 7,
+      "class": -1
+    }
+  },
+  {
+    "id": 1097,
+    "name": "studded_chaps",
+    "stackable": false,
+    "equipable": true,
+    "equipment_data": {
+      "type": 7,
+      "class": -1
+    }
+  },
+  {
+    "id": 1099,
+    "name": "green_dhide_chaps",
     "stackable": false,
     "equipable": true,
     "equipment_data": {
@@ -1299,6 +1661,26 @@
   {
     "id": 1165,
     "name": "black_full_helm",
+    "stackable": false,
+    "equipable": true,
+    "equipment_data": {
+      "type": 0,
+      "class": 82
+    }
+  },
+  {
+    "id": 1167,
+    "name": "leather_cowl",
+    "stackable": false,
+    "equipable": true,
+    "equipment_data": {
+      "type": 0,
+      "class": 82
+    }
+  },
+  {
+    "id": 1169,
+    "name": "coif",
     "stackable": false,
     "equipable": true,
     "equipment_data": {
@@ -1937,6 +2319,16 @@
     }
   },
   {
+    "id": 1575,
+    "name": "cat_training_medal",
+    "stackable": false,
+    "equipable": true,
+    "equipment_data": {
+      "type": 2,
+      "class": -1
+    }
+  },
+  {
     "id": 1580,
     "name": "ice_gloves",
     "stackable": false,
@@ -2167,6 +2559,16 @@
     }
   },
   {
+    "id": 1702,
+    "name": "dragonstone_ammy",
+    "stackable": false,
+    "equipable": true,
+    "equipment_data": {
+      "type": 2,
+      "class": -1
+    }
+  },
+  {
     "id": 1704,
     "name": "amulet_of_glory",
     "stackable": false,
@@ -2217,6 +2619,46 @@
     }
   },
   {
+    "id": 1716,
+    "name": "unblessed_symbol",
+    "stackable": false,
+    "equipable": true,
+    "equipment_data": {
+      "type": 2,
+      "class": -1
+    }
+  },
+  {
+    "id": 1718,
+    "name": "holy_symbol",
+    "stackable": false,
+    "equipable": true,
+    "equipment_data": {
+      "type": 2,
+      "class": -1
+    }
+  },
+  {
+    "id": 1722,
+    "name": "unpowered_symbol",
+    "stackable": false,
+    "equipable": true,
+    "equipment_data": {
+      "type": 2,
+      "class": -1
+    }
+  },
+  {
+    "id": 1724,
+    "name": "unholy_symbol",
+    "stackable": false,
+    "equipable": true,
+    "equipment_data": {
+      "type": 2,
+      "class": -1
+    }
+  },
+  {
     "id": 1725,
     "name": "amulet_of_strength",
     "stackable": false,
@@ -2257,6 +2699,16 @@
     }
   },
   {
+    "id": 1757,
+    "name": "brown_apron",
+    "stackable": false,
+    "equipable": true,
+    "equipment_data": {
+      "type": 4,
+      "class": 21
+    }
+  },
+  {
     "id": 1796,
     "name": "silver_necklace",
     "stackable": false,
@@ -2287,6 +2739,16 @@
     }
   },
   {
+    "id": 1835,
+    "name": "desert_robe",
+    "stackable": false,
+    "equipable": true,
+    "equipment_data": {
+      "type": 7,
+      "class": -1
+    }
+  },
+  {
     "id": 1837,
     "name": "desert_boots",
     "stackable": false,
@@ -2304,6 +2766,16 @@
     "equipment_data": {
       "type": 4,
       "class": 22
+    }
+  },
+  {
+    "id": 1845,
+    "name": "slave_robes",
+    "stackable": false,
+    "equipable": true,
+    "equipment_data": {
+      "type": 7,
+      "class": -1
     }
   },
   {
@@ -2333,6 +2805,26 @@
     "equipable": true,
     "equipment_data": {
       "type": 12,
+      "class": -1
+    }
+  },
+  {
+    "id": 2405,
+    "name": "carnillean_armour",
+    "stackable": false,
+    "equipable": true,
+    "equipment_data": {
+      "type": 4,
+      "class": 20
+    }
+  },
+  {
+    "id": 2406,
+    "name": "hazeels_mark",
+    "stackable": false,
+    "equipable": true,
+    "equipment_data": {
+      "type": 2,
       "class": -1
     }
   },
@@ -2427,6 +2919,36 @@
     }
   },
   {
+    "id": 2493,
+    "name": "blue_dhide_chaps",
+    "stackable": false,
+    "equipable": true,
+    "equipment_data": {
+      "type": 7,
+      "class": -1
+    }
+  },
+  {
+    "id": 2495,
+    "name": "red_dhide_chaps",
+    "stackable": false,
+    "equipable": true,
+    "equipment_data": {
+      "type": 7,
+      "class": -1
+    }
+  },
+  {
+    "id": 2497,
+    "name": "black_dhide_chaps",
+    "stackable": false,
+    "equipable": true,
+    "equipment_data": {
+      "type": 7,
+      "class": -1
+    }
+  },
+  {
     "id": 2499,
     "name": "blue_dhide_body",
     "stackable": false,
@@ -2449,6 +2971,16 @@
   {
     "id": 2503,
     "name": "black_dhide_body",
+    "stackable": false,
+    "equipable": true,
+    "equipment_data": {
+      "type": 4,
+      "class": 20
+    }
+  },
+  {
+    "id": 2513,
+    "name": "dragon_chainbody",
     "stackable": false,
     "equipable": true,
     "equipment_data": {
@@ -2607,6 +3139,246 @@
     }
   },
   {
+    "id": 2583,
+    "name": "black_platebody_t",
+    "stackable": false,
+    "equipable": true,
+    "equipment_data": {
+      "type": 4,
+      "class": 20
+    }
+  },
+  {
+    "id": 2585,
+    "name": "black_platelegs_t",
+    "stackable": false,
+    "equipable": true,
+    "equipment_data": {
+      "type": 7,
+      "class": -1
+    }
+  },
+  {
+    "id": 2587,
+    "name": "black_full_helm_t",
+    "stackable": false,
+    "equipable": true,
+    "equipment_data": {
+      "type": 0,
+      "class": 82
+    }
+  },
+  {
+    "id": 2589,
+    "name": "black_kiteshield_t",
+    "stackable": false,
+    "equipable": true,
+    "equipment_data": {
+      "type": 5,
+      "class": -1
+    }
+  },
+  {
+    "id": 2591,
+    "name": "black_platebody_g",
+    "stackable": false,
+    "equipable": true,
+    "equipment_data": {
+      "type": 4,
+      "class": 20
+    }
+  },
+  {
+    "id": 2593,
+    "name": "black_platelegs_g",
+    "stackable": false,
+    "equipable": true,
+    "equipment_data": {
+      "type": 7,
+      "class": -1
+    }
+  },
+  {
+    "id": 2595,
+    "name": "black_full_helm_g",
+    "stackable": false,
+    "equipable": true,
+    "equipment_data": {
+      "type": 0,
+      "class": 82
+    }
+  },
+  {
+    "id": 2597,
+    "name": "black_kiteshield_g",
+    "stackable": false,
+    "equipable": true,
+    "equipment_data": {
+      "type": 5,
+      "class": -1
+    }
+  },
+  {
+    "id": 2599,
+    "name": "adam_platebody_t",
+    "stackable": false,
+    "equipable": true,
+    "equipment_data": {
+      "type": 4,
+      "class": 20
+    }
+  },
+  {
+    "id": 2601,
+    "name": "adam_platelegs_t",
+    "stackable": false,
+    "equipable": true,
+    "equipment_data": {
+      "type": 7,
+      "class": -1
+    }
+  },
+  {
+    "id": 2603,
+    "name": "adam_kiteshield_t",
+    "stackable": false,
+    "equipable": true,
+    "equipment_data": {
+      "type": 5,
+      "class": -1
+    }
+  },
+  {
+    "id": 2605,
+    "name": "adam_full_helm_t",
+    "stackable": false,
+    "equipable": true,
+    "equipment_data": {
+      "type": 0,
+      "class": 82
+    }
+  },
+  {
+    "id": 2607,
+    "name": "adam_platebody_g",
+    "stackable": false,
+    "equipable": true,
+    "equipment_data": {
+      "type": 4,
+      "class": 20
+    }
+  },
+  {
+    "id": 2609,
+    "name": "adam_platelegs_g",
+    "stackable": false,
+    "equipable": true,
+    "equipment_data": {
+      "type": 7,
+      "class": -1
+    }
+  },
+  {
+    "id": 2611,
+    "name": "adam_kiteshield_g",
+    "stackable": false,
+    "equipable": true,
+    "equipment_data": {
+      "type": 5,
+      "class": -1
+    }
+  },
+  {
+    "id": 2613,
+    "name": "adam_full_helm_g",
+    "stackable": false,
+    "equipable": true,
+    "equipment_data": {
+      "type": 0,
+      "class": 82
+    }
+  },
+  {
+    "id": 2615,
+    "name": "rune_platebody_g",
+    "stackable": false,
+    "equipable": true,
+    "equipment_data": {
+      "type": 4,
+      "class": 20
+    }
+  },
+  {
+    "id": 2617,
+    "name": "rune_platelegs_g",
+    "stackable": false,
+    "equipable": true,
+    "equipment_data": {
+      "type": 7,
+      "class": -1
+    }
+  },
+  {
+    "id": 2619,
+    "name": "rune_full_helm_g",
+    "stackable": false,
+    "equipable": true,
+    "equipment_data": {
+      "type": 0,
+      "class": 82
+    }
+  },
+  {
+    "id": 2621,
+    "name": "rune_kiteshield_g",
+    "stackable": false,
+    "equipable": true,
+    "equipment_data": {
+      "type": 5,
+      "class": -1
+    }
+  },
+  {
+    "id": 2623,
+    "name": "rune_platebody_t",
+    "stackable": false,
+    "equipable": true,
+    "equipment_data": {
+      "type": 4,
+      "class": 20
+    }
+  },
+  {
+    "id": 2625,
+    "name": "rune_platelegs_t",
+    "stackable": false,
+    "equipable": true,
+    "equipment_data": {
+      "type": 7,
+      "class": -1
+    }
+  },
+  {
+    "id": 2627,
+    "name": "rune_full_helm_t",
+    "stackable": false,
+    "equipable": true,
+    "equipment_data": {
+      "type": 0,
+      "class": 82
+    }
+  },
+  {
+    "id": 2629,
+    "name": "rune_kiteshield_t",
+    "stackable": false,
+    "equipable": true,
+    "equipment_data": {
+      "type": 5,
+      "class": -1
+    }
+  },
+  {
     "id": 2631,
     "name": "highwayman_mask",
     "stackable": false,
@@ -2614,6 +3386,96 @@
     "equipment_data": {
       "type": 0,
       "class": 82
+    }
+  },
+  {
+    "id": 2633,
+    "name": "blue_beret",
+    "stackable": false,
+    "equipable": true,
+    "equipment_data": {
+      "type": 0,
+      "class": 80
+    }
+  },
+  {
+    "id": 2635,
+    "name": "black_beret",
+    "stackable": false,
+    "equipable": true,
+    "equipment_data": {
+      "type": 0,
+      "class": 80
+    }
+  },
+  {
+    "id": 2637,
+    "name": "white_beret",
+    "stackable": false,
+    "equipable": true,
+    "equipment_data": {
+      "type": 0,
+      "class": 80
+    }
+  },
+  {
+    "id": 2639,
+    "name": "tan_cavaliert",
+    "stackable": false,
+    "equipable": true,
+    "equipment_data": {
+      "type": 0,
+      "class": 80
+    }
+  },
+  {
+    "id": 2641,
+    "name": "dark_cavaliert",
+    "stackable": false,
+    "equipable": true,
+    "equipment_data": {
+      "type": 0,
+      "class": 80
+    }
+  },
+  {
+    "id": 2643,
+    "name": "black_cavaliert",
+    "stackable": false,
+    "equipable": true,
+    "equipment_data": {
+      "type": 0,
+      "class": 80
+    }
+  },
+  {
+    "id": 2645,
+    "name": "red_headband",
+    "stackable": false,
+    "equipable": true,
+    "equipment_data": {
+      "type": 0,
+      "class": 80
+    }
+  },
+  {
+    "id": 2647,
+    "name": "black_headband",
+    "stackable": false,
+    "equipable": true,
+    "equipment_data": {
+      "type": 0,
+      "class": 80
+    }
+  },
+  {
+    "id": 2649,
+    "name": "brown_headband",
+    "stackable": false,
+    "equipable": true,
+    "equipment_data": {
+      "type": 0,
+      "class": 80
     }
   },
   {
@@ -2757,6 +3619,16 @@
     }
   },
   {
+    "id": 2894,
+    "name": "boots_5",
+    "stackable": false,
+    "equipable": true,
+    "equipment_data": {
+      "type": 10,
+      "class": -1
+    }
+  },
+  {
     "id": 2896,
     "name": "robe_top_5",
     "stackable": false,
@@ -2784,6 +3656,26 @@
     "equipment_data": {
       "type": 0,
       "class": 80
+    }
+  },
+  {
+    "id": 2902,
+    "name": "gloves_5",
+    "stackable": false,
+    "equipable": true,
+    "equipment_data": {
+      "type": 9,
+      "class": -1
+    }
+  },
+  {
+    "id": 2904,
+    "name": "boots_6",
+    "stackable": false,
+    "equipable": true,
+    "equipment_data": {
+      "type": 10,
+      "class": -1
     }
   },
   {
@@ -2817,6 +3709,26 @@
     }
   },
   {
+    "id": 2912,
+    "name": "gloves_6",
+    "stackable": false,
+    "equipable": true,
+    "equipment_data": {
+      "type": 9,
+      "class": -1
+    }
+  },
+  {
+    "id": 2914,
+    "name": "boots_7",
+    "stackable": false,
+    "equipable": true,
+    "equipment_data": {
+      "type": 10,
+      "class": -1
+    }
+  },
+  {
     "id": 2916,
     "name": "robe_top_7",
     "stackable": false,
@@ -2844,6 +3756,26 @@
     "equipment_data": {
       "type": 0,
       "class": 80
+    }
+  },
+  {
+    "id": 2922,
+    "name": "gloves_7",
+    "stackable": false,
+    "equipable": true,
+    "equipment_data": {
+      "type": 9,
+      "class": -1
+    }
+  },
+  {
+    "id": 2924,
+    "name": "boots_8",
+    "stackable": false,
+    "equipable": true,
+    "equipment_data": {
+      "type": 10,
+      "class": -1
     }
   },
   {
@@ -2877,6 +3809,26 @@
     }
   },
   {
+    "id": 2932,
+    "name": "gloves_8",
+    "stackable": false,
+    "equipable": true,
+    "equipment_data": {
+      "type": 9,
+      "class": -1
+    }
+  },
+  {
+    "id": 2934,
+    "name": "boots_9",
+    "stackable": false,
+    "equipable": true,
+    "equipment_data": {
+      "type": 10,
+      "class": -1
+    }
+  },
+  {
     "id": 2936,
     "name": "robe_top_9",
     "stackable": false,
@@ -2904,6 +3856,16 @@
     "equipment_data": {
       "type": 0,
       "class": 80
+    }
+  },
+  {
+    "id": 2942,
+    "name": "gloves_9",
+    "stackable": false,
+    "equipable": true,
+    "equipment_data": {
+      "type": 9,
+      "class": -1
     }
   },
   {
@@ -3087,6 +4049,16 @@
     }
   },
   {
+    "id": 2997,
+    "name": "pirates_hook",
+    "stackable": false,
+    "equipable": true,
+    "equipment_data": {
+      "type": 9,
+      "class": -1
+    }
+  },
+  {
     "id": 3054,
     "name": "mystic_lava_staff",
     "stackable": false,
@@ -3253,7 +4225,7 @@
     "equipable": true,
     "equipment_data": {
       "type": 4,
-      "class": 21
+      "class": 20
     }
   },
   {
@@ -3337,6 +4309,106 @@
     }
   },
   {
+    "id": 3208,
+    "name": "crystal_pendant",
+    "stackable": false,
+    "equipable": true,
+    "equipment_data": {
+      "type": 2,
+      "class": -1
+    }
+  },
+  {
+    "id": 3327,
+    "name": "myre_snelm_1",
+    "stackable": false,
+    "equipable": true,
+    "equipment_data": {
+      "type": 0,
+      "class": 82
+    }
+  },
+  {
+    "id": 3329,
+    "name": "blood_n_tar_snelm_1",
+    "stackable": false,
+    "equipable": true,
+    "equipment_data": {
+      "type": 0,
+      "class": 82
+    }
+  },
+  {
+    "id": 3331,
+    "name": "ochre_snelm_1",
+    "stackable": false,
+    "equipable": true,
+    "equipment_data": {
+      "type": 0,
+      "class": 82
+    }
+  },
+  {
+    "id": 3333,
+    "name": "bruise_blue_snelm_1",
+    "stackable": false,
+    "equipable": true,
+    "equipment_data": {
+      "type": 0,
+      "class": 82
+    }
+  },
+  {
+    "id": 3335,
+    "name": "broken_bark_snelm_1",
+    "stackable": false,
+    "equipable": true,
+    "equipment_data": {
+      "type": 0,
+      "class": 82
+    }
+  },
+  {
+    "id": 3337,
+    "name": "myre_snelm_2",
+    "stackable": false,
+    "equipable": true,
+    "equipment_data": {
+      "type": 0,
+      "class": 82
+    }
+  },
+  {
+    "id": 3339,
+    "name": "blood_n_tar_snelm_2",
+    "stackable": false,
+    "equipable": true,
+    "equipment_data": {
+      "type": 0,
+      "class": 82
+    }
+  },
+  {
+    "id": 3341,
+    "name": "ochre_snelm_2",
+    "stackable": false,
+    "equipable": true,
+    "equipment_data": {
+      "type": 0,
+      "class": 82
+    }
+  },
+  {
+    "id": 3343,
+    "name": "bruise_blue_snelm_2",
+    "stackable": false,
+    "equipable": true,
+    "equipment_data": {
+      "type": 0,
+      "class": 82
+    }
+  },
+  {
     "id": 3387,
     "name": "splitbark_body",
     "stackable": false,
@@ -3373,6 +4445,66 @@
     "equipable": true,
     "equipment_data": {
       "type": 10,
+      "class": -1
+    }
+  },
+  {
+    "id": 3472,
+    "name": "black_plateskirt_t",
+    "stackable": false,
+    "equipable": true,
+    "equipment_data": {
+      "type": 7,
+      "class": -1
+    }
+  },
+  {
+    "id": 3473,
+    "name": "black_plateskirt_g",
+    "stackable": false,
+    "equipable": true,
+    "equipment_data": {
+      "type": 7,
+      "class": -1
+    }
+  },
+  {
+    "id": 3474,
+    "name": "adam_plateskirt_t",
+    "stackable": false,
+    "equipable": true,
+    "equipment_data": {
+      "type": 7,
+      "class": -1
+    }
+  },
+  {
+    "id": 3475,
+    "name": "adam_plateskirt_g",
+    "stackable": false,
+    "equipable": true,
+    "equipment_data": {
+      "type": 7,
+      "class": -1
+    }
+  },
+  {
+    "id": 3476,
+    "name": "rune_plateskirt_g",
+    "stackable": false,
+    "equipable": true,
+    "equipment_data": {
+      "type": 7,
+      "class": -1
+    }
+  },
+  {
+    "id": 3477,
+    "name": "rune_plateskirt_t",
+    "stackable": false,
+    "equipable": true,
+    "equipment_data": {
+      "type": 7,
       "class": -1
     }
   },
@@ -3454,6 +4586,26 @@
     "equipment_data": {
       "type": 5,
       "class": -1
+    }
+  },
+  {
+    "id": 3748,
+    "name": "fremennik_helm",
+    "stackable": false,
+    "equipable": true,
+    "equipment_data": {
+      "type": 0,
+      "class": 80
+    }
+  },
+  {
+    "id": 3749,
+    "name": "archer_helm",
+    "stackable": false,
+    "equipable": true,
+    "equipment_data": {
+      "type": 0,
+      "class": 80
     }
   },
   {

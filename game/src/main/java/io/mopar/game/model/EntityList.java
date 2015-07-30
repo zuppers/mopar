@@ -173,7 +173,7 @@ public class EntityList<T extends Entity> implements Iterable<T> {
      * @return The id or <code>-1</code> if there is no space left in the list.
      */
     private int getNextId() {
-        for(int i = 0; i < entities.length; i++) {
+        for(int i = 1; i < entities.length; i++) {
             if(entities[i] == null) {
                 return i;
             }

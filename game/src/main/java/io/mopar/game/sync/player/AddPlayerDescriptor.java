@@ -2,6 +2,7 @@ package io.mopar.game.sync.player;
 
 import io.mopar.game.model.Player;
 import io.mopar.game.model.Position;
+import io.mopar.game.model.Direction;
 import io.mopar.game.model.Step;
 import io.mopar.game.sync.PlayerDescriptor;
 import io.mopar.game.sync.block.AppearanceUpdateBlock;
@@ -42,7 +43,7 @@ public class AddPlayerDescriptor extends PlayerDescriptor {
         this.relative = relative;
         lastStep = player.getLastStep();
         if(lastStep == null) {
-            lastStep = Step.NORTH;
+            lastStep = new Step(Direction.NORTH);
         }
 
         if(!hasUpdateBlock(AppearanceUpdateBlock.class)) {

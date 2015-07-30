@@ -37,7 +37,7 @@ public class Route {
             List<Step> steps = new ArrayList<>();
             for(int i = 0; i < max; i++) {
 
-                steps.add(Step.forVector(dx, dy));
+                steps.add(new Step(Direction.forVector(dx, dy)));
 
                 if(dx > 0) {
                     dx--;

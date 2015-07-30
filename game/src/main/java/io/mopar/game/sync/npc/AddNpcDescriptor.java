@@ -1,12 +1,10 @@
 package io.mopar.game.sync.npc;
 
 import io.mopar.game.model.NPC;
-import io.mopar.game.model.Player;
 import io.mopar.game.model.Position;
+import io.mopar.game.model.Direction;
 import io.mopar.game.model.Step;
 import io.mopar.game.sync.NpcDescriptor;
-import io.mopar.game.sync.PlayerDescriptor;
-import io.mopar.game.sync.block.AppearanceUpdateBlock;
 
 /**
  * @author Hadyn Fitzgerald
@@ -46,7 +44,7 @@ public class AddNpcDescriptor extends NpcDescriptor {
         lastStep = npc.getLastStep();
         this.type = npc.getType();
         if(lastStep == null) {
-            lastStep = Step.NORTH;
+            lastStep = new Step(Direction.NORTH);
         }
     }
 

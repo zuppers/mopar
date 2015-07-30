@@ -253,6 +253,21 @@ public class GameMessageCodecInitializer implements MessageCodecInitializer {
         return new InterfaceItemOptionMessage(widgetId, componentId, itemId, slot, 1);
     }
 
+    /**
+     *
+     * @param packet
+     * @return
+     */
+    private LocaleOptionMessage decodeLocaleOptionOneMessage(Packet packet) {
+        ByteBuf buf = packet.getBuffer();
+
+        int ukn = readLEShort(buf);
+        int a = readShortA(buf);
+        int b = buf.readUnsignedShort();
+
+        return null;
+    }
+
 
     /**
      * Registers all of the message encoders.

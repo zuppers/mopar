@@ -1,7 +1,7 @@
 package io.mopar.rs2.game;
 
-import io.mopar.game.model.Appearance;
 import io.mopar.game.model.Position;
+import io.mopar.game.model.Direction;
 import io.mopar.game.model.Step;
 import io.mopar.game.msg.ChatMessage;
 import io.mopar.game.msg.PlayerSynchronizationMessage;

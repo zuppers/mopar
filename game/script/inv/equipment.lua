@@ -70,7 +70,8 @@ equipment.two_handed_weapons = {
 
 -- Full headwear
 equipment.full_headwear = {
-    equipment.full_helm
+    equipment.full_helm,
+    equipment.medium_helm
 }
 
 -- Full bodywear
@@ -106,11 +107,15 @@ function equipment:equip(plr, slot)
     -- Check to see if the equipment covers the players head
     if type == equipment.head and equipment:is_full_head(item:id()) then
         plr:set_feature_visible(identity.head, false)
+    else
+        plr:set_feature_visible(identity.head, true)
     end
 
     -- Check to see if the equipment covers the players body
     if type == equipment.body and equipment:is_full_body(item:id()) then
         plr:set_feature_visible(identity.arms, false)
+    else
+        plr:set_feature_visible(identity.arms, true)
     end
 
     -- Swap the requested items from the backpack to the equipment

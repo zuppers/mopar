@@ -3,6 +3,8 @@ package io.mopar.game.model;
 import java.io.DataInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * @author Hadyn Fitzgerald
@@ -24,6 +26,11 @@ public class Region {
      * The y coordinate.
      */
     private int y;
+
+    /**
+     *
+     */
+    private Map<Integer, Locale> locales = new HashMap<>();
 
     /**
      * The traversal maps.
@@ -94,12 +101,19 @@ public class Region {
         while((chk = dis.readUnsignedByte()) != chk_EOF) {
             switch (chk) {
                 case chk_LOCALE: {
-                    // 16
-                    // 6 + 6 + 2
-                    // 10
                     int type    = dis.readUnsignedShort();
+
                     int loc     = dis.readUnsignedShort();
+                    int x = loc >> 6 & 0x3f;
+                    int y = loc & 0x3f;
+                    int p = loc >> 12;
+
                     int ori     = dis.readUnsignedByte();
+                    int t = ori >> 2;
+                    int r = ori & 0x3;
+
+                    int h = t << 14 | x << 8L | y << 2L | p;
+                    locales.put(h, new Locale(type, r));
                 }
                 break;
 

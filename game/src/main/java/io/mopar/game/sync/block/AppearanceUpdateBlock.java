@@ -42,6 +42,10 @@ public class AppearanceUpdateBlock extends UpdateBlock {
                 block.setNecklaceId(inventory.getId(Equipment.NECK));
             }
 
+            if(!inventory.empty(Equipment.HANDS)) {
+                block.setGlovesId(inventory.getId(Equipment.HANDS));
+            }
+
             if(!inventory.empty(Equipment.WEAPON)) {
                 block.setWeaponId(inventory.getId(Equipment.WEAPON));
             }

@@ -46,17 +46,21 @@ public class World {
      */
     private StateBindings stateHandlers = new StateBindings();
 
+
+    /**
+     *
+     */
+    private RegionSet regions = new RegionSet();
+
     /**
      * The current time.
      */
     private int time;
 
-    public World() {
-        NPC npc = new NPC();
-        npc.setType(81);
-        npc.setPosition(new Position(3222, 3222));
-        npcs.add(npc);
-    }
+    /**
+     * Constructs a new {@link World};
+     */
+    public World() {}
 
     /**
      * Adds a player to the world.
@@ -163,6 +167,8 @@ public class World {
         for(Player player : players) {
             player.reset();
         }
+
+        regions.update();
     }
 
     /**
@@ -199,11 +205,19 @@ public class World {
             int steps = mobile.isRunning() ? 2 : 1;
             while(steps-- > 0 && mobile.hasSteps()) {
                 Step step = mobile.nextStep();
-                mobile.setPosition(current = current.offset(step.asVector()));
-                mobile.addStepRecord(new StepRecord(step, time));
-            }
 
-            mobile.setMoving(true);
+                // If the mobile is clipped then check if the next step is traversable
+                if(mobile.isClipped() && !regions.isTraversable(current, TraversalMap.TRAVERSE_WALKING, step.getDirection())) {
+                    mobile.clearSteps();
+                    break;
+                }
+
+                mobile.setPosition(current = current.offset(step.asVector()));
+                mobile.recordStep(step);
+                step.setTime(time);
+
+                mobile.setMoving(true);
+            }
         }
     }
 
@@ -222,5 +236,13 @@ public class World {
 
     public int getAmountPlayers() {
         return players.size();
+    }
+
+    /**
+     *
+     * @return
+     */
+    public RegionSet getRegions() {
+        return regions;
     }
 }

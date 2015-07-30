@@ -154,7 +154,23 @@ public class Position {
      * @return the region y.
      */
     public int getRegionY() {
-        return x >> 6;
+        return y >> 6;
+    }
+
+    /**
+     *
+     * @return
+     */
+    public int getLocalRegionX() {
+        return x - (getRegionX() << 6);
+    }
+
+    /**
+     *
+     * @return
+     */
+    public int getLocalRegionY() {
+        return y - (getRegionY() << 6);
     }
 
 

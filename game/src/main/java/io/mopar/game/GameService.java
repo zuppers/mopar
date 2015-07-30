@@ -82,6 +82,8 @@ public class GameService extends Service {
      * The current loop cycle.
      */
     private int loopCycle = 0;
+
+
     private ProfileSerializer profileSerializer;
 
     /**
@@ -108,6 +110,9 @@ public class GameService extends Service {
     public void setup() {
         initScriptEngine();
         registerRequestHandlers();
+
+        // TODO: Better way of doing this?
+        world.getRegions().setLoader(new AssetRegionLoader(assetLoader));
 
         // Reset the execution timer
         timer.reset();

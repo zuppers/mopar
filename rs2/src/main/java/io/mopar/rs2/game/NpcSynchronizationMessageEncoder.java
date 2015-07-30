@@ -1,5 +1,6 @@
 package io.mopar.rs2.game;
 
+import io.mopar.game.model.Direction;
 import io.mopar.game.model.Step;
 import io.mopar.game.msg.NpcSynchronizationMessage;
 import io.mopar.game.sync.NpcDescriptor;

@@ -1,7 +1,5 @@
 package io.mopar.game.model;
 
-import javafx.geometry.Pos;
-
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -28,7 +26,7 @@ public class Mobile extends Entity {
     /**
      * The previous steps.
      */
-    private Deque<StepRecord> previousSteps = new ArrayDeque<>(PREVIOUS_STEP_CAPACITY);
+    private Deque<Step> previousSteps = new ArrayDeque<>();
 
     /**
      * Flag for clipped movement.
@@ -123,13 +121,13 @@ public class Mobile extends Entity {
     /**
      * Adds a step
      *
-     * @param record
+     * @param step
      */
-    public void addStepRecord(StepRecord record) {
+    public void recordStep(Step step) {
         if(previousSteps.size() == PREVIOUS_STEP_CAPACITY) {
             previousSteps.remove();
         }
-        previousSteps.addLast(record);
+        previousSteps.addLast(step);
     }
 
     /**
@@ -141,8 +139,8 @@ public class Mobile extends Entity {
         if(previousSteps.isEmpty()) {
             return null;
         }
-        StepRecord record = previousSteps.getLast();
-        return record.getStep();
+        Step record = previousSteps.getLast();
+        return record;
     }
 
     /**
@@ -153,15 +151,15 @@ public class Mobile extends Entity {
     public Queue<Step> getRecentSteps() {
         Deque<Step> steps = new ArrayDeque<>();
 
-        StepRecord previous = null;
-        for(Iterator<StepRecord> i = previousSteps.descendingIterator(); i.hasNext(); ) {
-            StepRecord record = i.next();
+        Step previous = null;
+        for(Iterator<Step> i = previousSteps.descendingIterator(); i.hasNext(); ) {
+            Step record = i.next();
             if(previous != null && previous.getTime() != record.getTime()) {
                 break;
             }
 
             if(previous == null || previous.getTime() == record.getTime()) {
-                steps.addFirst(record.getStep());
+                steps.addFirst(record);
                 previous = record;
                 continue;
             }
@@ -177,7 +175,7 @@ public class Mobile extends Entity {
      * @return The steps taken at the time.
      */
     public List<Step> getStepsAt(int time) {
-        return previousSteps.stream().filter(step -> step.getTime() == time).map(step -> step.getStep()).collect(Collectors.toList());
+        return previousSteps.stream().filter(step -> step.getTime() == time).collect(Collectors.toList());
     }
 
     /**

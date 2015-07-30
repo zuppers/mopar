@@ -1,10 +1,10 @@
 package io.mopar.game.sync.player;
 
 import io.mopar.game.model.Player;
+import io.mopar.game.model.Direction;
 import io.mopar.game.model.Step;
 import io.mopar.game.sync.PlayerDescriptor;
 
-import java.util.List;
 import java.util.Queue;
 
 /**

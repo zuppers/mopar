@@ -94,6 +94,9 @@ public class Region {
         while((chk = dis.readUnsignedByte()) != chk_EOF) {
             switch (chk) {
                 case chk_LOCALE: {
+                    // 16
+                    // 6 + 6 + 2
+                    // 10
                     int type    = dis.readUnsignedShort();
                     int loc     = dis.readUnsignedShort();
                     int ori     = dis.readUnsignedByte();

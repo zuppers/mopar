@@ -5,7 +5,6 @@ package io.mopar.game.model;
  */
 public class TraversalMap {
 
-
     public static final int BLOCKED                         = 0x01;
 
     public static final int WALL_NORTH                      = 0x02;
@@ -388,12 +387,12 @@ public class TraversalMap {
 
     /**
      *
-     * @param ix
-     * @param iy
+     * @param x
+     * @param y
      * @return
      */
-    public int getValue(int ix, int iy) {
-        return values[ix][iy];
+    public int getValue(int x, int y) {
+        return values[x][y];
     }
 
     /**
@@ -407,9 +406,8 @@ public class TraversalMap {
         if(x >= 0 && y >= 0 && x < width && y < height) {
             return (values[x][y] & flags) != 0;
         }
-        return false;
+        return false;                                           // Not a huge fan of this
     }
-
 
     /**
      *

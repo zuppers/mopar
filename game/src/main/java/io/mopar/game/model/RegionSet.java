@@ -28,6 +28,11 @@ public class RegionSet {
     private RegionLoader loader = (x, y) -> new Region(x, y);
 
     /**
+     * The touch timeout.
+     */
+    private long touchTimeout = 30000L;
+
+    /**
      * Constructs a new {@link RegionSet};
      */
     public RegionSet() {}
@@ -49,7 +54,7 @@ public class RegionSet {
         while(itr.hasNext()) {
             Region region = itr.next();
             long diff = System.currentTimeMillis() - region.getLastTouchedTime();
-            if(diff > 30000L) {
+            if(diff > touchTimeout) {
                 logger.info("Region has been marked as inactive, unloading; " + region.getY() + "-" + region.getX());
                 itr.remove();
             }

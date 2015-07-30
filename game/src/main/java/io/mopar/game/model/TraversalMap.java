@@ -404,7 +404,10 @@ public class TraversalMap {
      * @return
      */
     private boolean active(int x, int y, int flags) {
-        return (values[x][y] & flags) != 0;
+        if(x >= 0 && y >= 0 && x < width && y < height) {
+            return (values[x][y] & flags) != 0;
+        }
+        return false;
     }
 
 

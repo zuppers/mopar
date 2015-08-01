@@ -181,6 +181,21 @@
   },
 
   {
+    "id" : 5312,
+    "name" : "enhanced_bow"
+  },
+
+  {
+    "id" : 5313,
+    "name" : "enhanced_yawn"
+  },
+
+  {
+    "id" : 5315,
+    "name" : "enhanced_angry"
+  },
+
+  {
     "id" : 5316,
     "name" : "enhanced_dance"
   },

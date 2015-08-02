@@ -644,9 +644,9 @@ public class TraversalMap {
         }
 
         for(int i = x; i < x + w; i++) {
-            if(i >= 0 && i < w) {
+            if(i >= 0 && i < width) {
                 for(int j = y; j < y + h; j++) {
-                    if(j >= 0 && j <= h) {
+                    if(j >= 0 && j <= height) {
                         unset(i, j, flags);
                     }
                 }

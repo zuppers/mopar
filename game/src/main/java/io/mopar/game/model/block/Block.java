@@ -100,7 +100,6 @@ public class Block {
             obj.setPosition(new Position(getRelativeX() + x, getRelativeY() + y, plane));
             tile.setLocale(group, obj);
             updatedObjectTiles.add(hash);
-            System.out.println("Created an obj");
         } else {
             parent.unmarkObject(plane,
                     obj.getPosition().getLocalRegionX(),
@@ -126,8 +125,8 @@ public class Block {
 
         if(configId != -1) {
             parent.markObject(plane,
-                    obj.getPosition().getRegionX(),
-                    obj.getPosition().getRegionY(),
+                    obj.getPosition().getLocalRegionX(),
+                    obj.getPosition().getLocalRegionY(),
                     type,
                     configId,
                     orientation);

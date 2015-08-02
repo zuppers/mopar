@@ -40,9 +40,9 @@ action:on_command('creategfx', command:for_admin(function(plr, cmd, args)
     local x             = tonumber(args[1])
     local y             = tonumber(args[2])
     local plane         = tonumber(args[3])
-    local config        = tonumber(args[3])
-    local height        = args[4] and tonumber(args[4]) or 0
-    local delay         = args[5] and tonumber(args[5]) or 0
+    local config        = tonumber(args[4])
+    local height        = args[4] and tonumber(args[5]) or 0
+    local delay         = args[5] and tonumber(args[6]) or 0
 
     world:create_still_gfx(plane, x, y, config, height, delay)
 end))

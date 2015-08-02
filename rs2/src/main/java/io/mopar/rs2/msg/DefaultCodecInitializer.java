@@ -47,7 +47,7 @@ public class DefaultCodecInitializer implements MessageCodecInitializer {
      * @param status The message to encode.
      * @return The encoded packet.
      */
-    private Packet encodeStatusResponse(ByteBufAllocator alloc, PacketMetaList outgoingPackets, StatusMessage status) {
+    private Packet encodeStatusResponse(MessageCodecContext context, ByteBufAllocator alloc, PacketMetaList outgoingPackets, StatusMessage status) {
         return PacketBuilder.create(status.getId(), status.getName(), 0, alloc).build();
     }
 }

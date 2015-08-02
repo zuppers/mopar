@@ -1,5 +1,6 @@
 package io.mopar.rs2.login;
 
+import io.mopar.rs2.msg.MessageCodecContext;
 import io.mopar.rs2.msg.MessageCodecInitializer;
 import io.mopar.rs2.msg.MessageCodec;
 import io.mopar.rs2.msg.login.LoginStatusCheck;
@@ -124,7 +125,7 @@ public class LoginMessageCodecInitializer implements MessageCodecInitializer {
      * @param outgoingPackets
      * @param message
      */
-    private Packet encodeProfileMessage(ByteBufAllocator alloc, PacketMetaList outgoingPackets, ProfileMessage message) {
+    private Packet encodeProfileMessage(MessageCodecContext context, ByteBufAllocator alloc, PacketMetaList outgoingPackets, ProfileMessage message) {
         PacketBuilder builder = PacketBuilder.create(2, "profile_info", 14, alloc);
         builder.writeByte(2);                                                                   // Rights
         builder.writeByte(0);                                                                   // Black marks

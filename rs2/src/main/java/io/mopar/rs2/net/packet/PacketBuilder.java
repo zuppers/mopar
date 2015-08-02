@@ -36,6 +36,11 @@ public class PacketBuilder {
         return this;
     }
 
+    public PacketBuilder writeBytes(ByteBuf buffer) {
+        buf.writeBytes(buffer);
+        return this;
+    }
+
 
     enum AccessMode {BYTE_ACCESS, BIT_ACCESS}
 

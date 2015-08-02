@@ -2,6 +2,7 @@ package io.mopar.game.lua;
 
 import io.mopar.core.lua.Coerce;
 import io.mopar.core.lua.LuaModule;
+import io.mopar.game.GameService;
 import io.mopar.game.event.*;
 import io.mopar.game.event.player.PlayerCreatedEvent;
 import io.mopar.game.event.player.PlayerDisplayUpdateEvent;
@@ -10,7 +11,7 @@ import org.luaj.vm2.LuaClosure;
 /**
  * @author Hadyn Fitzgerald
  */
-public class EventLuaModule implements LuaModule {
+public class ServiceModule implements LuaModule {
 
     /**
      *
@@ -25,14 +26,14 @@ public class EventLuaModule implements LuaModule {
     /**
      *
      */
-    private EventBindings bindings;
+    private GameService service;
 
     /**
      *
-     * @param bindings
+     * @param service
      */
-    public EventLuaModule(EventBindings bindings) {
-        this.bindings = bindings;
+    public ServiceModule(GameService service) {
+        this.service = service;
     }
 
     /**
@@ -40,7 +41,7 @@ public class EventLuaModule implements LuaModule {
      * @param type
      * @param closure
      */
-    public void on(int type, LuaClosure closure) {
+    public void on_event(int type, LuaClosure closure) {
         switch (type) {
             case player_created:
                 on_player_created(closure);
@@ -58,7 +59,7 @@ public class EventLuaModule implements LuaModule {
      * @param closure
      */
     public void on_player_created(LuaClosure closure) {
-        bindings.add(PlayerCreatedEvent.class, (PlayerCreatedEvent evt) -> closure.call(Coerce.coerceToLua(evt.getPlayer())));
+        service.registerEventHandler(PlayerCreatedEvent.class, (PlayerCreatedEvent evt) -> closure.call(Coerce.coerceToLua(evt.getPlayer())));
     }
 
     /**
@@ -66,7 +67,7 @@ public class EventLuaModule implements LuaModule {
      * @param closure
      */
     public void on_player_display_updated(LuaClosure closure) {
-        bindings.add(PlayerDisplayUpdateEvent.class, (PlayerDisplayUpdateEvent event) -> closure.call(Coerce.coerceToLua(event.getPlayer())));
+        service.registerEventHandler(PlayerDisplayUpdateEvent.class, (PlayerDisplayUpdateEvent event) -> closure.call(Coerce.coerceToLua(event.getPlayer())));
     }
 
     /**
@@ -75,6 +76,6 @@ public class EventLuaModule implements LuaModule {
      */
     @Override
     public String getNamespace() {
-        return "event";
+        return "service";
     }
 }

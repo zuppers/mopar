@@ -166,13 +166,6 @@ public class MobileSceneGraph<T extends Mobile> {
             T entity = node.getEntity();
             int id = node.getId();
 
-            if (node.isRemoved()) {
-                activeIds.remove(node.getId());
-                iterator.remove();
-                setState(id, STATE_REMOVED);
-                continue;
-            }
-
             Position compare = entity.getPosition();
             if (isVisible(id)) {
 
@@ -180,7 +173,7 @@ public class MobileSceneGraph<T extends Mobile> {
                 // otherwise just set the entity as being idle
                 if (entity.isTeleporting() && currentPosition.within(compare, viewDistance)) {
                     setState(id, STATE_TELEPORTED | VISIBLE_FLAG);
-                } else if (!currentPosition.within(compare, viewDistance)) {
+                } else if (node.isRemoved() || !currentPosition.within(compare, viewDistance)) {
                     setState(id, STATE_REMOVED);
                     size--;
                 } else {
@@ -189,7 +182,7 @@ public class MobileSceneGraph<T extends Mobile> {
             } else {
 
                 // Check if the player exits the scene, if they do just remove them
-                if (!scanPosition.within(compare, scanDistance)) {
+                if (node.isRemoved() || !scanPosition.within(compare, scanDistance)) {
                     activeIds.remove(node.getId());
                     iterator.remove();
                     continue;

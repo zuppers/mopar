@@ -12,9 +12,10 @@ import io.mopar.game.sync.block.AppearanceUpdateBlock;
  */
 public class AddPlayerDescriptor extends PlayerDescriptor {
 
-
-
-    private int playerId;
+    /**
+     *
+     */
+    private int id;
 
     /**
      * The position.
@@ -32,13 +33,13 @@ public class AddPlayerDescriptor extends PlayerDescriptor {
     private Step lastStep;
 
     /**
-     * Constructs a new {@link io.mopar.game.sync.PlayerDescriptor};
+     * Constructs a new {@link AddPlayerDescriptor};
      *
      * @param player The player.
      */
     public AddPlayerDescriptor(Player player, Position relative) {
         super(player);
-        playerId = player.getId();
+        id = player.getId();
         position = player.getPosition();
         this.relative = relative;
         lastStep = player.getLastStep();
@@ -51,16 +52,32 @@ public class AddPlayerDescriptor extends PlayerDescriptor {
         }
     }
 
+    /**
+     *
+     * @return
+     */
+    public int getId() {
+        return id;
+    }
+
+    /**
+     *
+     * @return
+     */
     public Position getPosition() {
         return position;
     }
 
+    /**
+     *
+     * @return
+     */
     public Position getRelative() { return relative; }
 
-    public int getPlayerId() {
-        return playerId;
-    }
-
+    /**
+     *
+     * @return
+     */
     public Step getLastStep() {
         return lastStep;
     }

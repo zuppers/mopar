@@ -18,13 +18,17 @@ public class WalkingNpcDescriptor extends NpcDescriptor {
     /**
      * Constructs a new {@link WalkingNpcDescriptor};
      *
-     * @param player The player.
+     * @param npc The npc.
      */
-    public WalkingNpcDescriptor(NPC player) {
-        super(player);
-        step = player.getLastStep();
+    public WalkingNpcDescriptor(NPC npc) {
+        super(npc);
+        step = npc.getLastStep();
     }
 
+    /**
+     *
+     * @return
+     */
     public Step getStep() {
         return step;
     }

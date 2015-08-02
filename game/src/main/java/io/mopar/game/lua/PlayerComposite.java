@@ -306,4 +306,6 @@ public class PlayerComposite extends MobileComposite {
     public void print(String text) {
         player.print(text);
     }
+
+    public int region_id() { return player.getPosition().getRegionHash(); }
 }

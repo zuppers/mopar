@@ -5,30 +5,95 @@ package io.mopar.game.model;
  */
 public class SkillSet {
 
+    /**
+     *
+     */
     private int[] stats = new int[Skills.COUNT];
-    private double[] exp = new double[Skills.COUNT];
 
+    /**
+     *
+     */
+    private double[] experience = new double[Skills.COUNT];
+
+    /**
+     *
+     */
     public SkillSet() {
         for(int i = 0; i < stats.length; i++) {
             stats[i] = 1;
-            exp[i] = 0.0D;
+            experience[i] = 0.0D;
         }
         stats[Skills.HITPOINTS] = 10;
-        exp[Skills.HITPOINTS] = 1184;
+        experience[Skills.HITPOINTS] = 1184;
     }
 
+    /**
+     *
+     * @param skill
+     * @param stat
+     */
     public void setStat(int skill, int stat) {
         stats[skill] = stat;
     }
 
+    /**
+     *
+     * @param skill
+     * @return
+     */
     public int getStat(int skill) {
         return stats[skill];
     }
 
-    public int getLevel(int skill) {
-        return getLevelFromExperience(exp[skill]);
+    /**
+     *
+     * @param id
+     * @param experience
+     */
+    public void setExperience(int id, double experience) {
+        this.experience[id] = experience;
     }
 
+    /**
+     *
+     * @param id
+     * @return
+     */
+    public double getExperience(int id) {
+        return experience[id];
+    }
+
+    /**
+     *
+     * @param skill
+     * @param amount
+     */
+    public void giveExperience(int skill, double amount) {
+        double curr = getExperience(skill);
+        if(curr + amount > 200_000_000D) {
+            amount = 200_000_000 - curr;
+        }
+        int prev = getLevel(skill);
+        experience[skill] += amount;
+        int currl = getLevel(skill);
+
+        stats[skill] += currl - prev;
+    }
+
+    /**
+     *
+     * @param skill
+     * @return
+     */
+    public int getLevel(int skill) {
+        return getLevelFromExperience(experience[skill]);
+    }
+
+    /**
+     *
+     * @param xp
+     * @return
+     */
     private static int getLevelFromExperience(double xp) {
         int points = 0;
         int output = 0;
@@ -42,25 +107,5 @@ public class SkillSet {
         }
 
         return 99;
-    }
-
-    public double getExperience(int i) {
-        return exp[i];
-    }
-
-    public void setExperience(int id, double experience) {
-        exp[id] = experience;
-    }
-
-    public void giveExp(int skill, double amount) {
-        double curr = getExperience(skill);
-        if(curr + amount > 200_000_000D) {
-            amount = 200_000_000 - curr;
-        }
-        int prev = getLevel(skill);
-        exp[skill] += amount;
-        int currl = getLevel(skill);
-
-        stats[skill] += currl - prev;
     }
 }

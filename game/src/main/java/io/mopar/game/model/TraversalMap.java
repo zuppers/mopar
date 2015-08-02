@@ -35,7 +35,14 @@ public class TraversalMap {
      */
     private int[][] values;
 
+    /**
+     *
+     */
     private int width;
+
+    /**
+     *
+     */
     private int height;
 
     /**
@@ -86,17 +93,17 @@ public class TraversalMap {
      *
      * @param x
      * @param y
-     * @param cls
+     * @param type
      * @param rotation
      * @param impenetrable
      */
-    public void markWall(int x, int y, int cls, int rotation, boolean impenetrable) {
+    public void markWall(int x, int y, int type, int rotation, boolean impenetrable) {
 
         //
         // Straight walls
         //
 
-        if(cls == 0) {
+        if(type == 0) {
 
             //     x
             // > | < y
@@ -135,7 +142,7 @@ public class TraversalMap {
         // Corner walls
         //
 
-        if(cls == 2) {
+        if(type == 2) {
 
             //     v
             //     -
@@ -182,7 +189,7 @@ public class TraversalMap {
         // Diagonal walls
         //
 
-        if(cls == 1 || cls == 3) {
+        if(type == 1 || type == 3) {
 
             // / y Upper left
             // x
@@ -220,7 +227,7 @@ public class TraversalMap {
             // Straight walls
             //
 
-            if(cls == 0) {
+            if(type == 0) {
 
                 //     x
                 // > | < y
@@ -259,7 +266,7 @@ public class TraversalMap {
             // Corner walls
             //
 
-            if(cls == 2) {
+            if(type == 2) {
 
                 //     v
                 //     -
@@ -306,7 +313,7 @@ public class TraversalMap {
             // Diagonal walls
             //
 
-            if(cls == 1 || cls == 3) {
+            if(type == 1 || type == 3) {
 
                 // / y Upper left
                 // x
@@ -344,11 +351,257 @@ public class TraversalMap {
      *
      * @param x
      * @param y
-     * @param cls
+     * @param type
      * @param impenetrable
      */
-    public void unmarkWall(int x, int y, int cls, boolean impenetrable) {
+    public void unmarkWall(int x, int y, int type, int orientation, boolean impenetrable) {
 
+        //
+        // Straight walls
+        //
+
+        if(type == 0) {
+
+            //     x
+            // > | < y
+            if (orientation == 0) {
+                unset(x,      y,  WALL_WEST);
+                unset(x - 1,  y,  WALL_EAST);
+            }
+
+            // v
+            // -
+            // ^ y
+            // x
+            if (orientation == 1) {
+                unset(x, y,       WALL_NORTH);
+                unset(x, y + 1,   WALL_SOUTH);
+            }
+
+            // y > | <
+            //   x
+            if (orientation == 2) {
+                unset(x,     y,   WALL_EAST);
+                unset(x + 1, y,   WALL_WEST);
+            }
+
+            // x
+            // v y
+            // -
+            // ^
+            if (orientation == 3) {
+                unset(x, y,       WALL_SOUTH);
+                unset(x, y - 1,   WALL_NORTH);
+            }
+        }
+
+        //
+        // Corner walls
+        //
+
+        if(type == 2) {
+
+            //     v
+            //     -
+            // > | * y
+            //     x
+            if (orientation == 0) {
+                unset(x,      y,      WALL_WEST | WALL_NORTH);
+                unset(x - 1,  y,      WALL_EAST);
+                unset(x,      y + 1,  WALL_SOUTH);
+            }
+
+            // v
+            // -
+            // * | < y
+            // x
+            if (orientation == 1) {
+                unset(x,      y,      WALL_EAST | WALL_NORTH);
+                unset(x,      y + 1,  WALL_SOUTH);
+                unset(x + 1,  y,      WALL_WEST);
+            }
+
+            // y
+            // * | < x
+            // -
+            // ^
+            if (orientation == 2) {
+                unset(x,      y,      WALL_EAST | WALL_SOUTH);
+                unset(x + 1,  y,      WALL_WEST);
+                unset(x,      y - 1,  WALL_NORTH);
+            }
+
+            // x > | *
+            //       -
+            //       ^
+            //       y
+            if (orientation == 3) {
+                unset(x,      y,      WALL_WEST | WALL_SOUTH);
+                unset(x - 1,  y,      WALL_EAST);
+                unset(x,      y - 1,  WALL_NORTH);
+            }
+        }
+
+        //
+        // Diagonal walls
+        //
+
+        if(type == 1 || type == 3) {
+
+            // / y Upper left
+            // x
+            if (orientation == 0) {
+                unset(x,      y,      WALL_NORTH_WEST);
+                unset(x - 1,  y + 1,  WALL_SOUTH_EAST);
+            }
+
+
+            // \ y Upper right
+            // x
+            if (orientation == 1) {
+                unset(x,      y,      WALL_NORTH_EAST);
+                unset(x + 1,  y + 1,  WALL_SOUTH_WEST);
+            }
+
+            // / y Lower right
+            // x
+            if (orientation == 2) {
+                unset(x,      y,      WALL_SOUTH_EAST);
+                unset(x + 1,  y - 1,  WALL_NORTH_WEST);
+            }
+
+            // \ y Lower left
+            // x
+            if (orientation == 3) {
+                unset(x,      y,      WALL_SOUTH_WEST);
+                unset(x - 1,  y - 1,  WALL_NORTH_EAST);
+            }
+        }
+
+        if(impenetrable) {
+
+            //
+            // Straight walls
+            //
+
+            if(type == 0) {
+
+                //     x
+                // > | < y
+                if (orientation == 0) {
+                    unset(x,      y, IMPENETRABLE_WALL_WEST);
+                    unset(x - 1,  y, IMPENETRABLE_WALL_EAST);
+                }
+
+                // v
+                // -
+                // ^ y
+                // x
+                if (orientation == 1) {
+                    unset(x,  y,      IMPENETRABLE_WALL_NORTH);
+                    unset(x,  y + 1,  IMPENETRABLE_WALL_SOUTH);
+                }
+
+                // y > | <
+                //   x
+                if (orientation == 2) {
+                    unset(x,      y, IMPENETRABLE_WALL_EAST);
+                    unset(x + 1,  y, IMPENETRABLE_WALL_WEST);
+                }
+
+                // x
+                // v y
+                // -
+                // ^
+                if (orientation == 3) {
+                    unset(x, y,       IMPENETRABLE_WALL_EAST);
+                    unset(x, y - 1,   IMPENETRABLE_WALL_WEST);
+                }
+            }
+
+            //
+            // Corner walls
+            //
+
+            if(type == 2) {
+
+                //     v
+                //     -
+                // > | * y
+                //     x
+                if (orientation == 0) {
+                    unset(x,      y,      IMPENETRABLE_WALL_WEST | IMPENETRABLE_WALL_NORTH);
+                    unset(x - 1,  y,      IMPENETRABLE_WALL_EAST);
+                    unset(x,      y + 1,  IMPENETRABLE_WALL_SOUTH);
+                }
+
+                // v
+                // -
+                // * | < y
+                // x
+                if (orientation == 1) {
+                    unset(x,      y,      IMPENETRABLE_WALL_EAST | IMPENETRABLE_WALL_NORTH);
+                    unset(x,      y + 1,  IMPENETRABLE_WALL_SOUTH);
+                    unset(x + 1,  y,      IMPENETRABLE_WALL_WEST);
+                }
+
+                // y
+                // * | < x
+                // -
+                // ^
+                if (orientation == 2) {
+                    unset(x,      y,      IMPENETRABLE_WALL_EAST | IMPENETRABLE_WALL_SOUTH);
+                    unset(x + 1,  y,      IMPENETRABLE_WALL_WEST);
+                    unset(x,      y - 1,  IMPENETRABLE_WALL_NORTH);
+                }
+
+                // x > | *
+                //       -
+                //       ^
+                //       y
+                if (orientation == 3) {
+                    unset(x,      y,      IMPENETRABLE_WALL_WEST | IMPENETRABLE_WALL_SOUTH);
+                    unset(x - 1,  y,      IMPENETRABLE_WALL_EAST);
+                    unset(x,      y - 1,  IMPENETRABLE_WALL_NORTH);
+                }
+            }
+
+            //
+            // Diagonal walls
+            //
+
+            if(type == 1 || type == 3) {
+
+                // / y Upper left
+                // x
+                if (orientation == 0) {
+                    unset(x, y,           IMPENETRABLE_WALL_NORTH_WEST);
+                    unset(x - 1, y + 1,   IMPENETRABLE_WALL_SOUTH_EAST);
+                }
+
+
+                // \ y Upper right
+                // x
+                if (orientation == 1) {
+                    unset(x, y,           IMPENETRABLE_WALL_NORTH_EAST);
+                    unset(x + 1, y + 1,   IMPENETRABLE_WALL_SOUTH_WEST);
+                }
+
+                // / y Lower right
+                // x
+                if (orientation == 2) {
+                    unset(x,      y,      IMPENETRABLE_WALL_SOUTH_EAST);
+                    unset(x + 1,  y - 1,  IMPENETRABLE_WALL_NORTH_WEST);
+                }
+
+                // \ y Lower left
+                // x
+                if (orientation == 3) {
+                    unset(x,      y,      IMPENETRABLE_WALL_SOUTH_WEST);
+                    unset(x - 1,  y - 1,  IMPENETRABLE_WALL_NORTH_EAST);
+                }
+            }
+        }
     }
 
     /**
@@ -370,6 +623,31 @@ public class TraversalMap {
                 for(int j = y; j < y + h; j++) {
                     if(j >= 0 && j <= height) {
                         set(i, j, flags);
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     *
+     * @param x
+     * @param y
+     * @param w
+     * @param h
+     * @param impenetrable
+     */
+    public void unmarkOccupant(int x, int y, int w, int h, boolean impenetrable) {
+        int flags = OCCUPANT;
+        if(impenetrable) {
+            flags |= IMPENETRABLE_OCCUPANT;
+        }
+
+        for(int i = x; i < x + w; i++) {
+            if(i >= 0 && i < w) {
+                for(int j = y; j < y + h; j++) {
+                    if(j >= 0 && j <= h) {
+                        unset(i, j, flags);
                     }
                 }
             }
@@ -418,38 +696,42 @@ public class TraversalMap {
      * @return
      */
     public boolean isTraversable(int x, int y, int tflags, Direction direction) {
-        boolean bool = true;
+        boolean traversable = true;
         switch (direction) {
-            case NORTH: {
+            case NORTH:
+            {
                 int flags = 0;
                 if ((tflags & TRAVERSE_WALKING)   != 0) flags |= WALL_SOUTH | OCCUPANT | BLOCKED;
                 if ((tflags & TRAVERSE_SIGHT)     != 0) flags |= IMPENETRABLE_WALL_SOUTH | IMPENETRABLE_OCCUPANT;
-                bool &= !active(x, y + 1, flags);
+                traversable &= !active(x, y + 1, flags);
             }
             break;
 
-            case SOUTH: {
+            case SOUTH:
+            {
                 int flags = 0;
                 if ((tflags & TRAVERSE_WALKING)   != 0) flags |= WALL_NORTH | OCCUPANT | BLOCKED;
                 if ((tflags & TRAVERSE_SIGHT)     != 0) flags |= IMPENETRABLE_WALL_NORTH | IMPENETRABLE_OCCUPANT;
-                bool &= !active(x, y - 1, flags);
+                traversable &= !active(x, y - 1, flags);
             }
             break;
 
-            case EAST: {
+            case EAST:
+            {
                 int flags = 0;
                 if ((tflags & TRAVERSE_WALKING)   != 0) flags |= WALL_WEST | OCCUPANT | BLOCKED;
                 if ((tflags & TRAVERSE_SIGHT)     != 0) flags |= IMPENETRABLE_WALL_WEST | IMPENETRABLE_OCCUPANT;
-                bool &= !active(x + 1, y, flags);
+                traversable &= !active(x + 1, y, flags);
             }
             break;
 
 
-            case WEST: {
+            case WEST:
+            {
                 int flags = 0;
                 if ((tflags & TRAVERSE_WALKING)   != 0) flags |= WALL_EAST | OCCUPANT | BLOCKED;
                 if ((tflags & TRAVERSE_SIGHT)     != 0) flags |= IMPENETRABLE_WALL_EAST | IMPENETRABLE_OCCUPANT;
-                bool &= !active(x - 1, y, flags);
+                traversable &= !active(x - 1, y, flags);
             }
             break;
 
@@ -467,7 +749,7 @@ public class TraversalMap {
                 if((tflags & TRAVERSE_WALKING)  != 0) f2 |= WALL_SOUTH | OCCUPANT;
                 if((tflags & TRAVERSE_SIGHT)    != 0) f2 |= IMPENETRABLE_WALL_SOUTH | IMPENETRABLE_OCCUPANT;
 
-                bool &= !active(x - 1, y + 1, f0) & !active(x - 1, y, f1) & !active(x, y + 1, f2);
+                traversable &= !active(x - 1, y + 1, f0) & !active(x - 1, y, f1) & !active(x, y + 1, f2);
             }
             break;
 
@@ -485,7 +767,7 @@ public class TraversalMap {
                 if((tflags & TRAVERSE_WALKING)  != 0) f2 |= WALL_SOUTH | OCCUPANT;
                 if((tflags & TRAVERSE_SIGHT)    != 0) f2 |= IMPENETRABLE_WALL_SOUTH | IMPENETRABLE_OCCUPANT;
 
-                bool &= !active(x + 1, y + 1, f0) & !active(x + 1, y, f1) & !active(x, y + 1, f2);
+                traversable &= !active(x + 1, y + 1, f0) & !active(x + 1, y, f1) & !active(x, y + 1, f2);
             }
             break;
 
@@ -503,11 +785,12 @@ public class TraversalMap {
                 if((tflags & TRAVERSE_WALKING)  != 0) f2 |= WALL_NORTH | OCCUPANT;
                 if((tflags & TRAVERSE_SIGHT)    != 0) f2 |= IMPENETRABLE_WALL_NORTH | IMPENETRABLE_OCCUPANT;
 
-                bool &= !active(x - 1, y - 1, f0) & !active(x - 1, y, f1) & !active(x, y - 1, f2);
+                traversable &= !active(x - 1, y - 1, f0) & !active(x - 1, y, f1) & !active(x, y - 1, f2);
             }
             break;
 
-            case SOUTH_EAST: {
+            case SOUTH_EAST:
+            {
                 int f0 = 0;
                 int f1 = 0;
                 int f2 = 0;
@@ -520,10 +803,11 @@ public class TraversalMap {
                 if((tflags & TRAVERSE_WALKING)  != 0) f2 |= WALL_NORTH | OCCUPANT;
                 if((tflags & TRAVERSE_SIGHT)    != 0) f2 |= IMPENETRABLE_WALL_NORTH | IMPENETRABLE_OCCUPANT;
 
-                bool &= !active(x + 1, y - 1, f0) & !active(x + 1, y, f1) & !active(x, y - 1, f2);
+                traversable &= !active(x + 1, y - 1, f0) & !active(x + 1, y, f1) & !active(x, y - 1, f2);
             }
             break;
         }
-        return bool;
+        return traversable;
     }
+
 }

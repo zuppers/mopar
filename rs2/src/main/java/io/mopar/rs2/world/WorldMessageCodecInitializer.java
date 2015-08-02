@@ -1,5 +1,6 @@
 package io.mopar.rs2.world;
 
+import io.mopar.rs2.msg.MessageCodecContext;
 import io.mopar.rs2.msg.MessageCodecInitializer;
 import io.mopar.rs2.msg.MessageCodec;
 import io.mopar.rs2.msg.handshake.WorldServiceHandshake;
@@ -65,7 +66,7 @@ public class WorldMessageCodecInitializer implements MessageCodecInitializer {
      * @param message The message to encode.
      * @return The encoded packet.
      */
-    private Packet encodeSnapshot(ByteBufAllocator alloc, PacketMetaList outgoingPackets, SnapshotMessage message) {
+    private Packet encodeSnapshot(MessageCodecContext context, ByteBufAllocator alloc, PacketMetaList outgoingPackets, SnapshotMessage message) {
         PacketBuilder builder = PacketBuilder.create(0, "world_snapshot", PacketMetaData.VAR_SHORT_LENGTH, alloc);
 
         Snapshot snapshot = message.getSnapshot();

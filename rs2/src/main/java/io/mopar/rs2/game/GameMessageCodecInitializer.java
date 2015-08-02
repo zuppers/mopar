@@ -1,10 +1,8 @@
 package io.mopar.rs2.game;
 
-import io.mopar.game.model.Inventory;
-import io.mopar.game.model.Item;
-import io.mopar.game.model.Position;
-import io.mopar.game.model.Scene;
+import io.mopar.game.model.*;
 import io.mopar.game.msg.*;
+import io.mopar.rs2.msg.MessageCodecContext;
 import io.mopar.rs2.msg.game.InterfaceItemOptionMessage;
 import io.mopar.rs2.msg.MessageCodec;
 import io.mopar.rs2.msg.MessageCodecInitializer;
@@ -85,7 +83,7 @@ public class GameMessageCodecInitializer implements MessageCodecInitializer {
         codec.registerMessageDecoder(incomingPackets.getId("packet_check"), this::decodeBlankMessage);
         codec.registerMessageDecoder(incomingPackets.getId("focus_changed"), this::decodeBlankMessage);
         codec.registerMessageDecoder(incomingPackets.getId("click"), this::decodeBlankMessage);
-        codec.registerMessageDecoder(incomingPackets.getId("loc_option_1"), this::decodeBlankMessage);
+        codec.registerMessageDecoder(incomingPackets.getId("loc_option_1"), this::decodeLocaleOptionOneMessage);
         codec.registerMessageDecoder(incomingPackets.getId("settings"), this::decodeBlankMessage);
         codec.registerMessageDecoder(incomingPackets.getId("obj_option_unk"), this::decodeBlankMessage);
     }
@@ -261,9 +259,9 @@ public class GameMessageCodecInitializer implements MessageCodecInitializer {
     private LocaleOptionMessage decodeLocaleOptionOneMessage(Packet packet) {
         ByteBuf buf = packet.getBuffer();
 
-        int ukn = readLEShort(buf);
+        int x = readLEShort(buf);
         int a = readShortA(buf);
-        int b = buf.readUnsignedShort();
+        int y = buf.readUnsignedShort();
 
         return null;
     }
@@ -288,6 +286,11 @@ public class GameMessageCodecInitializer implements MessageCodecInitializer {
         codec.registerMessageEncoder(PlaySongMessage.class, this::encodeSongMessage);
         codec.registerMessageEncoder(SetInterfaceTextMessage.class, this::encodeSetInterfaceTextMessage);
         codec.registerMessageEncoder(UpdateSkillMessage.class, this::encodeUpdateSkillMessage);
+        codec.registerMessageEncoder(ResetBlockMessage.class, this::encodeResetBlockMessage);
+        codec.registerMessageEncoder(BlockSynchronizationMessage.class, this::encodeBlockSynchronizationMessage);
+        codec.registerMessageEncoder(CreateStillGraphicMessage.class, this::encodeCreateStillGraphicMessage);
+        codec.registerMessageEncoder(UpdateGameObjectMessage.class, this::encodeUpdateGameObjectMessage);
+        codec.registerMessageEncoder(RemoveGameObjectMessage.class, this::encodeRemoveGameObjectMessage);
 
         // Register the synchronization message encoders
         codec.registerMessageEncoder(PlayerSynchronizationMessage.class, new PlayerSynchronizationMessageEncoder());
@@ -302,7 +305,7 @@ public class GameMessageCodecInitializer implements MessageCodecInitializer {
      * @param message The message to encode.
      * @return The encoded packet.
      */
-    private Packet encodeRebuildSceneMessage(ByteBufAllocator alloc, PacketMetaList outgoingPackets,
+    private Packet encodeRebuildSceneMessage(MessageCodecContext ctx, ByteBufAllocator alloc, PacketMetaList outgoingPackets,
                                              RebuildSceneMessage message) {
         PacketBuilder builder = PacketBuilder.create(outgoingPackets.get("rebuild_scene"), alloc);
 
@@ -349,7 +352,7 @@ public class GameMessageCodecInitializer implements MessageCodecInitializer {
      * @param message The message to encode.
      * @return The encoded packet.
      */
-    private Packet encodeSetRootInterfaceMessage(ByteBufAllocator allocator, PacketMetaList outgoingPackets,
+    private Packet encodeSetRootInterfaceMessage(MessageCodecContext ctx, ByteBufAllocator allocator, PacketMetaList outgoingPackets,
                                                  SetRootInterfaceMessage message) {
         PacketBuilder builder = PacketBuilder.create(outgoingPackets.get("set_root_interface"), allocator);
         builder.writeLEShortA(message.getWidgetId());
@@ -368,7 +371,7 @@ public class GameMessageCodecInitializer implements MessageCodecInitializer {
      * @param message
      * @return
      */
-    private Packet encodeSetInterfaceMessage(ByteBufAllocator allocator, PacketMetaList outgoingPackets, SetInterfaceMessage message) {
+    private Packet encodeSetInterfaceMessage(MessageCodecContext ctx, ByteBufAllocator allocator, PacketMetaList outgoingPackets, SetInterfaceMessage message) {
         PacketBuilder builder = PacketBuilder.create(outgoingPackets.get("set_interface"), allocator);
         builder.writeByte(message.getType());
         builder.writeIMEInt(message.getTargetId() << 16 | message.getComponentId());
@@ -384,7 +387,7 @@ public class GameMessageCodecInitializer implements MessageCodecInitializer {
      * @param message
      * @return
      */
-    private Packet encodePrintMessage(ByteBufAllocator allocator, PacketMetaList outgoingPackets, PrintMessage message) {
+    private Packet encodePrintMessage(MessageCodecContext ctx, ByteBufAllocator allocator, PacketMetaList outgoingPackets, PrintMessage message) {
         PacketBuilder builder = PacketBuilder.create(outgoingPackets.get("print"), allocator);
         builder.writeJstr(message.getText());
         return builder.build();
@@ -397,7 +400,7 @@ public class GameMessageCodecInitializer implements MessageCodecInitializer {
      * @param message
      * @return
      */
-    private Packet encodeSetInterfaceHiddenMessage(ByteBufAllocator allocator, PacketMetaList outgoingPackets, SetInterfaceHiddenMessage message) {
+    private Packet encodeSetInterfaceHiddenMessage(MessageCodecContext ctx, ByteBufAllocator allocator, PacketMetaList outgoingPackets, SetInterfaceHiddenMessage message) {
         PacketBuilder builder = PacketBuilder.create(outgoingPackets.get("set_interface_hidden"), allocator);
         builder.writeByteN(message.isHidden() ? 1 : 0);
         builder.writeShort(0);
@@ -412,7 +415,7 @@ public class GameMessageCodecInitializer implements MessageCodecInitializer {
      * @param message
      * @return
      */
-    private Packet encodeRefreshInventoryMessage(ByteBufAllocator allocator, PacketMetaList outgoingPackets, RefreshInventoryMessage message) {
+    private Packet encodeRefreshInventoryMessage(MessageCodecContext ctx, ByteBufAllocator allocator, PacketMetaList outgoingPackets, RefreshInventoryMessage message) {
         PacketBuilder builder = PacketBuilder.create(outgoingPackets.get("refresh_inventory"), allocator);
         builder.writeInt(message.getWidgetId() << 16 | message.getComponentId());
         builder.writeShort(message.getId());
@@ -444,7 +447,7 @@ public class GameMessageCodecInitializer implements MessageCodecInitializer {
      * @param message
      * @return
      */
-    private Packet encodeUpdateInventoryMessage(ByteBufAllocator allocator, PacketMetaList outgoingPackets, UpdateInventoryMessage message) {
+    private Packet encodeUpdateInventoryMessage(MessageCodecContext ctx, ByteBufAllocator allocator, PacketMetaList outgoingPackets, UpdateInventoryMessage message) {
         PacketBuilder builder = PacketBuilder.create(outgoingPackets.get("update_inventory"), allocator);
         builder.writeInt(message.getWidgetId() << 16 | message.getComponentId());
         builder.writeShort(message.getId());
@@ -478,7 +481,7 @@ public class GameMessageCodecInitializer implements MessageCodecInitializer {
      * @param message
      * @return
      */
-    private Packet encodeSetVariableMessage(ByteBufAllocator allocator, PacketMetaList outgoingPackets, SetVariableMessage message) {
+    private Packet encodeSetVariableMessage(MessageCodecContext ctx, ByteBufAllocator allocator, PacketMetaList outgoingPackets, SetVariableMessage message) {
         if(message.getValue() >= -128 && message.getValue() < 128) {
             PacketBuilder builder = PacketBuilder.create(outgoingPackets.get("variable_b"), allocator);
             builder.writeShortA(message.getId());
@@ -499,7 +502,7 @@ public class GameMessageCodecInitializer implements MessageCodecInitializer {
      * @param message
      * @return
      */
-    private Packet encodeAccessOptionsMessage(ByteBufAllocator allocator, PacketMetaList outgoingPackets, AccessOptionMessage message) {
+    private Packet encodeAccessOptionsMessage(MessageCodecContext ctx, ByteBufAllocator allocator, PacketMetaList outgoingPackets, AccessOptionMessage message) {
         PacketBuilder builder = PacketBuilder.create(outgoingPackets.get("access_options"), allocator);
         builder.writeLEShort(0);
         builder.writeLEShort(message.getEnd());
@@ -516,7 +519,7 @@ public class GameMessageCodecInitializer implements MessageCodecInitializer {
      * @param message
      * @return
      */
-    private Packet encodeSongMessage(ByteBufAllocator allocator, PacketMetaList outgoingPackets, PlaySongMessage message) {
+    private Packet encodeSongMessage(MessageCodecContext ctx, ByteBufAllocator allocator, PacketMetaList outgoingPackets, PlaySongMessage message) {
         PacketBuilder builder = PacketBuilder.create(outgoingPackets.get("song"), allocator);
         builder.writeLEShortA(message.getId());
         return builder.build();
@@ -529,7 +532,7 @@ public class GameMessageCodecInitializer implements MessageCodecInitializer {
      * @param message
      * @return
      */
-    private Packet encodeSetInterfaceTextMessage(ByteBufAllocator allocator, PacketMetaList outgoingPackets, SetInterfaceTextMessage message) {
+    private Packet encodeSetInterfaceTextMessage(MessageCodecContext ctx, ByteBufAllocator allocator, PacketMetaList outgoingPackets, SetInterfaceTextMessage message) {
         PacketBuilder builder = PacketBuilder.create(outgoingPackets.get("interface_text"), allocator);
         builder.writeIMEInt(message.getWidgetId() << 16 | message.getComponentId());
         builder.writeJstr(message.getText());
@@ -544,11 +547,101 @@ public class GameMessageCodecInitializer implements MessageCodecInitializer {
      * @param message
      * @return
      */
-    private Packet encodeUpdateSkillMessage(ByteBufAllocator allocator, PacketMetaList outgoingPackets, UpdateSkillMessage message) {
+    private Packet encodeUpdateSkillMessage(MessageCodecContext ctx, ByteBufAllocator allocator, PacketMetaList outgoingPackets, UpdateSkillMessage message) {
         PacketBuilder builder = PacketBuilder.create(outgoingPackets.get("update_skill"), allocator);
         builder.writeByteA(message.getStat());
         builder.writeMEInt(message.getExperience());
         builder.writeByte(message.getId());
+        return builder.build();
+    }
+
+    /**
+     *
+     * @param allocator
+     * @param outgoingPackets
+     * @param message
+     * @return
+     */
+    private Packet encodeResetBlockMessage(MessageCodecContext ctx, ByteBufAllocator allocator, PacketMetaList outgoingPackets, ResetBlockMessage message) {
+        PacketBuilder builder = PacketBuilder.create(outgoingPackets.get("reset_block"), allocator);
+        builder.writeByte(message.getX() << 3);
+        builder.writeByteN(message.getY() << 3);
+        return builder.build();
+    }
+
+    /**
+     *
+     * @param ctx
+     * @param allocator
+     * @param outgoingPackets
+     * @param message
+     * @return
+     */
+    private Packet encodeBlockSynchronizationMessage(MessageCodecContext ctx, ByteBufAllocator allocator, PacketMetaList outgoingPackets, BlockSynchronizationMessage message) {
+        PacketBuilder builder = PacketBuilder.create(outgoingPackets.get("sync_block"), allocator);
+        builder.writeByteA(message.getY() << 3);
+        builder.writeByteS(message.getX() << 3);
+        for(BlockMessage msg : message.getMessages()) {
+            Packet packet = ctx.encode(msg);
+            builder.writeByte(packet.getId());
+            if(packet.getLength() < 0) {
+                throw new IllegalStateException("Packet cannot be variable length");
+            }
+
+            ByteBuf buf = packet.getBuffer();
+            builder.writeBytes(packet.getBuffer());
+            buf.release();
+        }
+        return builder.build();
+    }
+
+    /**
+     *
+     * @param ctx
+     * @param allocator
+     * @param outgoingPackets
+     * @param message
+     * @return
+     */
+    private Packet encodeCreateStillGraphicMessage(MessageCodecContext ctx, ByteBufAllocator allocator, PacketMetaList outgoingPackets, CreateStillGraphicMessage message) {
+        PacketBuilder builder = PacketBuilder.create(outgoingPackets.get("create_still_graphic"), allocator);
+        int loc = message.getX() << 4 | message.getY();
+        builder.writeByte(loc);
+        Graphic graphic = message.getGraphic();
+        builder.writeShort(graphic.getType());
+        builder.writeByte(graphic.getHeight());
+        builder.writeShort(graphic.getDelay());
+        return builder.build();
+    }
+
+    /**
+     *
+     * @param ctx
+     * @param allocator
+     * @param outgoingPackets
+     * @param message
+     * @return
+     */
+    private Packet encodeUpdateGameObjectMessage(MessageCodecContext ctx, ByteBufAllocator allocator, PacketMetaList outgoingPackets, UpdateGameObjectMessage message) {
+        PacketBuilder builder = PacketBuilder.create(outgoingPackets.get("update_obj"), allocator);
+        builder.writeByteA(message.getType() << 2 | message.getOrientation());
+        builder.writeByte(message.getX() << 4 | message.getY());
+        builder.writeShortA(message.getConfigId());
+        return builder.build();
+    }
+
+    /**
+     *
+     * @param ctx
+     * @param allocator
+     * @param outgoingPackets
+     * @param message
+     * @return
+     */
+    private Packet encodeRemoveGameObjectMessage(MessageCodecContext ctx, ByteBufAllocator allocator, PacketMetaList outgoingPackets, RemoveGameObjectMessage message) {
+        PacketBuilder builder = PacketBuilder.create(outgoingPackets.get("remove_obj"), allocator);
+        builder.writeByteN(message.getType() << 2 | message.getOrientation());
+        builder.writeByte(message.getX() << 4 | message.getY());
         return builder.build();
     }
 }

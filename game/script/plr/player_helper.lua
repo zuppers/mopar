@@ -35,7 +35,7 @@ setmetatable(module, {
 })
 
 -- Handle for when a player is created
-event:on(event.player_created, function(plr)
+service:on_event(service.player_created, function(plr)
 
     -- Print the whale-cum
     plr:print('Welcome to Moparscape.')
@@ -52,7 +52,7 @@ event:on(event.player_created, function(plr)
 end)
 
 -- TODO Figure out what we may eventually do with this
-event:on(event.player_display_updated, function(plr)
+service:on_event(service.player_display_updated, function(plr)
     display:open_screen(plr, plr:display_mode())
 end)
 

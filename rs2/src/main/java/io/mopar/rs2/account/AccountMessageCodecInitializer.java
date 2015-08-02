@@ -3,6 +3,7 @@ package io.mopar.rs2.account;
 import io.mopar.core.Base37;
 import io.mopar.core.msg.Message;
 import io.mopar.rs2.msg.MessageCodec;
+import io.mopar.rs2.msg.MessageCodecContext;
 import io.mopar.rs2.msg.MessageCodecInitializer;
 import io.mopar.rs2.msg.login.LoginRequestMessage;
 import io.mopar.rs2.msg.login.LoginStatusCheck;
@@ -117,7 +118,7 @@ public class AccountMessageCodecInitializer implements MessageCodecInitializer {
      * @param outgoingPackets
      * @param message
      */
-    private Packet encodeProfileMessage(ByteBufAllocator alloc, PacketMetaList outgoingPackets, ProfileMessage message) {
+    private Packet encodeProfileMessage(MessageCodecContext context, ByteBufAllocator alloc, PacketMetaList outgoingPackets, ProfileMessage message) {
         PacketBuilder builder = PacketBuilder.create(2, "profile_info", 14, alloc);
         builder.writeByte(2);                                                                   // Rights
         builder.writeByte(0);                                                                   // Black marks
@@ -204,7 +205,7 @@ public class AccountMessageCodecInitializer implements MessageCodecInitializer {
      * @param message
      * @return
      */
-    private Packet encodeUsernameSuggestionMessage(ByteBufAllocator allocator, PacketMetaList packetMetaList, UsernameSuggestionMessage message) {
+    private Packet encodeUsernameSuggestionMessage(MessageCodecContext context, ByteBufAllocator allocator, PacketMetaList packetMetaList, UsernameSuggestionMessage message) {
         List<String> usernames = message.getSuggestedUsernames();
         PacketBuilder builder = PacketBuilder.create(21, "suggest_usernames", usernames.size() * 8 + 1, allocator);
         builder.writeByte(usernames.size());

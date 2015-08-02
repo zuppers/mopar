@@ -351,7 +351,10 @@
     "id": 58,
     "name": "harmony",
     "formatted_name": "Harmony",
-    "file": 76
+    "file": 76,
+    "regions" : [
+      12850
+    ]
   },
   {
     "id": 59,

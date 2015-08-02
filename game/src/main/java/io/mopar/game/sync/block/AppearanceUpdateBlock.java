@@ -20,7 +20,7 @@ public class AppearanceUpdateBlock extends UpdateBlock {
     public static AppearanceUpdateBlock create(Player player) {
         AppearanceUpdateBlock block = new AppearanceUpdateBlock();
 
-        block.setName(player.getUsername());
+        block.setName(player.getUid());
         block.setCombatLevel(3);
 
         if(player.hasInventory(Equipment.INVENTORY_ID)) {
@@ -98,8 +98,14 @@ public class AppearanceUpdateBlock extends UpdateBlock {
         return block;
     }
 
+    /**
+     *
+     */
     private boolean male;
 
+    /**
+     *
+     */
     private int headStyle = -1;
     private int beardStyle = -1;
     private int bodyStyle = -1;
@@ -108,6 +114,9 @@ public class AppearanceUpdateBlock extends UpdateBlock {
     private int legsStyle = -1;
     private int feetStyle = -1;
 
+    /**
+     *
+     */
     private int helmetId = -1;
     private int capeId = -1;
     private int neckId = -1;

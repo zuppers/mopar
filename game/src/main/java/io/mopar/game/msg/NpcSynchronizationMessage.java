@@ -65,7 +65,7 @@ public class NpcSynchronizationMessage extends Message {
      *
      * @param count The count.
      */
-    public void setLocalPlayerCount(int count) {
+    public void setLocalNpcCount(int count) {
         localPlayerCount = count;
     }
 
@@ -76,6 +76,14 @@ public class NpcSynchronizationMessage extends Message {
      */
     public int getLocalNpcCount() {
         return localPlayerCount;
+    }
+
+    /**
+     *
+     * @return
+     */
+    public Position getPosition() {
+        return position;
     }
 
     /**
@@ -124,12 +132,8 @@ public class NpcSynchronizationMessage extends Message {
             }
         }
 
-        message.setLocalPlayerCount(localCount);
+        message.setLocalNpcCount(localCount);
 
         return message;
-    }
-
-    public Position getPosition() {
-        return position;
     }
 }

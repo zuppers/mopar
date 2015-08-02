@@ -1,11 +1,11 @@
 package io.mopar.rs2.game;
 
-import io.mopar.game.model.Direction;
 import io.mopar.game.model.Step;
 import io.mopar.game.msg.NpcSynchronizationMessage;
 import io.mopar.game.sync.NpcDescriptor;
 import io.mopar.game.sync.UpdateBlock;
 import io.mopar.game.sync.npc.*;
+import io.mopar.rs2.msg.MessageCodecContext;
 import io.mopar.rs2.msg.MessageEncoder;
 import io.mopar.rs2.net.packet.Packet;
 import io.mopar.rs2.net.packet.PacketBuilder;
@@ -17,7 +17,7 @@ import java.util.Map;
 import java.util.Queue;
 
 /**
- * Created by hadyn on 7/28/2015.
+ * @author Hadyn Fitzgerald
  */
 public class NpcSynchronizationMessageEncoder implements MessageEncoder<NpcSynchronizationMessage> {
 
@@ -40,7 +40,7 @@ public class NpcSynchronizationMessageEncoder implements MessageEncoder<NpcSynch
     private Map<Class<? extends UpdateBlock>, UpdateBlockEncoder> blockEncoders = new HashMap<>();
 
     /**
-     * Constructs a new {@link PlayerSynchronizationMessageEncoder};
+     * Constructs a new {@link NpcSynchronizationMessageEncoder};
      */
     public NpcSynchronizationMessageEncoder() {
         register(IdleNpcDescriptor.class, this::encodeIdleDescriptor);
@@ -51,15 +51,17 @@ public class NpcSynchronizationMessageEncoder implements MessageEncoder<NpcSynch
     }
 
     /**
-     * Encodes a player synchronization message to a packet.
+     * Encodes a npc synchronization message to a packet.
      *
+     *
+     * @param context
      * @param allocator The byte buffer allocator.
      * @param outgoingPackets The outgoing packets.
      * @param message The message to encode.
      * @return The encoded packet.
      */
     @Override
-    public Packet encode(ByteBufAllocator allocator, PacketMetaList outgoingPackets,
+    public Packet encode(MessageCodecContext context, ByteBufAllocator allocator, PacketMetaList outgoingPackets,
                          NpcSynchronizationMessage message) {
         PacketBuilder builder = PacketBuilder.create(outgoingPackets.get("npc_update"), allocator);
 
@@ -146,7 +148,7 @@ public class NpcSynchronizationMessageEncoder implements MessageEncoder<NpcSynch
     }
 
     /**
-     * Encodes an idle player descriptor. For an idle player if there are no update blocks then we do not write out
+     * Encodes an idle npc descriptor. For an idle npc if there are no update blocks then we do not write out
      * the descriptor type however if there is we must. For other descriptors note that we have to write out if there
      * were update blocks.
      *
@@ -162,7 +164,7 @@ public class NpcSynchronizationMessageEncoder implements MessageEncoder<NpcSynch
     }
 
     /**
-     * Encodes a walking player descriptor.
+     * Encodes a walking npc descriptor.
      *
      * @param descriptor The descriptor.
      * @param builder The packet builder.
@@ -175,7 +177,7 @@ public class NpcSynchronizationMessageEncoder implements MessageEncoder<NpcSynch
     }
 
     /**
-     * Encodes a running player descriptor.
+     * Encodes a running npc descriptor.
      *
      * @param descriptor The descriptor.
      * @param builder The packet builder.
@@ -196,7 +198,7 @@ public class NpcSynchronizationMessageEncoder implements MessageEncoder<NpcSynch
     }
 
     /**
-     * Encodes a remove player descriptor.
+     * Encodes a remove npc descriptor.
      *
      * @param descriptor The descriptor.
      * @param builder The packet builder.
@@ -207,7 +209,7 @@ public class NpcSynchronizationMessageEncoder implements MessageEncoder<NpcSynch
     }
 
     /**
-     * Encodes an add player descriptor.
+     * Encodes an add npc descriptor.
      *
      * @param descriptor The descriptor.
      * @param builder The packet builder.
@@ -216,7 +218,7 @@ public class NpcSynchronizationMessageEncoder implements MessageEncoder<NpcSynch
         int x = descriptor.getPosition().getX() - descriptor.getRelative().getX();
         int y = descriptor.getPosition().getY() - descriptor.getRelative().getY();
 
-        builder.writeBits(15, descriptor.getNpcId());
+        builder.writeBits(15, descriptor.getId());
         builder.writeBits(1, 0);
         builder.writeBits(3, descriptor.getLastStep().toInteger());
         builder.writeBits(1, descriptor.hasUpdateBlocks() ? 1 : 0);

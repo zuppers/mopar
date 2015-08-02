@@ -6,6 +6,7 @@ import io.mopar.account.Profile;
 import io.mopar.account.SkillModel;
 import io.mopar.core.msg.Message;
 import io.mopar.core.msg.MessageListener;
+import io.mopar.game.model.block.RegionSet;
 import io.mopar.game.msg.*;
 
 import java.util.*;
@@ -56,8 +57,10 @@ public class Player extends Mobile {
      */
     private ChatMessage publicChatMessage;
 
+    /**
+     *
+     */
     private SkillSet skills = new SkillSet();
-
 
     /**
      * Constructs a new {@link Player};
@@ -76,7 +79,7 @@ public class Player extends Mobile {
      *
      * @return
      */
-    public long getUsername() {
+    public long getUid() {
         return username;
     }
 
@@ -109,6 +112,15 @@ public class Player extends Mobile {
 
     /**
      *
+     * @param id
+     * @param active
+     */
+    public void setFeatureVisible(int id, boolean active) {
+        appearance.setVisible(id, active);
+    }
+
+    /**
+     *
      * @param bool
      */
     public void setAppearanceUpdated(boolean bool) {
@@ -130,7 +142,6 @@ public class Player extends Mobile {
      */
     public boolean getAppearanceUpdated() {
         return appearanceUpdated;
-
     }
 
     /**
@@ -372,7 +383,6 @@ public class Player extends Mobile {
      */
     public void setPublicChatMessage(ChatMessage message) {
         this.publicChatMessage = message;
-        setUpdated(true);
     }
 
     /**
@@ -413,6 +423,17 @@ public class Player extends Mobile {
     }
 
     /**
+     *
+     * @param widgetId
+     * @param componentId
+     * @param text
+     */
+    public void setInterfaceText(int widgetId, int componentId, String text) {
+        send(new SetInterfaceTextMessage(widgetId, componentId, text));
+    }
+
+
+    /**
      * Gets the scene.
      *
      * @return the scene.
@@ -429,6 +450,24 @@ public class Player extends Mobile {
     public void updateLocalPlayers(EntityList<Player> players) {
         scene.updateLocalPlayers(players, getPosition());
         send(PlayerSynchronizationMessage.create(this));
+    }
+
+    /**
+     *
+     * @param npcs
+     */
+    public void updateLocalNpcs(EntityList<NPC> npcs) {
+        scene.updateLocalNpcs(npcs, getPosition());
+        send(NpcSynchronizationMessage.create(this));
+    }
+
+    /**
+     *
+     * @param regions
+     */
+    public void updateBlocks(RegionSet regions) {
+        scene.updateBlocks(regions, getPosition());
+        send(BlockSynchronizationMessage.create(this, regions));
     }
 
     /**
@@ -468,6 +507,14 @@ public class Player extends Mobile {
     }
 
     /**
+     *
+     * @param messages
+     */
+    public void send(Collection<? extends Message> messages) {
+        messages.forEach(this::send);
+    }
+
+    /**
      * Sends a message.
      *
      * @param message The message to send.
@@ -476,16 +523,40 @@ public class Player extends Mobile {
         messageListeners.forEach(listener -> listener.handle(message));
     }
 
+    /**
+     *
+     * @param skill
+     * @param amount
+     */
     public void giveExp(int skill, double amount) {
-        skills.giveExp(skill, amount);
+        skills.giveExperience(skill, amount);
         Double d = Double.valueOf(skills.getExperience(skill));
         send(new UpdateSkillMessage(skill, d.intValue(), skills.getStat(skill)));
     }
 
+    /**
+     *
+     */
     public void refreshSkills() {
         for(int i = 0; i < Skills.COUNT; i++) {
             send(new UpdateSkillMessage(i, Double.valueOf(skills.getExperience(i)).intValue(), skills.getStat(i)));
         }
+    }
+
+    /**
+     *
+     * @return
+     */
+    public SkillSet getSkills() {
+        return skills;
+    }
+
+    /**
+     *
+     * @param id
+     */
+    public void playSong(int id) {
+        send(new PlaySongMessage(id));
     }
 
     /**
@@ -497,18 +568,10 @@ public class Player extends Mobile {
         super.reset();
     }
 
-    public void playSong(int id) {
-        send(new PlaySongMessage(id));
-    }
-
-    public void setInterfaceText(int widgetId, int componentId, String text) {
-        send(new SetInterfaceTextMessage(widgetId, componentId, text));
-    }
-
-    public void setFeatureVisible(int id, boolean active) {
-        appearance.setVisible(id, active);
-    }
-
+    /**
+     *
+     * @return
+     */
     public Profile toProfile() {
         Profile profile = new Profile();
         profile.setUid(username);
@@ -548,14 +611,5 @@ public class Player extends Mobile {
         }
 
         return profile;
-    }
-
-    public SkillSet getSkills() {
-        return skills;
-    }
-
-    public void updateLocalNpcs(EntityList<NPC> npcs) {
-        scene.updateLocalNpcs(npcs, getPosition());
-        send(NpcSynchronizationMessage.create(this));
     }
 }

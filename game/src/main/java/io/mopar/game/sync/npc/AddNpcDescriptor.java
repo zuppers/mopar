@@ -11,9 +11,10 @@ import io.mopar.game.sync.NpcDescriptor;
  */
 public class AddNpcDescriptor extends NpcDescriptor {
 
-
-
-    private int playerId;
+    /**
+     *
+     */
+    private int id;
 
     /**
      * The position.
@@ -29,6 +30,10 @@ public class AddNpcDescriptor extends NpcDescriptor {
      * The last step.
      */
     private Step lastStep;
+
+    /**
+     *
+     */
     private int type;
 
     /**
@@ -38,7 +43,7 @@ public class AddNpcDescriptor extends NpcDescriptor {
      */
     public AddNpcDescriptor(NPC npc, Position relative) {
         super(npc);
-        playerId = npc.getId();
+        id = npc.getId();
         position = npc.getPosition();
         this.relative = relative;
         lastStep = npc.getLastStep();
@@ -48,20 +53,40 @@ public class AddNpcDescriptor extends NpcDescriptor {
         }
     }
 
+    /**
+     *
+     * @return
+     */
     public Position getPosition() {
         return position;
     }
 
+    /**
+     *
+     * @return
+     */
     public Position getRelative() { return relative; }
 
-    public int getNpcId() {
-        return playerId;
+    /**
+     *
+     * @return
+     */
+    public int getId() {
+        return id;
     }
 
+    /**
+     *
+     * @return
+     */
     public Step getLastStep() {
         return lastStep;
     }
 
+    /**
+     *
+     * @return
+     */
     public int getType() {
         return type;
     }

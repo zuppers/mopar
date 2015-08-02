@@ -11,6 +11,21 @@ public class NPC extends Mobile {
     private int type;
 
     /**
+     *
+     */
+    public NPC(int type) {
+        this.type = type;
+    }
+
+    /**
+     *
+     * @param type
+     */
+    public void setType(int type) {
+        this.type = type;
+    }
+
+    /**
      * Gets the type.
      *
      * @return The type.
@@ -19,7 +34,4 @@ public class NPC extends Mobile {
         return type;
     }
 
-    public void setType(int type) {
-        this.type = type;
-    }
 }

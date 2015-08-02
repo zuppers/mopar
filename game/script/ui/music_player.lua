@@ -21,8 +21,15 @@ function music_player:play_song(plr, id)
 end
 
 action:on_button(music.list, 1, function(plr, widget, comp, child, opt)
-    print(child)
     music_player:play_song(plr, child)
+end)
+
+world:on(world.player_region_updated, function(plr)
+    local song = songs:for_region(plr:region_id())
+    if not song then
+        return
+    end
+    music_player:play_song(plr, song.id)
 end)
 
 return music_player

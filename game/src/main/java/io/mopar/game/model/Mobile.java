@@ -49,6 +49,11 @@ public class Mobile extends Entity {
     private boolean teleporting;
 
     /**
+     * The previous position.
+     */
+    private Position previousPosition;
+
+    /**
      * Queues a state.
      *
      * @param state The state.
@@ -166,6 +171,22 @@ public class Mobile extends Entity {
         }
 
         return steps;
+    }
+
+    /**
+     *
+     * @param previousPosition
+     */
+    public void setPreviousPosition(Position previousPosition) {
+        this.previousPosition = previousPosition;
+    }
+
+    /**
+     *
+     * @return
+     */
+    public Position getPreviousPosition() {
+        return previousPosition;
     }
 
     /**

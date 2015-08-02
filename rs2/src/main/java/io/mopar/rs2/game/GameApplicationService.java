@@ -110,6 +110,7 @@ public class GameApplicationService extends ApplicationService<GameService> {
      */
     private void registerOutgoingPackets(PacketMetaList outgoingPackets) {
         outgoingPackets.add(new PacketMetaData(4, "song", 2));
+        outgoingPackets.add(new PacketMetaData(17, "create_still_graphic", 6));
         outgoingPackets.add(new PacketMetaData(21, "set_interface_hidden", 7));
         outgoingPackets.add(new PacketMetaData(22, "update_inventory", PacketMetaData.VAR_SHORT_LENGTH));
         outgoingPackets.add(new PacketMetaData(32, "npc_update", PacketMetaData.VAR_SHORT_LENGTH));
@@ -117,13 +118,17 @@ public class GameApplicationService extends ApplicationService<GameService> {
         outgoingPackets.add(new PacketMetaData(60, "variable_b", 3));
         outgoingPackets.add(new PacketMetaData(70, "print", PacketMetaData.VAR_BYTE_LENGTH));
         outgoingPackets.add(new PacketMetaData(105, "refresh_inventory", PacketMetaData.VAR_SHORT_LENGTH));
+        outgoingPackets.add(new PacketMetaData(112, "reset_block", 2));
         outgoingPackets.add(new PacketMetaData(145, "set_root_interface", 5));
         outgoingPackets.add(new PacketMetaData(155, "set_interface", 9));
         outgoingPackets.add(new PacketMetaData(162, "rebuild_scene", PacketMetaData.VAR_SHORT_LENGTH));
         outgoingPackets.add(new PacketMetaData(165, "access_options", 14));
         outgoingPackets.add(new PacketMetaData(171, "interface_text", PacketMetaData.VAR_SHORT_LENGTH));
+        outgoingPackets.add(new PacketMetaData(179, "update_obj", 4));
+        outgoingPackets.add(new PacketMetaData(195, "remove_obj", 2));
         outgoingPackets.add(new PacketMetaData(225, "player_update", PacketMetaData.VAR_SHORT_LENGTH));
         outgoingPackets.add(new PacketMetaData(226, "variable_i", 6 ));
+        outgoingPackets.add(new PacketMetaData(230, "sync_block", PacketMetaData.VAR_SHORT_LENGTH));
     }
 
     /**

@@ -19,6 +19,7 @@ public class Position {
      * The plane.
      */
     private int plane;
+    private Object regionHash;
 
     /**
      * Constructs a new {@link Position};
@@ -155,6 +156,14 @@ public class Position {
      */
     public int getRegionY() {
         return y >> 6;
+    }
+
+    /**
+     *
+     * @return
+     */
+    public int getRegionHash() {
+        return getRegionX() << 8 | getRegionY();
     }
 
     /**

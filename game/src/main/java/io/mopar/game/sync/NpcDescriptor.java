@@ -20,9 +20,9 @@ public class NpcDescriptor extends Descriptor<NPC> {
     }
 
     /**
-     * Creates a new player descriptor for the players current state.
+     * Creates a new npc descriptor for the npcs current state.
      *
-     * @param npc The player.
+     * @param npc The npc.
      * @return The descriptor for the provided player.
      */
     public static NpcDescriptor create(NPC npc) {

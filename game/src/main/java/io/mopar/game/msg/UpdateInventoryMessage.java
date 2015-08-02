@@ -11,10 +11,29 @@ import java.util.List;
  */
 public class UpdateInventoryMessage extends Message {
 
-    private int widgetId;
-    private int componentId;
+    /**
+     *
+     */
     private Inventory inventory;
+
+    /**
+     *
+     */
     private int id;
+
+    /**
+     *
+     */
+    private int widgetId;
+
+    /**
+     *
+     */
+    private int componentId;
+
+    /**
+     *
+     */
     private List<Integer> slots = new ArrayList<>();
 
     /**
@@ -33,29 +52,49 @@ public class UpdateInventoryMessage extends Message {
 
     /**
      *
+     * @return
+     */
+    public Inventory getInventory() {
+        return inventory;
+    }
+
+    /**
+     *
+     * @return
+     */
+    public int getId() {
+        return id;
+    }
+
+    /**
+     *
+     * @return
+     */
+    public int getWidgetId() {
+        return widgetId;
+    }
+
+    /**
+     *
+     * @return
+     */
+    public int getComponentId() {
+        return componentId;
+    }
+
+    /**
+     *
      * @param slot
      */
     public void addSlot(int slot) {
         slots.add(slot);
     }
 
+    /**
+     *
+     * @return
+     */
     public List<Integer> getSlots() {
         return slots;
-    }
-
-    public Inventory getInventory() {
-        return inventory;
-    }
-
-    public int getId() {
-        return id;
-    }
-
-    public int getWidgetId() {
-        return widgetId;
-    }
-
-    public int getComponentId() {
-        return componentId;
     }
 }

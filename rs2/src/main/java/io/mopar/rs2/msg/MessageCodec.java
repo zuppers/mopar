@@ -73,6 +73,6 @@ public class MessageCodec {
         if(encoder == null) {
             throw new NullPointerException("Internal error; no encoder registered for message " + message.getClass().getSimpleName());
         }
-        return encoder.encode(allocator, outgoingPackets, message);
+        return encoder.encode((msg) -> encodeMessage(allocator, outgoingPackets, msg), allocator, outgoingPackets, message);
     }
 }

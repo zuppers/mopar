@@ -7,6 +7,47 @@ local items     = lazy('items')
 local backpack  = lazy('inv/backpack')
 local skills    = lazy('skills')
 
+--[[
+    x y plane type config [orientation]
+ ]]
+action:on_command('createobj', command:for_admin(function(plr, cmd, args)
+    local x             = tonumber(args[1])
+    local y             = tonumber(args[2])
+    local plane         = tonumber(args[3])
+    local type          = tonumber(args[4])
+    local config        = tonumber(args[5])
+    local orientation   = args[6] and tonumber(args[6]) or 0
+
+    world:create_obj(plane, x, y, type, config, orientation)
+end))
+
+--[[
+    x y plane group
+ ]]
+action:on_command('removeobj', command:for_admin(function(plr, cmd, args)
+    local x             = tonumber(args[1])
+    local y             = tonumber(args[2])
+    local plane         = tonumber(args[3])
+    local group         = tonumber(args[4])
+
+    world:remove_obj(plane, x, y, group)
+end))
+
+--[[
+    x y plane config [height [delay] ]
+ ]]
+action:on_command('creategfx', command:for_admin(function(plr, cmd, args)
+    local x             = tonumber(args[1])
+    local y             = tonumber(args[2])
+    local plane         = tonumber(args[3])
+    local config        = tonumber(args[3])
+    local height        = args[4] and tonumber(args[4]) or 0
+    local delay         = args[5] and tonumber(args[5]) or 0
+
+    world:create_still_gfx(plane, x, y, config, height, delay)
+end))
+
+
 --[[ ]]
 
 action:on_command('tele', command:for_admin(function(plr, cmd, args)

@@ -13,10 +13,12 @@ public interface MessageEncoder<T extends Message> {
     /**
      * Encodes a message to a packet.
      *
+     *
+     * @param context
      * @param allocator The byte buffer allocator.
      * @param outgoingPackets The outgoing packets.
      * @param message The message to encode.
      * @return The encoded packet.
      */
-    Packet encode(ByteBufAllocator allocator, PacketMetaList outgoingPackets, T message);
+    Packet encode(MessageCodecContext context, ByteBufAllocator allocator, PacketMetaList outgoingPackets, T message);
 }

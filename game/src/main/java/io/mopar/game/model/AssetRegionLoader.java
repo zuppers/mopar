@@ -1,10 +1,11 @@
 package io.mopar.game.model;
 
 import io.mopar.core.asset.AssetLoader;
-import io.mopar.core.asset.AssetLoaderException;
+import io.mopar.game.model.block.Region;
+import io.mopar.game.model.block.RegionLoader;
+import io.mopar.game.model.block.RegionLoaderException;
 
 import java.io.ByteArrayInputStream;
-import java.net.URISyntaxException;
 import java.util.zip.GZIPInputStream;
 
 /**

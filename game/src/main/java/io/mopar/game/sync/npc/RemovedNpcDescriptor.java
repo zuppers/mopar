@@ -9,12 +9,13 @@ import io.mopar.game.sync.PlayerDescriptor;
  * @author Hadyn Fitzgerald
  */
 public class RemovedNpcDescriptor extends NpcDescriptor {
+
     /**
-     * Constructs a new {@link PlayerDescriptor};
+     * Constructs a new {@link RemovedNpcDescriptor};
      *
-     * @param player The player.
+     * @param npc The npc.
      */
-    public RemovedNpcDescriptor(NPC player) {
-        super(player);
+    public RemovedNpcDescriptor(NPC npc) {
+        super(npc);
     }
 }

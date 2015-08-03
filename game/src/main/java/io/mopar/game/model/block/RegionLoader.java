@@ -1,4 +1,4 @@
-package io.mopar.game.model;
+package io.mopar.game.model.block;
 
 /**
  * @author Hadyn Fitzgerald

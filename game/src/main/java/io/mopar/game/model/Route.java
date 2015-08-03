@@ -9,6 +9,9 @@ import java.util.List;
  */
 public class Route {
 
+    /**
+     *
+     */
     public static final class Point {
         int x, y;
 

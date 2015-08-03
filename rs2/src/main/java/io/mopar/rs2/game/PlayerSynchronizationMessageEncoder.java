@@ -1,7 +1,6 @@
 package io.mopar.rs2.game;
 
 import io.mopar.game.model.Position;
-import io.mopar.game.model.Direction;
 import io.mopar.game.model.Step;
 import io.mopar.game.msg.ChatMessage;
 import io.mopar.game.msg.PlayerSynchronizationMessage;
@@ -9,6 +8,7 @@ import io.mopar.game.sync.*;
 import io.mopar.game.sync.block.AppearanceUpdateBlock;
 import io.mopar.game.sync.block.ChatUpdateBlock;
 import io.mopar.game.sync.player.*;
+import io.mopar.rs2.msg.MessageCodecContext;
 import io.mopar.rs2.msg.MessageEncoder;
 import io.mopar.rs2.net.packet.Packet;
 import io.mopar.rs2.net.packet.PacketBuilder;
@@ -60,14 +60,16 @@ public class PlayerSynchronizationMessageEncoder implements MessageEncoder<Playe
     /**
      * Encodes a player synchronization message to a packet.
      *
+     *
+     * @param context
      * @param allocator The byte buffer allocator.
      * @param outgoingPackets The outgoing packets.
      * @param message The message to encode.
      * @return The encoded packet.
      */
     @Override
-    public Packet encode(ByteBufAllocator allocator, PacketMetaList outgoingPackets,
-                                              PlayerSynchronizationMessage message) {
+    public Packet encode(MessageCodecContext context, ByteBufAllocator allocator, PacketMetaList outgoingPackets,
+                         PlayerSynchronizationMessage message) {
         PacketBuilder builder = PacketBuilder.create(outgoingPackets.get("player_update"), allocator);
 
         builder.switchToBitAccess();
@@ -261,7 +263,7 @@ public class PlayerSynchronizationMessageEncoder implements MessageEncoder<Playe
         int x = descriptor.getPosition().getX() - descriptor.getRelative().getX();
         int y = descriptor.getPosition().getY() - descriptor.getRelative().getY();
 
-        builder.writeBits(11, descriptor.getPlayerId());
+        builder.writeBits(11, descriptor.getId());
         builder.writeBits(1, descriptor.hasUpdateBlocks() ? 1 : 0);
         builder.writeBits(5, x);
         builder.writeBits(3, descriptor.getLastStep().toInteger());

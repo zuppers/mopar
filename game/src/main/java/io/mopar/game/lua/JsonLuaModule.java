@@ -61,19 +61,19 @@ public class JsonLuaModule implements LuaModule {
                 JsonElement innerElement = arr.get(i);
                 if(innerElement.isJsonArray() || innerElement.isJsonObject()) {
                     LuaTable innerTable = new LuaTable();
-                    table.set(i, innerTable);
+                    table.set(i+1, innerTable);
                     appendToTable(innerTable, innerElement);
                 } else {
                     if(innerElement.isJsonNull()) {
-                        table.set(i, LuaValue.NIL);
+                        table.set(i+1, LuaValue.NIL);
                     } else if(innerElement.isJsonPrimitive()) {
                         JsonPrimitive primitive = innerElement.getAsJsonPrimitive();
                         if(primitive.isBoolean()) {
-                            table.set(i, LuaBoolean.valueOf(primitive.getAsBoolean()));
+                            table.set(i+1, LuaBoolean.valueOf(primitive.getAsBoolean()));
                         } else if(primitive.isNumber()) {
-                            table.set(i, Coerce.coerceToLua(primitive.getAsDouble()));
+                            table.set(i+1, Coerce.coerceToLua(primitive.getAsDouble()));
                         } else if(primitive.isString()) {
-                            table.set(i, primitive.getAsString());
+                            table.set(i+1, primitive.getAsString());
                         }
                     }
                 }

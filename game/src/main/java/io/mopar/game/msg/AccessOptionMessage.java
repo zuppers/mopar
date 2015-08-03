@@ -6,12 +6,40 @@ import io.mopar.core.msg.Message;
  * @author Hadyn Fitzgerald
  */
 public class AccessOptionMessage extends Message {
+
+    /**
+     *
+     */
     private int widgetId;
+
+    /**
+     *
+     */
     private int componentId;
+
+    /**
+     *
+     */
     private int start;
+
+    /**
+     *
+     */
     private int end;
+
+    /**
+     *
+     */
     private int flags;
 
+    /**
+     *
+     * @param widgetId
+     * @param componentId
+     * @param start
+     * @param end
+     * @param flags
+     */
     public AccessOptionMessage(int widgetId, int componentId, int start, int end, int flags) {
         this.widgetId = widgetId;
         this.componentId = componentId;

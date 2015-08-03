@@ -244,13 +244,29 @@ public class Inventory {
 
     /**
      *
+     * @param first
+     * @param second
+     * @param mode
+     */
+    public void swap(int first, int second, int mode) {
+        if(mode == SWAP) {
+            Item item = get(second);
+            set(second, get(first));
+            set(first, item);
+        } else {
+            // TODO
+        }
+    }
+
+    /**
+     *
      * @param item
      * @param size
      * @param stack
      * @return
      */
     public boolean accept(Item item, int size, boolean stack) {
-        if(slotOf(item.getId()) != -1) {
+        if(stack && slotOf(item.getId()) != -1) {
             return true;
         }
         return freeSlot() < size;
@@ -416,17 +432,4 @@ public class Inventory {
         }
     }
 
-    /**
-     *
-     * @param first
-     * @param second
-     * @param mode
-     */
-    public void swap(int first, int second, int mode) {
-        if(mode == SWAP) {
-            Item item = get(second);
-            set(second, get(first));
-            set(first, item);
-        }
-    }
 }

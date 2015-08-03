@@ -1,5 +1,8 @@
-package io.mopar.game.model;
+package io.mopar.game.model.block;
 
+import io.mopar.game.model.Direction;
+import io.mopar.game.model.Position;
+import io.mopar.game.model.TraversalMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -47,17 +50,23 @@ public class RegionSet {
     }
 
     /**
-     *
+     * Processes all of the active regions.
      */
-    public void update() {
+    public void reset() {
         Iterator<Region> itr = regions.values().iterator();
         while(itr.hasNext()) {
             Region region = itr.next();
+
+            // Check if the region has fallen to become inactive
             long diff = System.currentTimeMillis() - region.getLastTouchedTime();
             if(diff > touchTimeout) {
-                logger.info("Region has been marked as inactive, unloading; " + region.getY() + "-" + region.getX());
+                logger.info("Region has been marked as inactive, unloading; " + region.getX() + "-" + region.getY());
                 itr.remove();
+                continue;
             }
+
+            // Reset the region
+            region.reset();
         }
     }
 
@@ -71,6 +80,19 @@ public class RegionSet {
         if(!isLoaded(x, y)) {
             safelyLoad(x, y);
         }
+    }
+
+    /**
+     *
+     * @param x
+     * @param y
+     * @return
+     */
+    public boolean isUpdated(int x, int y) {
+        if(!isLoaded(x, y)) {
+            return false;
+        }
+        return get(x, y).isUpdated();
     }
 
     /**
@@ -139,5 +161,50 @@ public class RegionSet {
      */
     private static final int getRegionKey(int x, int y) {
         return (x & 0xff) << 8 | (y & 0xff);
+    }
+
+    /**
+     *
+     * @param plane
+     * @param blockX
+     * @param blockY
+     * @return
+     */
+    public boolean isBlockUpdated(int plane, int blockX, int blockY) {
+        int regionX = blockX >> 3, regionY = blockY >> 3;
+        if(!isLoaded(regionX, regionY)) {
+            return false;
+        }
+        Region region = get(regionX, regionY);
+        Block block =  region.getBlock(plane,
+                blockX - (regionX << 3),
+                blockY - (regionY << 3));
+        return block.isUpdated();
+    }
+
+    /**
+     *
+     * @param position
+     * @return
+     */
+    public Block getBlock(Position position) {
+        return getBlock(position.getPlane(),
+                position.getBlockX(),
+                position.getBlockY());
+    }
+
+    /**
+     *
+     * @param plane
+     * @param blockX
+     * @param blockY
+     * @return
+     */
+    public Block getBlock(int plane, int blockX, int blockY) {
+        int regionX = blockX >> 3, regionY = blockY >> 3;
+        Region region = get(regionX, regionY);
+        return region.getBlock(plane,
+                blockX - (regionX << 3),
+                blockY - (regionY << 3));
     }
 }

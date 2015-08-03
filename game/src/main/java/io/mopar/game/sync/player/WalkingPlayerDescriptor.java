@@ -25,6 +25,10 @@ public class WalkingPlayerDescriptor extends PlayerDescriptor {
         step = player.getLastStep();
     }
 
+    /**
+     *
+     * @return
+     */
     public Step getStep() {
         return step;
     }

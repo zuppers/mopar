@@ -4,6 +4,7 @@ package io.mopar.game.model;
  * @author Hadyn Fitzgerald
  */
 public class Equipment {
+
     public static final int HEAD = 0;
     public static final int CAPE = 1;
     public static final int NECK = 2;
@@ -17,4 +18,9 @@ public class Equipment {
     public static final int AMMO = 13;
 
     public static final int INVENTORY_ID = 94;
+
+    /**
+     * Prevent instantiation.
+     */
+    private Equipment() {}
 }

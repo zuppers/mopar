@@ -77,21 +77,5 @@ public abstract class Entity {
         return position;
     }
 
-    /**
-     * Sets if the entity has been updated.
-     *
-     * @param updated The updated flag.
-     */
-    public void setUpdated(boolean updated) {
-        this.updated = updated;
-    }
 
-    /**
-     * Gets if the entity has been updated.
-     *
-     * @return If the entity was updated.
-     */
-    public boolean isUpdated() {
-        return updated;
-    }
 }

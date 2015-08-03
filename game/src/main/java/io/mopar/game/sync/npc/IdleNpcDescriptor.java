@@ -13,9 +13,9 @@ public class IdleNpcDescriptor extends NpcDescriptor {
     /**
      * Constructs a new {@link IdleNpcDescriptor};
      *
-     * @param player The player.
+     * @param npc The npc.
      */
-    public IdleNpcDescriptor(NPC player) {
-        super(player);
+    public IdleNpcDescriptor(NPC npc) {
+        super(npc);
     }
 }

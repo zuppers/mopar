@@ -20,11 +20,11 @@ public class RunningNpcDescriptor extends NpcDescriptor {
     /**
      * Constructs a new {@link RunningNpcDescriptor};
      *
-     * @param player The player.
+     * @param npc The npc.
      */
-    public RunningNpcDescriptor(NPC player) {
-        super(player);
-        steps = player.getRecentSteps();
+    public RunningNpcDescriptor(NPC npc) {
+        super(npc);
+        steps = npc.getRecentSteps();
     }
 
     /**

@@ -3,7 +3,7 @@ package io.mopar.game.msg;
 import io.mopar.core.msg.Message;
 
 /**
- * Created by hadyn on 7/23/2015.
+ * @author Hadyn Fitzgerald
  */
 public class PlaySongMessage extends Message {
 

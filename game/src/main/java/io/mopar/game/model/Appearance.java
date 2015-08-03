@@ -84,6 +84,16 @@ public class Appearance {
     }
 
     /**
+     * Sets if a feature is visible.
+     *
+     * @param id the id of the feature.
+     * @param bool if the feature is visible.
+     */
+    public void setVisible(int id, boolean bool) {
+        visible[id] = bool;
+    }
+
+    /**
      * Gets if a feature is visible.
      *
      * @param slot the slot.
@@ -91,9 +101,5 @@ public class Appearance {
      */
     public boolean isVisible(int slot) {
         return visible[slot];
-    }
-
-    public void setVisible(int id, boolean active) {
-        visible[id] = active;
     }
 }

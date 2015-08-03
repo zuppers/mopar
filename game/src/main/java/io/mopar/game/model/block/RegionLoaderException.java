@@ -1,6 +1,4 @@
-package io.mopar.game.model;
-
-import io.mopar.core.asset.AssetLoaderException;
+package io.mopar.game.model.block;
 
 /**
  * @author Hadyn Fitzgerald

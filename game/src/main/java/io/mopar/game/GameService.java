@@ -20,8 +20,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.script.ScriptException;
+import java.io.ByteArrayInputStream;
+import java.io.FileInputStream;
 import java.util.Arrays;
-import java.util.concurrent.Phaser;
 
 /**
  * @author Hadyn Fitzgerald
@@ -83,7 +84,9 @@ public class GameService extends Service {
      */
     private int loopCycle = 0;
 
-
+    /**
+     *
+     */
     private ProfileSerializer profileSerializer;
 
     /**
@@ -106,10 +109,26 @@ public class GameService extends Service {
         this.profileSerializer = serializer;
     }
 
+    /**
+     *
+     * @param cls
+     * @param handler
+     * @param <T>
+     */
+    public <T extends Event> void registerEventHandler(Class<T> cls, EventHandler<T> handler) {
+        eventBindings.add(cls, handler);
+    }
+
     @Override
     public void setup() {
         initScriptEngine();
         registerRequestHandlers();
+
+        try {
+            GameObjectConfig.init(new ByteArrayInputStream(assetLoader.load("objs.dat")));
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
 
         // TODO: Better way of doing this?
         world.getRegions().setLoader(new AssetRegionLoader(assetLoader));
@@ -129,8 +148,8 @@ public class GameService extends Service {
                 // Every 5 minutes automatically save all of the players
                 if(world.getTime() % 500 == 0) {
                     if(world.getAmountPlayers() > 0) {
-                        logger.info("Automatically saving player profiles");
-                        savePlayers();
+                        logger.info("Automatically saving all active player profiles");
+                        saveProfiles();
                     }
                 }
             }
@@ -142,19 +161,18 @@ public class GameService extends Service {
         // Update the world one last time before tearing down the service
         world.update();
 
-        savePlayers();
+        // Save all of the profiles
+        // TODO: Fix this
+        saveProfiles();
     }
 
-    public void savePlayers() {
-        //Phaser phaser = new Phaser();
-
-        // Save all of the player in the game
-        //phaser.bulkRegister(world.getAmountPlayers());
+    /**
+     *
+     */
+    public void saveProfiles() {
         for (Player player : world.getPlayers()) {
-            profileSerializer.save(player.toProfile(), (res) -> {}/*phaser.arrive()*/);
+            profileSerializer.save(player.toProfile(), (res) -> {});
         }
-
-        //phaser.arriveAndAwaitAdvance();
     }
 
     /**
@@ -285,7 +303,7 @@ public class GameService extends Service {
 
         // Register all of the modules
         scriptEngine.put(new ActionsLuaModule(actionBindings));
-        scriptEngine.put(new EventLuaModule(eventBindings));
+        scriptEngine.put(new ServiceModule(this));
         scriptEngine.put(new WorldLuaModule(world));
         scriptEngine.put(new AssetLuaModule(assetLoader));
         scriptEngine.put(new JsonLuaModule());
@@ -337,7 +355,7 @@ public class GameService extends Service {
         Player player = new Player();
         player.setUsername(request.getUsername());
 
-        if(world.hasPlayer(player.getUsername())) {
+        if(world.hasPlayer(player.getUid())) {
             callback.call(new NewPlayerResponse(NewPlayerResponse.ALREADY_ONLINE));
             return;
         }

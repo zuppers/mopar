@@ -1,5 +1,7 @@
 package io.mopar.game.model;
 
+import io.mopar.game.model.block.RegionSet;
+
 /**
  * @author Hadyn Fitzgerald
  */
@@ -18,12 +20,17 @@ public class Scene {
     /**
      * The local players.
      */
-    private MobileSceneGraph<Player> localPlayers = new MobileSceneGraph<>(World.PLAYER_CAPACITY);
+    private MobileSceneGraph<Player> localPlayers = new MobileSceneGraph<>(World.PLAYER_LIMIT);
 
     /**
      * The local npcs.
      */
-    private MobileSceneGraph<NPC> localNpcs = new MobileSceneGraph<>(World.NPC_CAPACITY);
+    private MobileSceneGraph<NPC> localNpcs = new MobileSceneGraph<>(World.NPC_LIMIT);
+
+    /**
+     *
+     */
+    private BlockSceneGraph immobiles = new BlockSceneGraph();
 
     /**
      * The position.
@@ -58,6 +65,16 @@ public class Scene {
     public void updateLocalNpcs(EntityList<NPC> npcs, Position currentPosition) {
         checkBuilt();
         localNpcs.update(npcs, position, currentPosition, LENGTH >> 1, VISIBLE_DISTANCE);
+    }
+
+    /**
+     *
+     * @param regions
+     * @param currentPosition
+     */
+    public void updateBlocks(RegionSet regions, Position currentPosition) {
+        checkBuilt();
+        immobiles.update(regions, position, currentPosition, VISIBLE_DISTANCE, LENGTH >> 1);
     }
 
     /**
@@ -104,4 +121,8 @@ public class Scene {
      * @return the local npcs.
      */
     public MobileSceneGraph<NPC> getLocalNpcs() { return localNpcs; }
+
+    public BlockSceneGraph getBlockGraph() {
+        return immobiles;
+    }
 }

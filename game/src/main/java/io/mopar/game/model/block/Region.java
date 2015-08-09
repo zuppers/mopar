@@ -1,5 +1,6 @@
 package io.mopar.game.model.block;
 
+import io.mopar.game.config.GameObjectConfig;
 import io.mopar.game.model.*;
 
 import java.io.DataInputStream;

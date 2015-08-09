@@ -84,7 +84,9 @@ public class FileSystem {
         volumes = new Volume[amountVolumes];
 
         tables = new MetaTable[amountVolumes];
-        Arrays.fill(tables, new MetaTable());
+        for(int i = 0; i < amountVolumes; i++) {
+            tables[i] = new MetaTable();
+        }
 
         // Initialize the blob file
         blob = new Blob(new BufferedFile(root.resolve("main_file_cache.dat2"), "rw", config.getSectorMemory()));

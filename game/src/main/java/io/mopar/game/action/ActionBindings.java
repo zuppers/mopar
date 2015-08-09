@@ -35,7 +35,7 @@ public class ActionBindings {
     /**
      * The swap item actions.
      */
-    private Map<Integer, SwitchItemMenuAction> switchItemActions = new HashMap<>();
+    private Map<Integer, SwitchItemsAction> switchItemActions = new HashMap<>();
 
     /**
      * The command actions.
@@ -88,25 +88,23 @@ public class ActionBindings {
     }
 
     /**
-     *
-     * @param action
-     * @param widgetId
+     *  @param widgetId
      * @param componentId
      * @param option
+     * @param action
      */
-    public void registerButtonMenuAction(ButtonMenuActionHandler action, int widgetId, int componentId, int option) {
+    public void registerButtonMenuAction(int widgetId, int componentId, int option, ButtonMenuActionHandler action) {
         buttonMenuActions.put(getButtonMenuActionKey(widgetId, componentId, option), action);
     }
 
 
     /**
-     *
-     * @param action
-     * @param widgetId
+     *  @param widgetId
      * @param componentId
      * @param option
+     * @param action
      */
-    public void registerItemMenuAction(ItemMenuAction action, int widgetId, int componentId, int itemId, int option) {
+    public void registerItemMenuAction(int widgetId, int componentId, int itemId, int option, ItemMenuAction action) {
         itemMenuActions.put(getItemMenuActionKey(widgetId, componentId, itemId, option), action);
     }
 
@@ -122,21 +120,20 @@ public class ActionBindings {
     }
 
     /**
-     *
-     * @param action
-     * @param widgetId
+     *  @param widgetId
      * @param componentId
+     * @param action
      */
-    public void registerSwapItemAction(SwitchItemMenuAction action, int widgetId, int componentId) {
+    public void registerSwitchItemsAction(int widgetId, int componentId, SwitchItemsAction action) {
         switchItemActions.put(getSwitchItemActionKey(widgetId, componentId), action);
     }
 
     /**
      *
-     * @param handler
      * @param command
+     * @param handler
      */
-    public void registerCommandAction(CommandAction handler, String command) {
+    public void registerCommandAction(String command, CommandAction handler) {
         commandActions.put(command, handler);
     }
 
@@ -223,7 +220,7 @@ public class ActionBindings {
      * @return
      */
     public boolean callSwitchItemAction(Player player, int widgetId, int componentId, int firstSlot, int secondSlot, int mode) {
-        SwitchItemMenuAction action = switchItemActions.get(getSwitchItemActionKey(widgetId, componentId));
+        SwitchItemsAction action = switchItemActions.get(getSwitchItemActionKey(widgetId, componentId));
         if(action == null) {
             return false;
         }

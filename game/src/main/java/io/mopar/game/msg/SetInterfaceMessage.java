@@ -39,6 +39,7 @@ public class SetInterfaceMessage extends Message {
         this.childId = childId;
         this.widgetId = widgetId;
         this.type = type;
+        System.out.println(type);
     }
 
     /**

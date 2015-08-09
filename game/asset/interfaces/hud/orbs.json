@@ -1,0 +1,27 @@
+[
+  {
+    "id" : 747,
+    "name" : "SummoningOrb"
+  },
+
+  {
+    "id" : 748,
+    "name" : "HitpointsOrb"
+  },
+
+  {
+    "id" : 749,
+    "name" : "PrayerOrb"
+  },
+
+  {
+    "id" : 750,
+    "name" : "EnergyOrb",
+    "components" : [
+      {
+        "id" : 1,
+        "name" : "ToggleButton"
+      }
+    ]
+  }
+]

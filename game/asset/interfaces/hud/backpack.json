@@ -1,0 +1,12 @@
+[
+  {
+    "id" : 149,
+    "name" : "Backpack",
+    "components" : [
+      {
+        "id" : 0,
+        "name" : "Container"
+      }
+    ]
+  }
+]

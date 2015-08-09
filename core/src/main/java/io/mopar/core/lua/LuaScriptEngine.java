@@ -1,9 +1,6 @@
 package io.mopar.core.lua;
 
-import org.luaj.vm2.Globals;
-import org.luaj.vm2.LuaError;
-import org.luaj.vm2.LuaFunction;
-import org.luaj.vm2.LuaValue;
+import org.luaj.vm2.*;
 import org.luaj.vm2.lib.OneArgFunction;
 import org.luaj.vm2.lib.PackageLib;
 import org.luaj.vm2.lib.jse.JseBaseLib;
@@ -129,7 +126,9 @@ public class LuaScriptEngine {
      * @param module The module.
      */
     public void put(LuaModule module) {
-        put(module.getNamespace(), module);
+        LuaValue value = Coerce.coerceToLua(module);
+        value.setmetatable(module.getMetaTable());
+        put(module.getNamespace(), value);
     }
 
     /**

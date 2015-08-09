@@ -1,9 +1,11 @@
 package io.mopar.game.model;
 
+import java.util.Iterator;
+
 /**
  * @author Hadyn Fitzgerald
  */
-public class Position {
+public class Position implements Cloneable {
 
     /**
      * The x coordinate.
@@ -19,7 +21,6 @@ public class Position {
      * The plane.
      */
     private int plane;
-    private Object regionHash;
 
     /**
      * Constructs a new {@link Position};
@@ -215,6 +216,14 @@ public class Position {
         int dx = position.x - x;
         int dy = position.y - y;
         return dx <= distance - 1 && dx >= -distance && dy <= distance - 1 && dy >= -distance && position.getPlane() == plane;
+    }
+
+    /**
+     *
+     * @return
+     */
+    public Position copy() {
+        return new Position(x, y, plane);
     }
 
     @Override

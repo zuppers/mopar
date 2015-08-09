@@ -1,25 +1,15 @@
-local rights = lazy('plr/rights')
+local Command = {}
 
-local module = {
-    _scripts = { 'admin' },
+function Command:Register(name, rights, func)
+    action:OnCommand(name, self:ForRights(rights, func))
+end
 
-    load = function(self)
-        for _, script in pairs(self._scripts) do
-            require('cmd/' .. script)
-        end
-    end,
-
-    for_admin = function(self, func)
-        return self:for_rights(rights.admin, func)
-    end,
-
-    for_rights = function(self, perm, func)
-        return function(plr, cmd, args)
-            if plr:rights() >= perm then
-                func(plr, cmd, args)
-            end
+function Command:ForRights(rights, func)
+    return function(player, name, arguments)
+        if player:GetRights() >= rights then
+            func(player, name, arguments)
         end
     end
-}
+end
 
-return module
+return Command

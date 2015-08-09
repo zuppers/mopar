@@ -1,0 +1,23 @@
+[
+  {
+    "id" : 170,
+    "name" : "MouseButtonMode",
+    "default_value" : 1
+  },
+
+  {
+    "id" : 171,
+    "name" : "ChatEffectsActive",
+    "default_value" : 1
+  },
+
+  {
+    "id" : 287,
+    "name" : "SplitChatActive"
+  },
+
+  {
+    "id" : 427,
+    "name" : "AidActive"
+  }
+]

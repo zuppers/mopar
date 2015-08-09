@@ -10,9 +10,12 @@ import io.mopar.game.event.*;
 import io.mopar.game.event.player.PlayerCreatedEvent;
 import io.mopar.game.event.player.PlayerDisplayUpdateEvent;
 import io.mopar.game.lua.*;
+import io.mopar.game.lua.EventModule;
+import io.mopar.game.lua.model.PlayerAdapter;
 import io.mopar.game.model.*;
-import io.mopar.game.model.Route.Point;
+import io.mopar.game.model.Waypoint;
 import io.mopar.game.msg.ChatMessage;
+import io.mopar.game.msg.ExecuteScriptMessage;
 import io.mopar.game.req.*;
 import io.mopar.game.res.*;
 import io.mopar.game.util.ExecutionTimer;
@@ -20,9 +23,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.script.ScriptException;
-import java.io.ByteArrayInputStream;
-import java.io.FileInputStream;
 import java.util.Arrays;
+import java.util.List;
 
 /**
  * @author Hadyn Fitzgerald
@@ -35,9 +37,9 @@ public class GameService extends Service {
     private static final Logger logger = LoggerFactory.getLogger(GameService.class);
 
     /**
-     * The event handler bindings.
+     * The event dispatcher.
      */
-    private EventBindings eventBindings = new EventBindings();
+    private ImmediateEventDispatcher eventDispatcher = new ImmediateEventDispatcher();
 
     /**
      * The script engine.
@@ -85,7 +87,7 @@ public class GameService extends Service {
     private int loopCycle = 0;
 
     /**
-     *
+     * The profile serializer.
      */
     private ProfileSerializer profileSerializer;
 
@@ -109,26 +111,20 @@ public class GameService extends Service {
         this.profileSerializer = serializer;
     }
 
-    /**
-     *
-     * @param cls
-     * @param handler
-     * @param <T>
-     */
-    public <T extends Event> void registerEventHandler(Class<T> cls, EventHandler<T> handler) {
-        eventBindings.add(cls, handler);
-    }
-
     @Override
     public void setup() {
         initScriptEngine();
         registerRequestHandlers();
 
         try {
-            GameObjectConfig.init(new ByteArrayInputStream(assetLoader.load("objs.dat")));
+            //GameObjectConfig.init(new ByteArrayInputStream(assetLoader.load("objs.dat")));
         } catch (Exception ex) {
             ex.printStackTrace();
         }
+
+
+        // Dispatch events from the world to the service event dispatcher
+        world.setEventDispatcher((evt) -> eventDispatcher.dispatch(evt));
 
         // TODO: Better way of doing this?
         world.getRegions().setLoader(new AssetRegionLoader(assetLoader));
@@ -201,11 +197,13 @@ public class GameService extends Service {
     /**
      *
      * @param playerId the player id.
-     * @param route the route.
+     * @param waypoints the waypoints.
      * @param callback The response callback.
      */
-    public void handleRoute(int playerId, Route route, Callback<RoutePlayerResponse> callback) {
-        submit(new RoutePlayerRequest(playerId, route), callback);
+    public void handleRoute(int playerId, List<Waypoint> waypoints, Callback<RoutePlayerResponse> callback) {
+        RoutePlayerRequest request = new RoutePlayerRequest(playerId);
+        waypoints.forEach(request::addWaypoint);
+        submit(request, callback);
     }
 
     /**
@@ -298,15 +296,29 @@ public class GameService extends Service {
      * Initializer method; initializes the script engine.
      */
     private void initScriptEngine() {
-        Coerce.register(Player.class, (plr) -> new PlayerComposite(plr));
-        Coerce.register(Item.class, (itm) -> new ItemComposite(itm));
+        Coerce.register(Player.class, (plr) -> new PlayerAdapter(plr));
 
         // Register all of the modules
-        scriptEngine.put(new ActionsLuaModule(actionBindings));
-        scriptEngine.put(new ServiceModule(this));
+        /*scriptEngine.put(new ActionsLuaModule(actionBindings));
         scriptEngine.put(new WorldLuaModule(world));
         scriptEngine.put(new AssetLuaModule(assetLoader));
-        scriptEngine.put(new JsonLuaModule());
+        scriptEngine.put(new EventLuaModule(dispatcher));
+        scriptEngine.put(new JsonLuaModule());*/
+
+        scriptEngine.put(new LogModule("Game::Environment"));
+        scriptEngine.put(new ActionModule(actionBindings));
+        scriptEngine.put(new EventModule(eventDispatcher));
+        scriptEngine.put(new AssetModule(assetLoader));
+
+        scriptEngine.put(new OptionModule());
+
+        scriptEngine.put(new InterfaceModule());
+        scriptEngine.put(new InventoryModule());
+        scriptEngine.put(new VariableModule());
+        scriptEngine.put(new VarbitModule());
+        scriptEngine.put(new GameObjectModule());
+        scriptEngine.put(new ItemModule());
+        scriptEngine.put(new SongModule());
     }
 
     /**
@@ -341,8 +353,8 @@ public class GameService extends Service {
      *
      * @param event the event to dispatch.
      */
-    private void dispatchEvent(Event event) {
-        eventBindings.handle(event);
+    private void dispatch(Event event) {
+        eventDispatcher.dispatch(event);
     }
 
     /**
@@ -353,7 +365,7 @@ public class GameService extends Service {
      */
     private void handleNewPlayerRequest(NewPlayerRequest request, Callback callback) {
         Player player = new Player();
-        player.setUsername(request.getUsername());
+        player.setUid(request.getUsername());
 
         if(world.hasPlayer(player.getUid())) {
             callback.call(new NewPlayerResponse(NewPlayerResponse.ALREADY_ONLINE));
@@ -382,6 +394,11 @@ public class GameService extends Service {
                     inv.set(item.getSlot(), new Item(item.getId(), item.getAmount()));
                 }
             }
+
+            for(VariableModel variable : profile.getVariables()) {
+                VariableSet variables = player.getVariables();
+                variables.setValue(variable.getId(), variable.getValue());
+            }
         }
 
         // Callback that the request was successful
@@ -389,8 +406,9 @@ public class GameService extends Service {
         response.setPlayer(player);
         callback.call(response);
 
-        // Dispatch an event signaling that the player was created
-        dispatchEvent(new PlayerCreatedEvent(player));
+        dispatch(new PlayerCreatedEvent(player));
+
+        player.refreshVariables();
     }
 
     /**
@@ -433,7 +451,7 @@ public class GameService extends Service {
 
         if(mode != player.getDisplayMode()) {
             player.setDisplayMode(request.getDisplayMode());
-            dispatchEvent(new PlayerDisplayUpdateEvent(player));
+            dispatch(new PlayerDisplayUpdateEvent(player));
         }
 
         callback.call(new UpdateDisplayResponse());
@@ -448,6 +466,12 @@ public class GameService extends Service {
     private void handleButtonActionRequest(ButtonActionRequest request, Callback callback) {
         Player player = world.getPlayer(request.getPlayerId());
         if(player == null) {
+            callback.call(new ButtonActionResponse());
+            return;
+        }
+
+        if(!player.isInterfaceOpen(request.getWidgetId(), request.getComponentId())) {
+            logger.info("Player attempted to interact with interface that was not opened; username: " + player.getUsername());
             callback.call(new ButtonActionResponse());
             return;
         }
@@ -508,15 +532,10 @@ public class GameService extends Service {
             return;
         }
 
-        player.clearSteps();
+        player.clearRoute();
 
-        // TODO: At some point update this since you dont need to interpolate between all the points, so it'd save some
-        // TODO: processing power and memory
-        Position currentPosition = player.getPosition();
-        Route route = request.getRoute();
-        for(Point point : route.getPoints()) {
-            player.addSteps(point.interpolate(currentPosition));
-            currentPosition = new Position(point.getX(), point.getY());
+        for(Waypoint point : request.getWaypoints()) {
+            player.addWaypoint(point);
         }
 
         callback.call(new RoutePlayerResponse(RoutePlayerResponse.OK));

@@ -1,0 +1,82 @@
+[
+  {
+    "id" : 0,
+    "name" : "Adventure",
+    "formattedName" : "Adventure",
+    "fileId" : 177,
+    "regions" : []
+  },
+
+  {
+    "id": 1,
+    "name": "AlKharid",
+    "formattedName": "Al Kharid",
+    "fileId" : 50,
+    "regions" : []
+  },
+
+  {
+    "id": 17,
+    "name": "AutumnVoyage",
+    "formattedName": "Autumn Voyage",
+    "fileId": 2,
+    "regions" : [
+      {
+        "x" : 50,
+        "y" : 51
+      }
+    ]
+  },
+
+  {
+    "id": 23,
+    "name": "BookOfSpells",
+    "formattedName": "Book of Spells",
+    "fileId": 64,
+    "regions" : [
+      {
+        "x" : 49,
+        "y" : 49
+      }
+    ]
+  },
+
+  {
+    "id": 35,
+    "name": "Dream",
+    "formattedName": "Dream",
+    "fileId": 327,
+    "regions" : [
+      {
+        "x" : 49,
+        "y" : 50
+      }
+    ]
+  },
+
+  {
+    "id": 58,
+    "name": "Harmony",
+    "formattedName": "Harmony",
+    "fileId": 76,
+    "regions" : [
+      {
+        "x" : 50,
+        "y" : 50
+      }
+    ]
+  },
+
+  {
+    "id": 161,
+    "name": "Yesteryear",
+    "formattedName": "Yesteryear",
+    "fileId": 145,
+    "regions" : [
+      {
+        "x" : 50,
+        "y" : 49
+      }
+    ]
+  }
+]

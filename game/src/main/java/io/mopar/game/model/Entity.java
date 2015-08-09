@@ -23,7 +23,7 @@ public abstract class Entity {
     /**
      * The variables.
      */
-    private Variables variables = new Variables();
+    private VariableSet variables = new VariableSet();
 
     /**
      * Constructs a new {@link Entity};
@@ -77,5 +77,56 @@ public abstract class Entity {
         return position;
     }
 
+    /**
+     * Sets the value of a variable.
+     *
+     * @param id the variable id.
+     * @param value the value.
+     */
+    public void setVariable(int id, int value) {
+        variables.setValue(id, value);
+    }
 
+    /**
+     * Gets the value of a variable.
+     *
+     * @param id the variable id.
+     * @return the value.
+     */
+    public int getVariable(int id) {
+        return variables.getValue(id);
+    }
+
+    /**
+     *
+     * @param id
+     * @param off
+     * @param len
+     * @param value
+     */
+    public void setBitVariable(int id, int off, int len, int value) {
+        int mask = (1 << len) - 1;
+        int i = (value & mask) << off;
+        setVariable(id, (getVariable(id) & ~(mask << off)) | i);
+    }
+
+    /**
+     *
+     * @param id
+     * @param off
+     * @param len
+     * @return
+     */
+    public int getBitVariable(int id, int off, int len) {
+        int mask = (1 << len) - 1;
+        return getVariable(id) >>> off & mask;
+    }
+
+    /**
+     *
+     * @return
+     */
+    public VariableSet getVariables() {
+        return variables;
+    }
 }

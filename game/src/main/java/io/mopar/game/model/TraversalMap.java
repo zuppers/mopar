@@ -108,8 +108,8 @@ public class TraversalMap {
             //     x
             // > | < y
             if (rotation == 0) {
-                set(x,      y,  WALL_WEST);
-                set(x - 1,  y,  WALL_EAST);
+                set(x, y, WALL_WEST);
+                set(x - 1, y, WALL_EAST);
             }
 
             // v
@@ -117,15 +117,15 @@ public class TraversalMap {
             // ^ y
             // x
             if (rotation == 1) {
-                set(x, y,       WALL_NORTH);
-                set(x, y + 1,   WALL_SOUTH);
+                set(x, y, WALL_NORTH);
+                set(x, y + 1, WALL_SOUTH);
             }
 
             // y > | <
             //   x
             if (rotation == 2) {
-                set(x,     y,   WALL_EAST);
-                set(x + 1, y,   WALL_WEST);
+                set(x, y, WALL_EAST);
+                set(x + 1, y, WALL_WEST);
             }
 
             // x
@@ -133,8 +133,8 @@ public class TraversalMap {
             // -
             // ^
             if (rotation == 3) {
-                set(x, y,       WALL_SOUTH);
-                set(x, y - 1,   WALL_NORTH);
+                set(x, y, WALL_SOUTH);
+                set(x, y - 1, WALL_NORTH);
             }
         }
 
@@ -149,9 +149,9 @@ public class TraversalMap {
             // > | * y
             //     x
             if (rotation == 0) {
-                set(x,      y,      WALL_WEST | WALL_NORTH);
-                set(x - 1,  y,      WALL_EAST);
-                set(x,      y + 1,  WALL_SOUTH);
+                set(x, y, WALL_WEST | WALL_NORTH);
+                set(x - 1, y, WALL_EAST);
+                set(x, y + 1, WALL_SOUTH);
             }
 
             // v
@@ -159,9 +159,9 @@ public class TraversalMap {
             // * | < y
             // x
             if (rotation == 1) {
-                set(x,      y,      WALL_EAST | WALL_NORTH);
-                set(x,      y + 1,  WALL_SOUTH);
-                set(x + 1,  y,      WALL_WEST);
+                set(x, y, WALL_EAST | WALL_NORTH);
+                set(x, y + 1, WALL_SOUTH);
+                set(x + 1, y, WALL_WEST);
             }
 
             // y
@@ -169,9 +169,9 @@ public class TraversalMap {
             // -
             // ^
             if (rotation == 2) {
-                set(x,      y,      WALL_EAST | WALL_SOUTH);
-                set(x + 1,  y,      WALL_WEST);
-                set(x,      y - 1,  WALL_NORTH);
+                set(x, y, WALL_EAST | WALL_SOUTH);
+                set(x + 1, y, WALL_WEST);
+                set(x, y - 1, WALL_NORTH);
             }
 
             // x > | *
@@ -179,9 +179,9 @@ public class TraversalMap {
             //       ^
             //       y
             if (rotation == 3) {
-                set(x,      y,      WALL_WEST | WALL_SOUTH);
-                set(x - 1,  y,      WALL_EAST);
-                set(x,      y - 1,  WALL_NORTH);
+                set(x, y, WALL_WEST | WALL_SOUTH);
+                set(x - 1, y, WALL_EAST);
+                set(x, y - 1, WALL_NORTH);
             }
         }
 
@@ -194,30 +194,30 @@ public class TraversalMap {
             // / y Upper left
             // x
             if (rotation == 0) {
-                set(x,      y,      WALL_NORTH_WEST);
-                set(x - 1,  y + 1,  WALL_SOUTH_EAST);
+                set(x, y, WALL_NORTH_WEST);
+                set(x - 1, y + 1, WALL_SOUTH_EAST);
             }
 
 
             // \ y Upper right
             // x
             if (rotation == 1) {
-                set(x,      y,      WALL_NORTH_EAST);
-                set(x + 1,  y + 1,  WALL_SOUTH_WEST);
+                set(x, y, WALL_NORTH_EAST);
+                set(x + 1, y + 1, WALL_SOUTH_WEST);
             }
 
             // / y Lower right
             // x
             if (rotation == 2) {
-                set(x,      y,      WALL_SOUTH_EAST);
-                set(x + 1,  y - 1,  WALL_NORTH_WEST);
+                set(x, y, WALL_SOUTH_EAST);
+                set(x + 1, y - 1, WALL_NORTH_WEST);
             }
 
             // \ y Lower left
             // x
             if (rotation == 3) {
-                set(x,      y,      WALL_SOUTH_WEST);
-                set(x - 1,  y - 1,  WALL_NORTH_EAST);
+                set(x, y, WALL_SOUTH_WEST);
+                set(x - 1, y - 1, WALL_NORTH_EAST);
             }
         }
 
@@ -232,8 +232,8 @@ public class TraversalMap {
                 //     x
                 // > | < y
                 if (rotation == 0) {
-                    set(x,      y, IMPENETRABLE_WALL_WEST);
-                    set(x - 1,  y, IMPENETRABLE_WALL_EAST);
+                    set(x, y, IMPENETRABLE_WALL_WEST);
+                    set(x - 1, y, IMPENETRABLE_WALL_EAST);
                 }
 
                 // v
@@ -241,15 +241,15 @@ public class TraversalMap {
                 // ^ y
                 // x
                 if (rotation == 1) {
-                    set(x,  y,      IMPENETRABLE_WALL_NORTH);
-                    set(x,  y + 1,  IMPENETRABLE_WALL_SOUTH);
+                    set(x, y, IMPENETRABLE_WALL_NORTH);
+                    set(x, y + 1, IMPENETRABLE_WALL_SOUTH);
                 }
 
                 // y > | <
                 //   x
                 if (rotation == 2) {
-                    set(x,      y, IMPENETRABLE_WALL_EAST);
-                    set(x + 1,  y, IMPENETRABLE_WALL_WEST);
+                    set(x, y, IMPENETRABLE_WALL_EAST);
+                    set(x + 1, y, IMPENETRABLE_WALL_WEST);
                 }
 
                 // x
@@ -257,8 +257,8 @@ public class TraversalMap {
                 // -
                 // ^
                 if (rotation == 3) {
-                    set(x, y,       IMPENETRABLE_WALL_EAST);
-                    set(x, y - 1,   IMPENETRABLE_WALL_WEST);
+                    set(x, y, IMPENETRABLE_WALL_EAST);
+                    set(x, y - 1, IMPENETRABLE_WALL_WEST);
                 }
             }
 
@@ -273,9 +273,9 @@ public class TraversalMap {
                 // > | * y
                 //     x
                 if (rotation == 0) {
-                    set(x,      y,      IMPENETRABLE_WALL_WEST | IMPENETRABLE_WALL_NORTH);
-                    set(x - 1,  y,      IMPENETRABLE_WALL_EAST);
-                    set(x,      y + 1,  IMPENETRABLE_WALL_SOUTH);
+                    set(x, y, IMPENETRABLE_WALL_WEST | IMPENETRABLE_WALL_NORTH);
+                    set(x - 1, y, IMPENETRABLE_WALL_EAST);
+                    set(x, y + 1, IMPENETRABLE_WALL_SOUTH);
                 }
 
                 // v
@@ -283,9 +283,9 @@ public class TraversalMap {
                 // * | < y
                 // x
                 if (rotation == 1) {
-                    set(x,      y,      IMPENETRABLE_WALL_EAST | IMPENETRABLE_WALL_NORTH);
-                    set(x,      y + 1,  IMPENETRABLE_WALL_SOUTH);
-                    set(x + 1,  y,      IMPENETRABLE_WALL_WEST);
+                    set(x, y, IMPENETRABLE_WALL_EAST | IMPENETRABLE_WALL_NORTH);
+                    set(x, y + 1, IMPENETRABLE_WALL_SOUTH);
+                    set(x + 1, y, IMPENETRABLE_WALL_WEST);
                 }
 
                 // y
@@ -293,9 +293,9 @@ public class TraversalMap {
                 // -
                 // ^
                 if (rotation == 2) {
-                    set(x,      y,      IMPENETRABLE_WALL_EAST | IMPENETRABLE_WALL_SOUTH);
-                    set(x + 1,  y,      IMPENETRABLE_WALL_WEST);
-                    set(x,      y - 1,  IMPENETRABLE_WALL_NORTH);
+                    set(x, y, IMPENETRABLE_WALL_EAST | IMPENETRABLE_WALL_SOUTH);
+                    set(x + 1, y, IMPENETRABLE_WALL_WEST);
+                    set(x, y - 1, IMPENETRABLE_WALL_NORTH);
                 }
 
                 // x > | *
@@ -303,9 +303,9 @@ public class TraversalMap {
                 //       ^
                 //       y
                 if (rotation == 3) {
-                    set(x,      y,      IMPENETRABLE_WALL_WEST | IMPENETRABLE_WALL_SOUTH);
-                    set(x - 1,  y,      IMPENETRABLE_WALL_EAST);
-                    set(x,      y - 1,  IMPENETRABLE_WALL_NORTH);
+                    set(x, y, IMPENETRABLE_WALL_WEST | IMPENETRABLE_WALL_SOUTH);
+                    set(x - 1, y, IMPENETRABLE_WALL_EAST);
+                    set(x, y - 1, IMPENETRABLE_WALL_NORTH);
                 }
             }
 
@@ -318,30 +318,30 @@ public class TraversalMap {
                 // / y Upper left
                 // x
                 if (rotation == 0) {
-                    set(x, y,           IMPENETRABLE_WALL_NORTH_WEST);
-                    set(x - 1, y + 1,   IMPENETRABLE_WALL_SOUTH_EAST);
+                    set(x, y, IMPENETRABLE_WALL_NORTH_WEST);
+                    set(x - 1, y + 1, IMPENETRABLE_WALL_SOUTH_EAST);
                 }
 
 
                 // \ y Upper right
                 // x
                 if (rotation == 1) {
-                    set(x, y,           IMPENETRABLE_WALL_NORTH_EAST);
-                    set(x + 1, y + 1,   IMPENETRABLE_WALL_SOUTH_WEST);
+                    set(x, y, IMPENETRABLE_WALL_NORTH_EAST);
+                    set(x + 1, y + 1, IMPENETRABLE_WALL_SOUTH_WEST);
                 }
 
                 // / y Lower right
                 // x
                 if (rotation == 2) {
-                    set(x,      y,      IMPENETRABLE_WALL_SOUTH_EAST);
-                    set(x + 1,  y - 1,  IMPENETRABLE_WALL_NORTH_WEST);
+                    set(x, y, IMPENETRABLE_WALL_SOUTH_EAST);
+                    set(x + 1, y - 1, IMPENETRABLE_WALL_NORTH_WEST);
                 }
 
                 // \ y Lower left
                 // x
                 if (rotation == 3) {
-                    set(x,      y,      IMPENETRABLE_WALL_SOUTH_WEST);
-                    set(x - 1,  y - 1,  IMPENETRABLE_WALL_NORTH_EAST);
+                    set(x, y, IMPENETRABLE_WALL_SOUTH_WEST);
+                    set(x - 1, y - 1, IMPENETRABLE_WALL_NORTH_EAST);
                 }
             }
         }
@@ -365,8 +365,8 @@ public class TraversalMap {
             //     x
             // > | < y
             if (orientation == 0) {
-                unset(x,      y,  WALL_WEST);
-                unset(x - 1,  y,  WALL_EAST);
+                unset(x, y, WALL_WEST);
+                unset(x - 1, y, WALL_EAST);
             }
 
             // v
@@ -374,15 +374,15 @@ public class TraversalMap {
             // ^ y
             // x
             if (orientation == 1) {
-                unset(x, y,       WALL_NORTH);
-                unset(x, y + 1,   WALL_SOUTH);
+                unset(x, y, WALL_NORTH);
+                unset(x, y + 1, WALL_SOUTH);
             }
 
             // y > | <
             //   x
             if (orientation == 2) {
-                unset(x,     y,   WALL_EAST);
-                unset(x + 1, y,   WALL_WEST);
+                unset(x, y, WALL_EAST);
+                unset(x + 1, y, WALL_WEST);
             }
 
             // x
@@ -390,8 +390,8 @@ public class TraversalMap {
             // -
             // ^
             if (orientation == 3) {
-                unset(x, y,       WALL_SOUTH);
-                unset(x, y - 1,   WALL_NORTH);
+                unset(x, y, WALL_SOUTH);
+                unset(x, y - 1, WALL_NORTH);
             }
         }
 
@@ -406,9 +406,9 @@ public class TraversalMap {
             // > | * y
             //     x
             if (orientation == 0) {
-                unset(x,      y,      WALL_WEST | WALL_NORTH);
-                unset(x - 1,  y,      WALL_EAST);
-                unset(x,      y + 1,  WALL_SOUTH);
+                unset(x, y, WALL_WEST | WALL_NORTH);
+                unset(x - 1, y, WALL_EAST);
+                unset(x, y + 1, WALL_SOUTH);
             }
 
             // v
@@ -416,9 +416,9 @@ public class TraversalMap {
             // * | < y
             // x
             if (orientation == 1) {
-                unset(x,      y,      WALL_EAST | WALL_NORTH);
-                unset(x,      y + 1,  WALL_SOUTH);
-                unset(x + 1,  y,      WALL_WEST);
+                unset(x, y, WALL_EAST | WALL_NORTH);
+                unset(x, y + 1, WALL_SOUTH);
+                unset(x + 1, y, WALL_WEST);
             }
 
             // y
@@ -426,9 +426,9 @@ public class TraversalMap {
             // -
             // ^
             if (orientation == 2) {
-                unset(x,      y,      WALL_EAST | WALL_SOUTH);
-                unset(x + 1,  y,      WALL_WEST);
-                unset(x,      y - 1,  WALL_NORTH);
+                unset(x, y, WALL_EAST | WALL_SOUTH);
+                unset(x + 1, y, WALL_WEST);
+                unset(x, y - 1, WALL_NORTH);
             }
 
             // x > | *
@@ -436,9 +436,9 @@ public class TraversalMap {
             //       ^
             //       y
             if (orientation == 3) {
-                unset(x,      y,      WALL_WEST | WALL_SOUTH);
-                unset(x - 1,  y,      WALL_EAST);
-                unset(x,      y - 1,  WALL_NORTH);
+                unset(x, y, WALL_WEST | WALL_SOUTH);
+                unset(x - 1, y, WALL_EAST);
+                unset(x, y - 1, WALL_NORTH);
             }
         }
 
@@ -451,30 +451,30 @@ public class TraversalMap {
             // / y Upper left
             // x
             if (orientation == 0) {
-                unset(x,      y,      WALL_NORTH_WEST);
-                unset(x - 1,  y + 1,  WALL_SOUTH_EAST);
+                unset(x, y, WALL_NORTH_WEST);
+                unset(x - 1, y + 1, WALL_SOUTH_EAST);
             }
 
 
             // \ y Upper right
             // x
             if (orientation == 1) {
-                unset(x,      y,      WALL_NORTH_EAST);
-                unset(x + 1,  y + 1,  WALL_SOUTH_WEST);
+                unset(x, y, WALL_NORTH_EAST);
+                unset(x + 1, y + 1, WALL_SOUTH_WEST);
             }
 
             // / y Lower right
             // x
             if (orientation == 2) {
-                unset(x,      y,      WALL_SOUTH_EAST);
-                unset(x + 1,  y - 1,  WALL_NORTH_WEST);
+                unset(x, y, WALL_SOUTH_EAST);
+                unset(x + 1, y - 1, WALL_NORTH_WEST);
             }
 
             // \ y Lower left
             // x
             if (orientation == 3) {
-                unset(x,      y,      WALL_SOUTH_WEST);
-                unset(x - 1,  y - 1,  WALL_NORTH_EAST);
+                unset(x, y, WALL_SOUTH_WEST);
+                unset(x - 1, y - 1, WALL_NORTH_EAST);
             }
         }
 
@@ -489,8 +489,8 @@ public class TraversalMap {
                 //     x
                 // > | < y
                 if (orientation == 0) {
-                    unset(x,      y, IMPENETRABLE_WALL_WEST);
-                    unset(x - 1,  y, IMPENETRABLE_WALL_EAST);
+                    unset(x, y, IMPENETRABLE_WALL_WEST);
+                    unset(x - 1, y, IMPENETRABLE_WALL_EAST);
                 }
 
                 // v
@@ -498,15 +498,15 @@ public class TraversalMap {
                 // ^ y
                 // x
                 if (orientation == 1) {
-                    unset(x,  y,      IMPENETRABLE_WALL_NORTH);
-                    unset(x,  y + 1,  IMPENETRABLE_WALL_SOUTH);
+                    unset(x, y, IMPENETRABLE_WALL_NORTH);
+                    unset(x, y + 1, IMPENETRABLE_WALL_SOUTH);
                 }
 
                 // y > | <
                 //   x
                 if (orientation == 2) {
-                    unset(x,      y, IMPENETRABLE_WALL_EAST);
-                    unset(x + 1,  y, IMPENETRABLE_WALL_WEST);
+                    unset(x, y, IMPENETRABLE_WALL_EAST);
+                    unset(x + 1, y, IMPENETRABLE_WALL_WEST);
                 }
 
                 // x
@@ -514,8 +514,8 @@ public class TraversalMap {
                 // -
                 // ^
                 if (orientation == 3) {
-                    unset(x, y,       IMPENETRABLE_WALL_EAST);
-                    unset(x, y - 1,   IMPENETRABLE_WALL_WEST);
+                    unset(x, y, IMPENETRABLE_WALL_EAST);
+                    unset(x, y - 1, IMPENETRABLE_WALL_WEST);
                 }
             }
 
@@ -530,9 +530,9 @@ public class TraversalMap {
                 // > | * y
                 //     x
                 if (orientation == 0) {
-                    unset(x,      y,      IMPENETRABLE_WALL_WEST | IMPENETRABLE_WALL_NORTH);
-                    unset(x - 1,  y,      IMPENETRABLE_WALL_EAST);
-                    unset(x,      y + 1,  IMPENETRABLE_WALL_SOUTH);
+                    unset(x, y, IMPENETRABLE_WALL_WEST | IMPENETRABLE_WALL_NORTH);
+                    unset(x - 1, y, IMPENETRABLE_WALL_EAST);
+                    unset(x, y + 1, IMPENETRABLE_WALL_SOUTH);
                 }
 
                 // v
@@ -540,9 +540,9 @@ public class TraversalMap {
                 // * | < y
                 // x
                 if (orientation == 1) {
-                    unset(x,      y,      IMPENETRABLE_WALL_EAST | IMPENETRABLE_WALL_NORTH);
-                    unset(x,      y + 1,  IMPENETRABLE_WALL_SOUTH);
-                    unset(x + 1,  y,      IMPENETRABLE_WALL_WEST);
+                    unset(x, y, IMPENETRABLE_WALL_EAST | IMPENETRABLE_WALL_NORTH);
+                    unset(x, y + 1, IMPENETRABLE_WALL_SOUTH);
+                    unset(x + 1, y, IMPENETRABLE_WALL_WEST);
                 }
 
                 // y
@@ -550,9 +550,9 @@ public class TraversalMap {
                 // -
                 // ^
                 if (orientation == 2) {
-                    unset(x,      y,      IMPENETRABLE_WALL_EAST | IMPENETRABLE_WALL_SOUTH);
-                    unset(x + 1,  y,      IMPENETRABLE_WALL_WEST);
-                    unset(x,      y - 1,  IMPENETRABLE_WALL_NORTH);
+                    unset(x, y, IMPENETRABLE_WALL_EAST | IMPENETRABLE_WALL_SOUTH);
+                    unset(x + 1, y, IMPENETRABLE_WALL_WEST);
+                    unset(x, y - 1, IMPENETRABLE_WALL_NORTH);
                 }
 
                 // x > | *
@@ -560,9 +560,9 @@ public class TraversalMap {
                 //       ^
                 //       y
                 if (orientation == 3) {
-                    unset(x,      y,      IMPENETRABLE_WALL_WEST | IMPENETRABLE_WALL_SOUTH);
-                    unset(x - 1,  y,      IMPENETRABLE_WALL_EAST);
-                    unset(x,      y - 1,  IMPENETRABLE_WALL_NORTH);
+                    unset(x, y, IMPENETRABLE_WALL_WEST | IMPENETRABLE_WALL_SOUTH);
+                    unset(x - 1, y, IMPENETRABLE_WALL_EAST);
+                    unset(x, y - 1, IMPENETRABLE_WALL_NORTH);
                 }
             }
 
@@ -575,30 +575,30 @@ public class TraversalMap {
                 // / y Upper left
                 // x
                 if (orientation == 0) {
-                    unset(x, y,           IMPENETRABLE_WALL_NORTH_WEST);
-                    unset(x - 1, y + 1,   IMPENETRABLE_WALL_SOUTH_EAST);
+                    unset(x, y, IMPENETRABLE_WALL_NORTH_WEST);
+                    unset(x - 1, y + 1, IMPENETRABLE_WALL_SOUTH_EAST);
                 }
 
 
                 // \ y Upper right
                 // x
                 if (orientation == 1) {
-                    unset(x, y,           IMPENETRABLE_WALL_NORTH_EAST);
-                    unset(x + 1, y + 1,   IMPENETRABLE_WALL_SOUTH_WEST);
+                    unset(x, y, IMPENETRABLE_WALL_NORTH_EAST);
+                    unset(x + 1, y + 1, IMPENETRABLE_WALL_SOUTH_WEST);
                 }
 
                 // / y Lower right
                 // x
                 if (orientation == 2) {
-                    unset(x,      y,      IMPENETRABLE_WALL_SOUTH_EAST);
-                    unset(x + 1,  y - 1,  IMPENETRABLE_WALL_NORTH_WEST);
+                    unset(x, y, IMPENETRABLE_WALL_SOUTH_EAST);
+                    unset(x + 1, y - 1, IMPENETRABLE_WALL_NORTH_WEST);
                 }
 
                 // \ y Lower left
                 // x
                 if (orientation == 3) {
-                    unset(x,      y,      IMPENETRABLE_WALL_SOUTH_WEST);
-                    unset(x - 1,  y - 1,  IMPENETRABLE_WALL_NORTH_EAST);
+                    unset(x, y, IMPENETRABLE_WALL_SOUTH_WEST);
+                    unset(x - 1, y - 1, IMPENETRABLE_WALL_NORTH_EAST);
                 }
             }
         }
@@ -691,11 +691,11 @@ public class TraversalMap {
      *
      * @param x
      * @param y
-     * @param tflags
      * @param direction
+     * @param tflags
      * @return
      */
-    public boolean isTraversable(int x, int y, int tflags, Direction direction) {
+    public boolean isTraversable(int x, int y, Direction direction, int tflags) {
         boolean traversable = true;
         switch (direction) {
             case NORTH:

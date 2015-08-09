@@ -1,0 +1,25 @@
+[
+  {
+    "id" : 500,
+    "name" : "SkillHelpType",
+    "variableId" : 965,
+    "offset" : 0,
+    "length" : 9
+  },
+
+  {
+    "id" : 501,
+    "name" : "SkillHelpCategory",
+    "variableId" : 965,
+    "offset" : 10,
+    "length" : 4
+  },
+
+  {
+    "id" : 502,
+    "name" : "Idk",
+    "variableId" : 1230,
+    "offset" : 9,
+    "length" : 13
+  }
+]

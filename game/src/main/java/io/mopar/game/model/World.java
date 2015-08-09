@@ -1,9 +1,8 @@
 package io.mopar.game.model;
 
 import io.mopar.game.event.Event;
-import io.mopar.game.event.EventBindings;
-import io.mopar.game.event.EventHandler;
-import io.mopar.game.event.player.PlayerRegionUpdatedEvent;
+import io.mopar.game.event.EventDispatcher;
+import io.mopar.game.event.player.PlayerRegionChangedEvent;
 import io.mopar.game.model.block.Block;
 import io.mopar.game.model.block.RegionSet;
 import io.mopar.game.model.block.StillGraphicCreatedBlockEvent;
@@ -34,14 +33,14 @@ public class World {
     public static final int NPC_LIMIT = 16384;
 
     /**
-     *
+     * The maximum amount of still graphics allowed to be spawned in the world.
      */
-    public static final int STILL_GRAPHIC_LIMIT = 4000;
+    public static final int STILL_GRAPHIC_LIMIT = 5000;
 
     /**
-     * The event bindings.
+     * The event dispatcher.
      */
-    private EventBindings eventBindings = new EventBindings();
+    private EventDispatcher dispatcher = (evt) -> logger.warn("Warning! Event dispatcher is unset, could not dispatch event: " + evt.getClass().getSimpleName());
 
     /**
      * The players.
@@ -54,7 +53,7 @@ public class World {
     private Map<Long, Player> playersByUid = new HashMap<>();
 
     /**
-     * The NPCs.
+     * The npcs.
      */
     private EntityList<NPC> npcs = new EntityList<>(NPC_LIMIT);
 
@@ -69,7 +68,7 @@ public class World {
     private StateBindings stateHandlers = new StateBindings();
 
     /**
-     *
+     * The regions.
      */
     private RegionSet regions = new RegionSet();
 
@@ -82,6 +81,15 @@ public class World {
      * Constructs a new {@link World};
      */
     public World() {}
+
+    /**
+     * Sets the event dispatcher.
+     *
+     * @param dispatcher the event dispatcher.
+     */
+    public void setEventDispatcher(EventDispatcher dispatcher) {
+        this.dispatcher = dispatcher;
+    }
 
     /**
      * Adds a player to the world.
@@ -99,6 +107,22 @@ public class World {
 
         playersByUid.put(player.getUid(), player);
         return players.add(player);
+    }
+
+    /**
+     * Removes a player.
+     *
+     * @param playerId The player id.
+     * @return if the player was successfully removed, <code>false</code> if the specified id does not reference
+     *          a player that exists.
+     */
+    public boolean removePlayer(int playerId) {
+        Player player = players.remove(playerId);
+        if(player == null) {
+            return false;
+        }
+        playersByUid.remove(player.getUid());
+        return true;
     }
 
     /**
@@ -122,22 +146,6 @@ public class World {
     }
 
     /**
-     * Removes a player.
-     *
-     * @param playerId The player id.
-     * @return if the player was successfully removed, <code>false</code> if the specified id does not reference
-     *          a player that exists.
-     */
-    public boolean removePlayer(int playerId) {
-        Player player = players.remove(playerId);
-        if(player == null) {
-            return false;
-        }
-        playersByUid.remove(player.getUid());
-        return true;
-    }
-
-    /**
      * Gets the players.
      *
      * @return The players.
@@ -147,22 +155,51 @@ public class World {
     }
 
     /**
-     *  @param plane
-     * @param x
-     * @param y
-     * @param type
+     * Gets if a player exists.
+     *
+     * @param playerId the player id.
+     * @return if the player exists.
      */
-    public void createGameObject(int plane, int x, int y, int type, int config, int orientation) {
-        Block block = regions.getBlock(plane, x >> 3, y >> 3);
-        block.updateGameObject(x & 7, y & 7, type, config, orientation);
+    public boolean playerExists(int playerId) {
+        return players.get(playerId) != null;
     }
 
     /**
+     * Gets the amount of players in the world.
      *
-     * @param plane
-     * @param x
-     * @param y
-     * @param group
+     * @return the amount of players.
+     */
+    public int getAmountPlayers() {
+        return players.size();
+    }
+
+    /**
+     * Creates a game object.
+     *
+     * @param plane the plane.
+     * @param x the x coordinate.
+     * @param y the y coordinate.
+     * @param type the object type.
+     * @param configId the configuration id.
+     * @param orientation the object orientation.
+     *
+     * @see GameObjectGroup
+     * @see ObjectOrientation
+     */
+    public void createGameObject(int plane, int x, int y, int type, int configId, int orientation) {
+        Block block = regions.getBlock(plane, x >> 3, y >> 3);
+        block.updateGameObject(x & 7, y & 7, type, configId, orientation);
+    }
+
+    /**
+     * Removes a game object.
+     *
+     * @param plane the plane.
+     * @param x the x coordinate.
+     * @param y the y coordinate.
+     * @param group the object group.
+     *
+     * @see GameObjectGroup
      */
     public void removeGameObject(int plane, int x, int y, int group) {
         Block block = regions.getBlock(plane, x >> 3, y >> 3);
@@ -170,14 +207,15 @@ public class World {
     }
 
     /**
+     * Creates a new still graphic.
      *
-     * @param plane
-     * @param x
-     * @param y
-     * @param type
-     * @param height
-     * @param delay
-     * @return
+     * @param plane the plane.
+     * @param x the x coordinate.
+     * @param y the y coordinate.
+     * @param type the type.
+     * @param height the height offset.
+     * @param delay the delay.
+     * @return if the still graphic was successfully created.
      */
     public boolean createStillGraphic(int plane, int x, int y, int type, int height, int delay) {
         StillGraphic stillGraphic = new StillGraphic(new Graphic(type, height, delay));
@@ -186,9 +224,10 @@ public class World {
     }
 
     /**
+     * Adds a still graphic.
      *
-     * @param stillGraphic
-     * @return
+     * @param stillGraphic the still graphic.
+     * @return if the still graphic was successfully added.
      */
     public boolean addStillGraphic(StillGraphic stillGraphic) {
         if(!stillGraphics.add(stillGraphic)) {
@@ -213,14 +252,21 @@ public class World {
     }
 
     /**
-     * Registers an event handler.
+     * Gets the regions.
      *
-     * @param cls the event class.
-     * @param handler the handler.
-     * @param <T> the generic event type.
+     * @return the regions.
      */
-    public <T extends Event> void registerEventHandler(Class<T> cls, EventHandler<T> handler) {
-        eventBindings.add(cls, handler);
+    public RegionSet getRegions() {
+        return regions;
+    }
+
+    /**
+     * Gets the time.
+     *
+     * @return The time.
+     */
+    public int getTime() {
+        return time;
     }
 
     /**
@@ -234,14 +280,15 @@ public class World {
             handlePlayerState(player);
             updateMovement(player);
 
-            if(player.isMoving() && player.getPreviousPosition() != null) {
+            if(player.isMoving()) {
                 Position previous = player.getPreviousPosition();
                 Position current  = player.getPosition();
 
                 // Compare the previous positions region with the current, if the player has
-                // moved regions send an event
+                // moved regions send an event. If the previous position is null then we can
+                // assume that the region was changed since we just entered
                 if(previous.getRegionHash() != current.getRegionHash()) {
-                    eventBindings.handle(new PlayerRegionUpdatedEvent(player));
+                    dispatch(new PlayerRegionChangedEvent(player));
                 }
             }
         }
@@ -274,6 +321,15 @@ public class World {
     }
 
     /**
+     * Dispatches an event.
+     *
+     * @param event the event to dispatch.
+     */
+    private void dispatch(Event event) {
+        dispatcher.dispatch(event);
+    }
+
+    /**
      * Handles the next queued player state, or if there are no queued states the player is said to be {@link States#IDLE}.
      *
      * @param player The player to handle.
@@ -281,7 +337,7 @@ public class World {
     private void handlePlayerState(Player player) {
         int state = player.hasPendingState() ? player.nextState() : States.IDLE;
         if(!stateHandlers.handlePlayerState(player, state)) {
-            logger.warn("No player state handler registered for state " + state);
+            //logger.warn("No player state handler registered for state " + state);
         }
     }
 
@@ -300,63 +356,42 @@ public class World {
      * @param mobile The mobile.
      */
     private void updateMovement(Mobile mobile) {
-        if(mobile.hasSteps()) {
+        mobile.setPreviousPosition(mobile.getPosition());
+
+        if(mobile.hasPendingSteps() || mobile.hasPendingWaypoints()) {
             Position source = mobile.getPosition();
             Position current = source;
 
             int steps = mobile.isRunning() ? 2 : 1;
-            while(steps-- > 0 && mobile.hasSteps()) {
-                mobile.setPreviousPosition(mobile.getPosition());
+            while(steps-- > 0) {
+
+                // If the mobile has no pending steps and has pending waypoints, interpolate between the current position
+                // and the next waypoint and append those calculated steps to the mobiles step queue
+                if(!mobile.hasPendingSteps() && mobile.hasPendingWaypoints()) {
+                    Waypoint waypoint = mobile.nextWaypoint();
+                    mobile.addSteps(waypoint.interpolate(mobile.getPosition()));
+                }
+
+                // If there are no pending steps after processing the next waypoint then we can assume the route is finished
+                if(!mobile.hasPendingSteps()) {
+                    break;
+                }
+
+
                 Step step = mobile.nextStep();
 
                 // If the mobile is clipped then check if the next step is traversable
-                if(mobile.isClipped() && !regions.isTraversable(current, TraversalMap.TRAVERSE_WALKING, step.getDirection())) {
-                    mobile.clearSteps();
+                if(mobile.isClipped() && !regions.isTraversable(current, step.getDirection(), TraversalMap.TRAVERSE_WALKING)) {
+                    mobile.clearRoute();
                     break;
                 }
 
                 mobile.setPosition(current = current.offset(step.asVector()));
-                mobile.recordStep(step);
+                mobile.addPreviousStep(step);
                 step.setTime(time);
 
                 mobile.setMoving(true);
             }
         }
-    }
-
-    /**
-     * Gets the time.
-     *
-     * @return The time.
-     */
-    public int getTime() {
-        return time;
-    }
-
-    /**
-     * Gets if a player exists.
-     *
-     * @param playerId the player id.
-     * @return if the player exists.
-     */
-    public boolean playerExists(int playerId) {
-        return players.get(playerId) != null;
-    }
-
-    /**
-     * Gets the amount of players in the world.
-     *
-     * @return the amount of players.
-     */
-    public int getAmountPlayers() {
-        return players.size();
-    }
-
-    /**
-     *
-     * @return
-     */
-    public RegionSet getRegions() {
-        return regions;
     }
 }

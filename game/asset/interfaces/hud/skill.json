@@ -1,0 +1,214 @@
+[
+  {
+    "id" : 320,
+    "name" : "SkillMenu",
+    "components" : [
+      {
+        "id" : 125,
+        "name" : "AttackButton"
+      },
+
+      {
+        "id" : 126,
+        "name" : "StrengthButton"
+      },
+
+      {
+        "id" : 127,
+        "name" : "DefenseButton"
+      },
+
+      {
+        "id" : 128,
+        "name" : "RangedButton"
+      },
+
+      {
+        "id" : 129,
+        "name" : "PrayerButton"
+      },
+
+      {
+        "id" : 130,
+        "name" : "MagicButton"
+      },
+
+      {
+        "id" : 131,
+        "name" : "RunecraftButton"
+      },
+
+      {
+        "id" : 132,
+        "name" : "ConstructionButton"
+      },
+
+      {
+        "id" : 133,
+        "name" : "HitpointsButton"
+      },
+
+      {
+        "id" : 134,
+        "name" : "AgilityButton"
+      },
+
+      {
+        "id" : 135,
+        "name" : "HerbloreButton"
+      },
+
+
+      {
+        "id" : 136,
+        "name" : "ThievingButton"
+      },
+
+      {
+        "id" : 137,
+        "name" : "CraftingButton"
+      },
+
+      {
+        "id" : 138,
+        "name" : "FletchingButton"
+      },
+
+      {
+        "id" : 139,
+        "name" : "SlayerButton"
+      },
+
+      {
+        "id" : 140,
+        "name" : "HunterButton"
+      },
+
+      {
+        "id" : 141,
+        "name" : "MiningButton"
+      },
+
+      {
+        "id" : 142,
+        "name" : "SmithingButton"
+      },
+
+      {
+        "id" : 143,
+        "name" : "FishingButton"
+      },
+
+      {
+        "id" : 144,
+        "name" : "CookingButton"
+      },
+
+      {
+        "id" : 145,
+        "name" : "FiremakingButton"
+      },
+
+      {
+        "id" : 146,
+        "name" : "WoodcuttingButton"
+      },
+
+      {
+        "id" : 147,
+        "name" : "FarmingButton"
+      },
+
+      {
+        "id" : 148,
+        "name" : "SummoningButton"
+      }
+    ]
+  },
+
+  {
+    "id" : 499,
+    "name" : "SkillHelpWindow",
+    "components" : [
+      {
+        "id" : 10,
+        "name" : "Category0"
+      },
+
+      {
+        "id" : 11,
+        "name" : "Category1"
+      },
+
+      {
+        "id" : 12,
+        "name" : "Category2"
+      },
+
+      {
+        "id" : 13,
+        "name" : "Category3"
+      },
+
+      {
+        "id" : 14,
+        "name" : "Category4"
+      },
+
+      {
+        "id" : 15,
+        "name" : "Category5"
+      },
+
+      {
+        "id" : 16,
+        "name" : "Category6"
+      },
+
+      {
+        "id" : 17,
+        "name" : "Category7"
+      },
+
+      {
+        "id" : 18,
+        "name" : "Category8"
+      },
+
+      {
+        "id" : 19,
+        "name" : "Category9"
+      },
+
+      {
+        "id" : 20,
+        "name" : "Category10"
+      },
+
+      {
+        "id" : 21,
+        "name" : "Category11"
+      },
+
+      {
+        "id" : 22,
+        "name" : "Category12"
+      },
+
+      {
+        "id" : 23,
+        "name" : "Category13"
+      },
+
+      {
+        "id" : 24,
+        "name" : "Category14"
+      },
+
+      {
+        "id" : 25,
+        "name" : "Category15"
+      }
+    ]
+  }
+]

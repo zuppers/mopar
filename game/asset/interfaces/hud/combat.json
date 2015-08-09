@@ -1,0 +1,12 @@
+[
+  {
+    "id" : 92,
+    "name" : "UnarmedAttack",
+    "components" : [
+      {
+        "id" : 0,
+        "name" : "WeaponLabel"
+      }
+    ]
+  }
+]

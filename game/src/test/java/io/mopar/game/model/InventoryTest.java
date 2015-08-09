@@ -13,7 +13,7 @@ public class InventoryTest {
 
     @Test
     public void testAddNonStack() throws Exception {
-        Inventory inv = new Inventory();
+        Inventory inv = new Inventory(50);
         inv.add(555, 20, false);
         assertEquals(20, inv.count(555));
         for(int slot = 0; slot < 20; slot++) {
@@ -23,7 +23,7 @@ public class InventoryTest {
 
     @Test
     public void testAddStack() throws Exception {
-        Inventory inv = new Inventory();
+        Inventory inv = new Inventory(50);
         inv.add(555, 1, true);
         inv.add(555, 2, true);
         assertEquals(3, inv.get(0).getAmount());
@@ -31,7 +31,7 @@ public class InventoryTest {
 
     @Test
     public void testSet() throws Exception {
-        Inventory inv = new Inventory();
+        Inventory inv = new Inventory(50);
         Item replace = new Item(20);
         inv.set(50, replace);
         assertEquals(replace, inv.set(50, new Item(5)));

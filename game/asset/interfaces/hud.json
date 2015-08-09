@@ -1,0 +1,259 @@
+[
+  {
+    "id" : 548,
+    "name" : "FixedScreen",
+    "components" : [
+      {
+        "id" : 2,
+        "name" : "Overlay"
+      },
+
+      {
+        "id" : 11,
+        "name" : "Window"
+      },
+
+      {
+        "id" : 14,
+        "name" : "ChatOptions"
+      },
+
+      {
+        "id" : 66,
+        "name" : "World"
+      },
+
+      {
+        "id" : 75,
+        "name" : "Chatbox"
+      },
+
+      {
+        "id"   : 70,
+        "name" : "Orb0"
+      },
+
+      {
+        "id"   : 71,
+        "name" : "Orb1"
+      },
+
+      {
+        "id"   : 72,
+        "name" : "Orb2"
+      },
+
+      {
+        "id"   : 73,
+        "name" : "Orb3"
+      },
+
+      {
+        "id"   : 83,
+        "name" : "CombatDisplay"
+      },
+
+      {
+        "id"   : 84,
+        "name" : "SkillDisplay"
+      },
+
+      {
+        "id"   : 85,
+        "name" : "QuestDisplay"
+      },
+
+      {
+        "id"   : 86,
+        "name" : "BackpackDisplay"
+      },
+
+      {
+        "id"   : 87,
+        "name" : "EquipmentDisplay"
+      },
+
+      {
+        "id"   : 88,
+        "name" : "PrayerDisplay"
+      },
+
+      {
+        "id"   : 89,
+        "name" : "SpellDisplay"
+      },
+
+      {
+        "id"   : 91,
+        "name" : "FriendDisplay"
+      },
+
+      {
+        "id"   : 92,
+        "name" : "IgnoreDisplay"
+      },
+
+      {
+        "id"   : 93,
+        "name" : "ClanDisplay"
+      },
+
+      {
+        "id"   : 94,
+        "name" : "SettingsDisplay"
+      },
+
+      {
+        "id"   : 95,
+        "name" : "EmotesDisplay"
+      },
+
+      {
+        "id"   : 96,
+        "name" : "MusicDisplay"
+      },
+
+      {
+        "id"   : 97,
+        "name" : "LogoutDisplay"
+      }
+    ]
+  },
+
+  {
+    "id" : 746,
+    "name" : "ResizableScreen",
+    "components" : [
+      {
+        "id" : 6,
+        "name" : "Window"
+      },
+
+      {
+        "id" : 23,
+        "name" : "ChatOptions"
+      },
+
+      {
+        "id" : 70,
+        "name" : "Chatbox"
+      },
+
+      {
+        "id"   : 13,
+        "name" : "Orb0"
+      },
+
+      {
+        "id"   : 14,
+        "name" : "Orb1"
+      },
+
+      {
+        "id"   : 15,
+        "name" : "Orb2"
+      },
+
+      {
+        "id"   : 16,
+        "name" : "Orb3"
+      },
+
+      {
+        "id"   : 93,
+        "name" : "CombatDisplay"
+      },
+
+      {
+        "id"   : 94,
+        "name" : "SkillDisplay"
+      },
+
+      {
+        "id"   : 95,
+        "name" : "QuestDisplay"
+      },
+
+      {
+        "id"   : 96,
+        "name" : "BackpackDisplay"
+      },
+
+      {
+        "id"   : 97,
+        "name" : "EquipmentDisplay"
+      },
+
+      {
+        "id"   : 98,
+        "name" : "PrayerDisplay"
+      },
+
+      {
+        "id"   : 99,
+        "name" : "SpellDisplay"
+      },
+
+      {
+        "id"   : 101,
+        "name" : "FriendDisplay"
+      },
+
+      {
+        "id"   : 102,
+        "name" : "IgnoreDisplay"
+      },
+
+      {
+        "id"   : 103,
+        "name" : "ClanDisplay"
+      },
+
+      {
+        "id"   : 104,
+        "name" : "SettingsDisplay"
+      },
+
+      {
+        "id"   : 105,
+        "name" : "EmotesDisplay"
+      },
+
+      {
+        "id"   : 106,
+        "name" : "MusicDisplay"
+      },
+
+      {
+        "id"   : 107,
+        "name" : "LogoutDisplay"
+      },
+
+      {
+        "id"   : 110,
+        "name" : "World"
+      }
+    ]
+  },
+
+  {
+    "id" : 137,
+    "name" : "ChatInput"
+  },
+
+  {
+    "id" : 751,
+    "name" : "ChatOptions"
+  },
+
+  {
+    "id" : 752,
+    "name" : "Chatbox",
+    "components" : [
+      {
+        "id" : 8,
+        "name" : "Input"
+      }
+    ]
+  }
+]

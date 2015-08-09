@@ -26,39 +26,39 @@ public class AppearanceUpdateBlock extends UpdateBlock {
         if(player.hasInventory(Equipment.INVENTORY_ID)) {
             Inventory inventory = player.getInventory(Equipment.INVENTORY_ID);
 
-            if(!inventory.empty(Equipment.HEAD)) {
+            if(!inventory.isEmpty(Equipment.HEAD)) {
                 block.setHelmetId(inventory.getId(Equipment.HEAD));
             }
 
-            if(!inventory.empty(Equipment.CAPE)) {
+            if(!inventory.isEmpty(Equipment.CAPE)) {
                 block.setCapeId(inventory.getId(Equipment.CAPE));
             }
 
-            if(!inventory.empty(Equipment.SHIELD)) {
+            if(!inventory.isEmpty(Equipment.SHIELD)) {
                 block.setShieldId(inventory.getId(Equipment.SHIELD));
             }
 
-            if(!inventory.empty(Equipment.NECK)) {
+            if(!inventory.isEmpty(Equipment.NECK)) {
                 block.setNecklaceId(inventory.getId(Equipment.NECK));
             }
 
-            if(!inventory.empty(Equipment.HANDS)) {
+            if(!inventory.isEmpty(Equipment.HANDS)) {
                 block.setGlovesId(inventory.getId(Equipment.HANDS));
             }
 
-            if(!inventory.empty(Equipment.WEAPON)) {
+            if(!inventory.isEmpty(Equipment.WEAPON)) {
                 block.setWeaponId(inventory.getId(Equipment.WEAPON));
             }
 
-            if(!inventory.empty(Equipment.BODY)) {
+            if(!inventory.isEmpty(Equipment.BODY)) {
                 block.setChestId(inventory.getId(Equipment.BODY));
             }
 
-            if(!inventory.empty(Equipment.LEGS)) {
+            if(!inventory.isEmpty(Equipment.LEGS)) {
                 block.setPantsId(inventory.getId(Equipment.LEGS));
             }
 
-            if(!inventory.empty(Equipment.FEET)) {
+            if(!inventory.isEmpty(Equipment.FEET)) {
                 block.setShoesId(inventory.getId(Equipment.FEET));
             }
         }

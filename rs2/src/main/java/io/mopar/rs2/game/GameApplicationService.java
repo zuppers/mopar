@@ -119,6 +119,7 @@ public class GameApplicationService extends ApplicationService<GameService> {
         outgoingPackets.add(new PacketMetaData(70, "print", PacketMetaData.VAR_BYTE_LENGTH));
         outgoingPackets.add(new PacketMetaData(105, "refresh_inventory", PacketMetaData.VAR_SHORT_LENGTH));
         outgoingPackets.add(new PacketMetaData(112, "reset_block", 2));
+        outgoingPackets.add(new PacketMetaData(115, "execute_script", PacketMetaData.VAR_SHORT_LENGTH));
         outgoingPackets.add(new PacketMetaData(145, "set_root_interface", 5));
         outgoingPackets.add(new PacketMetaData(155, "set_interface", 9));
         outgoingPackets.add(new PacketMetaData(162, "rebuild_scene", PacketMetaData.VAR_SHORT_LENGTH));
@@ -159,7 +160,7 @@ public class GameApplicationService extends ApplicationService<GameService> {
      */
     private void handleRouteMessage(Session session, RouteMessage message) {
         PlayerSessionContext ctx = session.get(PlayerSessionContext.class);
-        service.handleRoute(ctx.getPlayerId(), message.getRoute(), (res) -> {});
+        service.handleRoute(ctx.getPlayerId(), message.getWaypoints(), (res) -> {});
     }
 
     /**
@@ -282,11 +283,9 @@ public class GameApplicationService extends ApplicationService<GameService> {
                 return;
             }
 
-            // TODO: Clean this up properly
             session.attach(PlayerSessionContext.class, new PlayerSessionContext(res.getPlayer()));
             session.setDispatcher(dispatcher);
 
-            // TODO(sinisoul): Flesh this out more instead of using it as a testing platform
             session.writeAndFlush(new ProfileMessage(res.getPlayer().getId())).awaitUninterruptibly();
 
             res.getPlayer().addMessageListener(msg -> session.writeAndFlush(msg));
@@ -300,19 +299,6 @@ public class GameApplicationService extends ApplicationService<GameService> {
             session.pipeline().get(PacketEncoder.class).initCipher(cipherKeys);
 
             res.getPlayer().setDisplayMode(request.getDisplayMode());
-            res.getPlayer().rebuildScene();
-            res.getPlayer().refreshSkills();
-
-            // varbit - 4393 : Loop
-            int[] configs = new int[]{
-                    20, 21, 22, 23, 24, 25, 298, 311, 346, 414, 464, 598, 662, 721, 906, 1009, 1104, 1136, 1180, 1202
-            };
-            for(int config : configs) {
-                res.getPlayer().send(new SetVariableMessage(config, 0xffffffff));
-            }
-            // option 1
-            res.getPlayer().send(new AccessOptionMessage(187, 1, 0, 646, 0b10));
-
             res.getPlayer().setAppearanceUpdated(true);
         });
     }

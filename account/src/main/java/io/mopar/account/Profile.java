@@ -39,6 +39,11 @@ public class Profile {
     private List<InventoryModel> inventories = new ArrayList<>();
 
     /**
+     * The variable models.
+     */
+    private List<VariableModel> variables = new ArrayList<>();
+
+    /**
      * Constructs a new {@link Profile};
      */
     public Profile() {}
@@ -143,5 +148,21 @@ public class Profile {
      */
     public List<InventoryModel> getInventories() {
         return inventories;
+    }
+
+    /**
+     *
+     * @param variable
+     */
+    public void addVariable(VariableModel variable) {
+        variables.add(variable);
+    }
+
+    /**
+     *
+     * @return
+     */
+    public List<VariableModel> getVariables() {
+        return variables;
     }
 }

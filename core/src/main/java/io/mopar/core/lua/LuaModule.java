@@ -1,14 +1,22 @@
 package io.mopar.core.lua;
 
+import org.luaj.vm2.LuaTable;
+
 /**
  * @author Hadyn Fitzgerald
  *
- * TODO(sinisoul): Need to figure out how register module constants.
- *
- * Lua module methods are expected to follow lua convention styles. Either snakecase or
- * alllowercase.
+ * Lua module methods are expected to follow conventions.
  */
 public interface LuaModule {
+
+    /**
+     * Gets the module meta table.
+     *
+     * @return the meta table.
+     */
+    default LuaTable getMetaTable() {
+        return null;
+    }
 
     /**
      * Gets the namespace for the module.

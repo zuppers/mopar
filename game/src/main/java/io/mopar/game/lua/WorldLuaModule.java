@@ -2,7 +2,8 @@ package io.mopar.game.lua;
 
 import io.mopar.core.lua.Coerce;
 import io.mopar.core.lua.LuaModule;
-import io.mopar.game.event.player.PlayerRegionUpdatedEvent;
+import io.mopar.game.model.GameObjectGroup;
+import io.mopar.game.model.ObjectOrientation;
 import io.mopar.game.model.World;
 import org.luaj.vm2.LuaClosure;
 
@@ -10,8 +11,6 @@ import org.luaj.vm2.LuaClosure;
  * @author Hadyn Fitzgerald
  */
 public class WorldLuaModule implements LuaModule {
-
-    public static final int player_region_updated = 0;
 
     /**
      * The world.
@@ -21,90 +20,65 @@ public class WorldLuaModule implements LuaModule {
     /**
      * Constructs a new {@link WorldLuaModule};
      *
-     * @param world The world.
+     * @param world the world.
      */
     public WorldLuaModule(World world) {
         this.world = world;
     }
 
     /**
+     * Creates a new game object.
      *
-     * @param type
-     * @param closure
+     * @param plane the plane.
+     * @param x the x coordinate.
+     * @param y the y coordinate.
+     * @param type the object type.
+     * @param config the configuration id.
+     * @param orientation the orientation.
+     *
+     * @see GameObjectGroup
+     * @see ObjectOrientation
      */
-    public void on(int type, LuaClosure closure) {
-        switch (type) {
-            case player_region_updated:
-                on_player_region_updated(closure);
-                break;
-            default:
-                throw new IllegalArgumentException("Unhandled event type");
-        }
+    public void CreateObject(int plane, int x, int y, int type, int config, int orientation) {
+        world.createGameObject(plane, x, y, type, config, orientation);
     }
 
     /**
+     * Removes a game object.
      *
-     * @param closure
+     * @param plane the plane.
+     * @param x the x coordinate.
+     * @param y the y coordinate.
+     * @param group the object group.
+     *
+     * @see GameObjectGroup
      */
-    public void on_player_region_updated(LuaClosure closure) {
-        world.registerEventHandler(PlayerRegionUpdatedEvent.class, (evt) -> closure.invoke(Coerce.coerceToLua(evt.getPlayer())));
+    public void RemoveObject(int plane, int x, int y, int group) {
+        world.removeGameObject(plane, x, y, group);
+    }
+
+    /**
+     * Creates a new still graphic.
+     *
+     * @param plane the plane.
+     * @param x the x coordinate.
+     * @param y the y coordinate.
+     * @param configId the config id.
+     * @param height the height from the ground.
+     * @param delay the delay.
+     */
+    public void CreateStillGraphic(int plane, int x, int y, int configId, int height, int delay) {
+        world.createStillGraphic(plane, x, y, configId, height, delay);
     }
 
     /**
      * Registers a player state handler.
      *
-     * @param stateId The state id.
-     * @param closure The lua closure.
+     * @param id the state id.
+     * @param closure the closure.
      */
-    public void on_player_state(int stateId, LuaClosure closure) {
-        world.registerPlayerStateHandler(stateId, (plr) -> closure.call(Coerce.coerceToLua(plr)));
-    }
-
-    /**
-     * Registers a NPC state handler.
-     *
-     * @param stateId The state id.
-     * @param closure The lua closure.
-     */
-    public void on_npc_state(int id, int stateId, LuaClosure closure) {
-
-    }
-
-    /**
-     *
-     * @param plane
-     * @param x
-     * @param y
-     * @param type
-     * @param config
-     * @param orientation
-     */
-    public void create_obj(int plane, int x, int y, int type, int config, int orientation) {
-        world.createGameObject(plane, x, y, type, config, orientation);
-    }
-
-    /**
-     *
-     * @param plane
-     * @param x
-     * @param y
-     * @param group
-     */
-    public void remove_obj(int plane, int x, int y, int group) {
-        world.removeGameObject(plane, x, y, group);
-    }
-
-    /**
-     *
-     * @param plane
-     * @param x
-     * @param y
-     * @param config
-     * @param height
-     * @param delay
-     */
-    public void create_still_gfx(int plane, int x, int y, int config, int height, int delay) {
-        world.createStillGraphic(plane, x, y, config, height, delay);
+    public void OnPlayerState(int id, LuaClosure closure) {
+        world.registerPlayerStateHandler(id, (plr) -> closure.call(Coerce.coerceToLua(plr)));
     }
 
     /**
@@ -112,10 +86,9 @@ public class WorldLuaModule implements LuaModule {
      *
      * @return The time.
      */
-    public int time() {
+    public int Time() {
         return world.getTime();
     }
-
 
     /**
      * Gets the namespace.

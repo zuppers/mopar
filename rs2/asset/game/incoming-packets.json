@@ -7,7 +7,7 @@
 
   {
     "id" : 10,
-    "name" : "button_option_2",
+    "name" : "button",
     "length" : 4
   },
 
@@ -152,6 +152,12 @@
     "id" : 110,
     "name" : "load_scene",
     "length" : 0
+  },
+
+  {
+    "id" : 137,
+    "name" : "stop_song",
+    "length" : 4
   },
 
   {

@@ -1,0 +1,54 @@
+[
+  {
+    "id" : 261,
+    "name" : "SettingsMenu",
+    "components" : [
+      {
+        "id" : 3,
+        "name" : "RunToggle"
+      },
+
+      {
+        "id" : 4,
+        "name" : "ChatEffectsToggle"
+      },
+
+      {
+        "id" : 5,
+        "name" : "SplitChatToggle"
+      },
+
+      {
+        "id" : 6,
+        "name" : "MouseButtonToggle"
+      },
+
+      {
+        "id" : 7,
+        "name" : "AidToggle"
+      },
+
+      {
+        "id" : 16,
+        "name" : "GraphicSettings"
+      },
+
+      {
+        "id" : 18,
+        "name" : "AudioSettings"
+      }
+    ]
+  },
+
+  {
+    "id" : 742,
+    "name" : "GraphicSettingsWindow",
+    "components" : []
+  },
+
+  {
+    "id" : 743,
+    "name" : "AudioSettingsWindow",
+    "components" : []
+  }
+]

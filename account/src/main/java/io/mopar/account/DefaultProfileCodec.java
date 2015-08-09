@@ -14,6 +14,7 @@ public class DefaultProfileCodec implements ProfileCodec {
     private static final int chk_COORD  = 0x01;
     private static final int chk_INV    = 0x02;
     private static final int chk_SKILL  = 0x03;
+    private static final int chk_VAR    = 0x04;
 
     @Override
     public Profile decode(byte[] bytes) throws MalformedProfileException {
@@ -40,7 +41,6 @@ public class DefaultProfileCodec implements ProfileCodec {
         // Header
         // -----------------------------
         // uid  : int64 : format 1
-        //
         Profile profile = new Profile();
         profile.setUid(hbb.getLong());
 
@@ -86,6 +86,21 @@ public class DefaultProfileCodec implements ProfileCodec {
                     profile.addInventory(inventory);
                 }
                 break;
+
+                case chk_VAR: {
+                    VariableModel variable = new VariableModel();
+                    variable.setId(bb.getShort() & 0xffff);
+
+                    int value = bb.get() & 0xff;
+                    if(value == 255) {
+                        variable.setValue(bb.getInt());
+                    } else {
+                        variable.setValue(value);
+                    }
+
+                    profile.addVariable(variable);
+                }
+                break;
             }
         }
 
@@ -114,8 +129,7 @@ public class DefaultProfileCodec implements ProfileCodec {
         // Coordinate chunk
         length += 1 + 4;
 
-        List<InventoryModel> inventories = profile.getInventories();
-        for(InventoryModel inventory : inventories) {
+        for(InventoryModel inventory : profile.getInventories()) {
 
             // id       : int16
             // slot     : int16
@@ -140,6 +154,13 @@ public class DefaultProfileCodec implements ProfileCodec {
             // stat     : int8
             // exp      : int32
             length += 1 + 1 + 1 + 4;
+        }
+
+        for(VariableModel variable : profile.getVariables()) {
+            // chk      : int8
+            // id       : int16
+            // value    : <variable>
+            length += 1 + 2 + (variable.getValue() >= 255 ? 5 : 1);
         }
 
         // EOF chunk
@@ -190,6 +211,17 @@ public class DefaultProfileCodec implements ProfileCodec {
                 } else {
                     bb.put((byte) item.getAmount());
                 }
+            }
+        }
+
+        for(VariableModel variable : profile.getVariables()) {
+            bb.put((byte) chk_VAR);
+            bb.putShort((short) variable.getId());
+            if(variable.getValue() >= 255) {
+                bb.put((byte) 255);
+                bb.putInt(variable.getValue());
+            } else {
+                bb.put((byte) variable.getValue());
             }
         }
 

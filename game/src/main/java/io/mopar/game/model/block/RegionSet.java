@@ -73,26 +73,13 @@ public class RegionSet {
     /**
      * Loads a region.
      *
-     * @param x
-     * @param y
+     * @param x the region x coordinate.
+     * @param y the region y coordinate.
      */
     public void load(int x, int y) {
         if(!isLoaded(x, y)) {
             safelyLoad(x, y);
         }
-    }
-
-    /**
-     *
-     * @param x
-     * @param y
-     * @return
-     */
-    public boolean isUpdated(int x, int y) {
-        if(!isLoaded(x, y)) {
-            return false;
-        }
-        return get(x, y).isUpdated();
     }
 
     /**
@@ -142,29 +129,6 @@ public class RegionSet {
 
     /**
      *
-     * @param position
-     * @param tflags
-     * @param direction
-     * @return
-     */
-    public boolean isTraversable(Position position, int tflags, Direction direction) {
-        Region region = get(position.getRegionX(), position.getRegionY());
-        TraversalMap traversalMap = region.getTraversalMap(position.getPlane());
-        return traversalMap.isTraversable(position.getLocalRegionX(), position.getLocalRegionY(), tflags, direction);
-    }
-
-    /**
-     *
-     * @param x
-     * @param y
-     * @return
-     */
-    private static final int getRegionKey(int x, int y) {
-        return (x & 0xff) << 8 | (y & 0xff);
-    }
-
-    /**
-     *
      * @param plane
      * @param blockX
      * @param blockY
@@ -206,5 +170,28 @@ public class RegionSet {
         return region.getBlock(plane,
                 blockX - (regionX << 3),
                 blockY - (regionY << 3));
+    }
+
+    /**
+     *
+     * @param position
+     * @param direction
+     * @param tflags
+     * @return
+     */
+    public boolean isTraversable(Position position, Direction direction, int tflags) {
+        Region region = get(position.getRegionX(), position.getRegionY());
+        TraversalMap traversalMap = region.getTraversalMap(position.getPlane());
+        return traversalMap.isTraversable(position.getLocalRegionX(), position.getLocalRegionY(), direction, tflags);
+    }
+
+    /**
+     *
+     * @param x
+     * @param y
+     * @return
+     */
+    private static final int getRegionKey(int x, int y) {
+        return (x & 0xff) << 8 | (y & 0xff);
     }
 }

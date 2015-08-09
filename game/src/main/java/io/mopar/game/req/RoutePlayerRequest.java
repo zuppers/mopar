@@ -1,7 +1,10 @@
 package io.mopar.game.req;
 
 import io.mopar.core.Request;
-import io.mopar.game.model.Route;
+import io.mopar.game.model.Waypoint;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author Hadyn Fitzgerald
@@ -14,20 +17,17 @@ public class RoutePlayerRequest extends Request {
     private int playerId;
 
     /**
-     * The route.
+     * The waypoints.
      */
-    private Route route;
-
+    private List<Waypoint> waypoints = new ArrayList<>();
 
     /**
      * Constructs a new {@link RoutePlayerRequest};
      *
      * @param playerId The player id.
-     * @param route The route.
      */
-    public RoutePlayerRequest(int playerId, Route route) {
+    public RoutePlayerRequest(int playerId) {
         this.playerId = playerId;
-        this.route = route;
     }
 
     /**
@@ -40,11 +40,18 @@ public class RoutePlayerRequest extends Request {
     }
 
     /**
-     * Gets the route.
      *
-     * @return the route.
+     * @param waypoint
      */
-    public Route getRoute() {
-        return route;
+    public void addWaypoint(Waypoint waypoint) {
+        waypoints.add(waypoint);
+    }
+
+    /**
+     *
+     * @return
+     */
+    public List<Waypoint> getWaypoints() {
+        return waypoints;
     }
 }

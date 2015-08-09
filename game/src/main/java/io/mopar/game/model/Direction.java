@@ -6,42 +6,42 @@ package io.mopar.game.model;
 public enum Direction {
 
     /**
-     * North step.
+     * North direction.
      */
     NORTH(0, 1),
 
     /**
-     * North east step.
+     * North east direction.
      */
     NORTH_EAST(1, 1),
 
     /**
-     * East step.
+     * East direction.
      */
     EAST(1, 0),
 
     /**
-     * South east step.
+     * South east direction.
      */
     SOUTH_EAST(1, -1),
 
     /**
-     * South step.
+     * South direction.
      */
     SOUTH(0, -1),
 
     /**
-     * South west step.
+     * South west direction.
      */
     SOUTH_WEST(-1, -1),
 
     /**
-     * West step.
+     * West direction.
      */
     WEST(-1, 0),
 
     /**
-     * North west step.
+     * North west direction.
      */
     NORTH_WEST(-1, 1);
 
@@ -80,7 +80,7 @@ public enum Direction {
     }
 
     /**
-     * Gets the step as a vector.
+     * Gets the direction as a vector.
      *
      * @return the vector.
      */
@@ -117,21 +117,21 @@ public enum Direction {
     }
 
     /**
-     * Gets the step for the provided vector.
+     * Gets the direction for the provided vector.
      *
      * @param vector The vector.
-     * @return the step.
+     * @return the direction.
      */
     public static Direction forVector(Vector vector) {
         return forVector(vector.dx(), vector.dy());
     }
 
     /**
-     * Gets the step for the provided vector values. Uses the normalized vector magnitudes.
+     * Gets the direction for the provided vector values. Uses the normalized vector magnitudes.
      *
      * @param dx The delta x value.
      * @param dy The delta y value.
-     * @return the step.
+     * @return the direction.
      */
     public static Direction forVector(int dx, int dy) {
 

@@ -1,0 +1,22 @@
+[
+  {
+    "id" : 187,
+    "name" : "MusicMenu",
+    "components" : [
+      {
+        "id" : 1,
+        "name" : "List",
+        "childActions" : {
+          "start"   : 0,
+          "end"     : 350,
+          "actions" : [ "OPTION1" ]
+        }
+      },
+
+      {
+        "id" : 14,
+        "name" : "TrackName"
+      }
+    ]
+  }
+]

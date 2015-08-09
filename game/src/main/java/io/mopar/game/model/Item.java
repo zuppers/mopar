@@ -1,5 +1,7 @@
 package io.mopar.game.model;
 
+import io.mopar.game.config.ItemConfig;
+
 /**
  * @author Hadyn Fitzgerald
  */
@@ -51,6 +53,15 @@ public class Item {
      */
     public int getAmount() {
         return amount;
+    }
+
+    /**
+     * Gets the configuration for the item.
+     *
+     * @return the configuration.
+     */
+    public ItemConfig getConfig() {
+        return ItemConfig.forId(id);
     }
 
     /**

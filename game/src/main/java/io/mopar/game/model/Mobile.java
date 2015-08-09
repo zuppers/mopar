@@ -19,6 +19,11 @@ public class Mobile extends Entity {
     private Queue<Integer> states = new ArrayDeque<>();
 
     /**
+     * The waypoints.
+     */
+    private Queue<Waypoint> waypoints = new ArrayDeque<>();
+
+    /**
      * The steps.
      */
     private Queue<Step> steps = new ArrayDeque<>();
@@ -81,6 +86,40 @@ public class Mobile extends Entity {
     }
 
     /**
+     *
+     * @param x
+     * @param y
+     */
+    public void addWaypoint(int x, int y) {
+        addWaypoint(new Waypoint(x, y));
+    }
+
+    /**
+     * Adds a waypoint for the mobile to walk to.
+     *
+     * @param point the point to walk to.
+     */
+    public void addWaypoint(Waypoint point) {
+        waypoints.add(point);
+    }
+
+    /**
+     *
+     * @return
+     */
+    public Waypoint nextWaypoint() {
+        return waypoints.poll();
+    }
+
+    /**
+     *
+     * @return
+     */
+    public boolean hasPendingWaypoints() {
+        return !waypoints.isEmpty();
+    }
+
+    /**
      * Adds a step.
      *
      * @param step The step.
@@ -92,10 +131,10 @@ public class Mobile extends Entity {
     /**
      * Adds steps.
      *
-     * @param s The steps.
+     * @param coll The steps.
      */
-    public void addSteps(Collection<Step> s) {
-        steps.addAll(s);
+    public void addSteps(Collection<Step> coll) {
+        steps.addAll(coll);
     }
 
     /**
@@ -112,23 +151,24 @@ public class Mobile extends Entity {
      *
      * @return If the step queue is not empty.
      */
-    public boolean hasSteps() {
+    public boolean hasPendingSteps() {
         return !steps.isEmpty();
     }
 
     /**
-     * Clears the step queue.
+     * Clears the step and waypoint queue.
      */
-    public void clearSteps() {
+    public void clearRoute() {
+        waypoints.clear();
         steps.clear();
     }
 
     /**
-     * Adds a step
+     * Records a step that was taken.
      *
-     * @param step
+     * @param step the step.
      */
-    public void recordStep(Step step) {
+    public void addPreviousStep(Step step) {
         if(previousSteps.size() == PREVIOUS_STEP_CAPACITY) {
             previousSteps.remove();
         }
@@ -138,14 +178,14 @@ public class Mobile extends Entity {
     /**
      * Gets the last traversed step.
      *
-     * @return The last step or <code>null</code> if there are no recorded steps.
+     * @return The last step or {@code null} if there are no recorded steps.
      */
     public Step getLastStep() {
         if(previousSteps.isEmpty()) {
             return null;
         }
-        Step record = previousSteps.getLast();
-        return record;
+        Step step = previousSteps.getLast();
+        return step;
     }
 
     /**
@@ -174,22 +214,6 @@ public class Mobile extends Entity {
     }
 
     /**
-     *
-     * @param previousPosition
-     */
-    public void setPreviousPosition(Position previousPosition) {
-        this.previousPosition = previousPosition;
-    }
-
-    /**
-     *
-     * @return
-     */
-    public Position getPreviousPosition() {
-        return previousPosition;
-    }
-
-    /**
      * Gets the steps taken at a specific time.
      *
      * @param time The time.
@@ -198,6 +222,7 @@ public class Mobile extends Entity {
     public List<Step> getStepsAt(int time) {
         return previousSteps.stream().filter(step -> step.getTime() == time).collect(Collectors.toList());
     }
+
 
     /**
      * Sets if the mobile's movement is clipped.
@@ -260,7 +285,7 @@ public class Mobile extends Entity {
     public void teleport(Position position) {
         setPosition(position);
         teleporting = true;
-        clearSteps();
+        clearRoute();
     }
 
     /**
@@ -273,10 +298,27 @@ public class Mobile extends Entity {
     }
 
     /**
+     *
+     * @param previousPosition
+     */
+    public void setPreviousPosition(Position previousPosition) {
+        this.previousPosition = previousPosition;
+    }
+
+    /**
+     *
+     * @return
+     */
+    public Position getPreviousPosition() {
+        return previousPosition;
+    }
+
+    /**
      * Resets the mobile.
      */
     public void reset() {
         moving = false;
         teleporting = false;
     }
+
 }

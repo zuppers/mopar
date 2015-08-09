@@ -63,10 +63,12 @@ public class GameMessageCodecInitializer implements MessageCodecInitializer {
         codec.registerMessageDecoder(incomingPackets.getId("command"), this::decodeCommandMessage);
         codec.registerMessageDecoder(incomingPackets.getId("switch_items"), this::decodeSwapItemMessage);
 
+        codec.registerMessageDecoder(incomingPackets.getId("button"), (packet) -> decodeButtonOptionMessage(packet, 1, false));
+
         for(int i = 1; i <= 1; i++) {
             final int optionId = i;                                                                     // Err...k
             codec.registerMessageDecoder(incomingPackets.getId("button_option_" + i), (packet) ->
-                    decodeButtonOptionMessage(packet, optionId));
+                    decodeButtonOptionMessage(packet, optionId, true));
         }
 
         codec.registerMessageDecoder(incomingPackets.getId("item_option_1"), this::decodeItemOptionOneMessage);
@@ -86,6 +88,7 @@ public class GameMessageCodecInitializer implements MessageCodecInitializer {
         codec.registerMessageDecoder(incomingPackets.getId("loc_option_1"), this::decodeLocaleOptionOneMessage);
         codec.registerMessageDecoder(incomingPackets.getId("settings"), this::decodeBlankMessage);
         codec.registerMessageDecoder(incomingPackets.getId("obj_option_unk"), this::decodeBlankMessage);
+        codec.registerMessageDecoder(incomingPackets.getId("stop_song"), this::decodeBlankMessage);
     }
 
     /**
@@ -129,13 +132,16 @@ public class GameMessageCodecInitializer implements MessageCodecInitializer {
      * @param option
      * @return
      */
-    public ButtonOptionMessage decodeButtonOptionMessage(Packet packet, int option) {
+    public ButtonOptionMessage decodeButtonOptionMessage(Packet packet, int option, boolean readChild) {
         ByteBuf buf = packet.getBuffer();
         int widgetId = buf.readUnsignedShort();
         int componentId = buf.readUnsignedShort();
-        int childId = buf.readUnsignedShort();
-        if(childId == 65535) {
-            childId = -1;
+        int childId = -1;
+        if(readChild) {
+            childId = buf.readUnsignedShort();
+            if (childId == 65535) {
+                childId = -1;
+            }
         }
         return new ButtonOptionMessage(widgetId, componentId, childId, option);
     }
@@ -275,7 +281,7 @@ public class GameMessageCodecInitializer implements MessageCodecInitializer {
      */
     private void registerMessageEncoders(MessageCodec codec, PacketMetaList outgoingPackets) {
         codec.registerMessageEncoder(RebuildSceneMessage.class, this::encodeRebuildSceneMessage);
-        codec.registerMessageEncoder(SetRootInterfaceMessage.class, this::encodeSetRootInterfaceMessage);
+        codec.registerMessageEncoder(OpenScreenMessage.class, this::encodeSetRootInterfaceMessage);
         codec.registerMessageEncoder(SetInterfaceMessage.class, this::encodeSetInterfaceMessage);
         codec.registerMessageEncoder(PrintMessage.class, this::encodePrintMessage);
         codec.registerMessageEncoder(SetInterfaceHiddenMessage.class, this::encodeSetInterfaceHiddenMessage);
@@ -291,6 +297,8 @@ public class GameMessageCodecInitializer implements MessageCodecInitializer {
         codec.registerMessageEncoder(CreateStillGraphicMessage.class, this::encodeCreateStillGraphicMessage);
         codec.registerMessageEncoder(UpdateGameObjectMessage.class, this::encodeUpdateGameObjectMessage);
         codec.registerMessageEncoder(RemoveGameObjectMessage.class, this::encodeRemoveGameObjectMessage);
+        codec.registerMessageEncoder(ExecuteScriptMessage.class, this::encodeExecuteScriptMessage);
+
 
         // Register the synchronization message encoders
         codec.registerMessageEncoder(PlayerSynchronizationMessage.class, new PlayerSynchronizationMessageEncoder());
@@ -353,7 +361,7 @@ public class GameMessageCodecInitializer implements MessageCodecInitializer {
      * @return The encoded packet.
      */
     private Packet encodeSetRootInterfaceMessage(MessageCodecContext ctx, ByteBufAllocator allocator, PacketMetaList outgoingPackets,
-                                                 SetRootInterfaceMessage message) {
+                                                 OpenScreenMessage message) {
         PacketBuilder builder = PacketBuilder.create(outgoingPackets.get("set_root_interface"), allocator);
         builder.writeLEShortA(message.getWidgetId());
 
@@ -642,6 +650,14 @@ public class GameMessageCodecInitializer implements MessageCodecInitializer {
         PacketBuilder builder = PacketBuilder.create(outgoingPackets.get("remove_obj"), allocator);
         builder.writeByteN(message.getType() << 2 | message.getOrientation());
         builder.writeByte(message.getX() << 4 | message.getY());
+        return builder.build();
+    }
+
+    private Packet encodeExecuteScriptMessage(MessageCodecContext ctx, ByteBufAllocator allocator, PacketMetaList outgoingPackets, ExecuteScriptMessage message) {
+        PacketBuilder builder = PacketBuilder.create(outgoingPackets.get("execute_script"), allocator);
+        builder.writeShort(0);
+        builder.writeJstr("");
+        builder.writeInt(message.getId());
         return builder.build();
     }
 }

@@ -1,0 +1,57 @@
+[
+  {
+    "id" : 0,
+    "name" : "AdventureUnlocked",
+    "variableId" : 20,
+    "offset" : 0,
+    "length" : 1
+  },
+
+  {
+    "id" : 1,
+    "name" : "AlKharidUnlocked",
+    "variableId" : 20,
+    "offset" : 1,
+    "length" : 1
+  },
+
+  {
+    "id": 17,
+    "name": "BookOfSpellsUnlocked",
+    "variableId" : 17,
+    "offset" : 17,
+    "length" : 1
+  },
+
+  {
+    "id": 23,
+    "name": "AutumnVoyageUnlocked",
+    "variableId" : 20,
+    "offset" : 23,
+    "length" : 1
+  },
+
+  {
+    "id": 35,
+    "name": "DreamUnlocked",
+    "variableId" : 21,
+    "offset" : 3,
+    "length" : 1
+  },
+
+  {
+    "id" : 58,
+    "name" : "HarmonyUnlocked",
+    "variableId" : 21,
+    "offset" : 26,
+    "length" : 1
+  },
+
+  {
+    "id": 161,
+    "name": "YesteryearUnlocked",
+    "variableId" : 25,
+    "offset" : 1,
+    "length" : 1
+  }
+]

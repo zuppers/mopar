@@ -24,19 +24,18 @@ public class Inventory {
     private Set<Integer> updatedSlots = new HashSet<>();
 
     /**
-     * Constructs a new {@link Inventory};
+     * The capacity.
      */
-    public Inventory() {
-        this(10);
-    }
+    private int capacity;
 
     /**
      * Constructs a new {@link Inventory};
      *
-     * @param initialCapacity The initial capacity.
+     * @param capacity the capacity of this inventory.
      */
-    public Inventory(int initialCapacity) {
-        items = new Item[initialCapacity];
+    public Inventory(int capacity) {
+        items = new Item[capacity];
+        this.capacity = capacity;
     }
 
     /**
@@ -61,14 +60,21 @@ public class Inventory {
             } else {
                 slot = freeSlot();
             }
-            set(slot, new Item(id, amount));
+
+            if(slot != -1) {
+                set(slot, new Item(id, amount));
+            }
         } else {
-            items[freeSlot()] = item;
+            int slot = freeSlot();
+            if(slot != -1) {
+                items[freeSlot()] = item;
+            }
         }
     }
 
     /**
-     * Adds an item.
+     * Adds an item. The amount of the item that is added is limited either by, if the item is stacked the maximum
+     * allowed stack size or {@link Integer#MAX_VALUE} otherwise it is the number of free slots in the inventory.
      *
      * @param id the item id.
      * @param amount the amount to add.
@@ -93,11 +99,16 @@ public class Inventory {
                         amount += item.getAmount();
                     }
                 }
-                set(slot, new Item(id, amount));
+                if(slot >= 0) {
+                    set(slot, new Item(id, amount));
+                }
             } else {
                 int slot = -1;
                 while (amount-- > 0) {
-                    set(slot = freeSlot(slot + 1), new Item(id));
+                    if((slot = freeSlot(slot + 1)) < 0) {
+                        break;
+                    }
+                    set(slot, new Item(id));
                 }
             }
         }
@@ -143,9 +154,10 @@ public class Inventory {
     }
 
     /**
+     * Gets the id of an item in the inventory.
      *
-     * @param slot
-     * @return
+     * @param slot the slot.
+     * @return the id.
      */
     public int getId(int slot) {
         Item item = get(slot);
@@ -179,14 +191,14 @@ public class Inventory {
     /**
      * Removes an item from the inventory.
      *
-     * @param itemId the item id.
+     * @param id the item id.
      * @param amount the amount.
      * @param shift if the items should be shifted to the removed item slot.
      * @return the amount of the item that was removed.
      */
-    public int remove(int itemId, int amount, boolean shift) {
+    public int remove(int id, int amount, boolean shift) {
         int slot = -1;
-        while((slot = slotOf(itemId, slot + 1)) != -1) {
+        while((slot = slotOf(id, slot + 1)) != -1) {
             Item item = get(slot);
             int i = amount;
             if(i > item.getAmount()) {
@@ -204,11 +216,12 @@ public class Inventory {
     }
 
     /**
+     * Gets if a slot is empty.
      *
-     * @param slot
-     * @return
+     * @param slot the slot.
+     * @return if the slot is empty.
      */
-    public boolean empty(int slot) {
+    public boolean isEmpty(int slot) {
         return get(slot) == null;
     }
 
@@ -218,15 +231,14 @@ public class Inventory {
      * the stack amount or the specified amount. If the item is not marked as stackable gets the minimum value
      * of either the empty slots or specified amount.
      *
-     * @param itemId the item id.
+     * @param id the item id.
      * @param amount the amount.
-     * @param limit the inventory size limit.
      * @param stackable the stackable flag.
      * @return the amount of items that the inventory can accept.
      */
-    public int getSpace(int itemId, int amount, int limit, boolean stackable) {
+    public int getSpaceFor(int id, int amount, boolean stackable) {
         if(stackable) {
-            int slot = slotOf(itemId);
+            int slot = slotOf(id);
             if(slot != -1) {
                 Item item = items[slot];
                 if(item.getAmount() + amount < 0) {
@@ -234,7 +246,7 @@ public class Inventory {
                 }
             }
         } else {
-            int free = emptySlots(limit);
+            int free = emptySlots();
             if(amount > free) {
                 amount = free;
             }
@@ -243,12 +255,20 @@ public class Inventory {
     }
 
     /**
+     * Swaps two items.
      *
-     * @param first
-     * @param second
-     * @param mode
+     * @param first the first slot.
+     * @param second the second slot.
+     * @param mode the mode to swap the items.
+     *
+     * @see Inventory#SWAP
+     * @see Inventory#INSERT
      */
-    public void swap(int first, int second, int mode) {
+    public void switchItems(int first, int second, int mode) {
+        if(first < 0 || second < 0 || first >= capacity || second >= capacity) {
+            return;
+        }
+
         if(mode == SWAP) {
             Item item = get(second);
             set(second, get(first));
@@ -259,17 +279,18 @@ public class Inventory {
     }
 
     /**
+     * Gets if the inventory can accept an item.
      *
-     * @param item
-     * @param size
-     * @param stack
-     * @return
+     * @param item the item to accept.
+     * @param stack if the item stacks.
+     * @return if the inventory can accept the item, this does not take into account items that stack
+     *          going beyond the stack limit.
      */
-    public boolean accept(Item item, int size, boolean stack) {
+    public boolean accept(Item item, boolean stack) {
         if(stack && slotOf(item.getId()) != -1) {
             return true;
         }
-        return freeSlot() < size;
+        return freeSlot() != -1;
     }
 
     /**
@@ -303,13 +324,11 @@ public class Inventory {
     /**
      * Gets the amount of empty slots.
      *
-     * @param limit the size limit of the inventory.
      * @return the amount of empty slots.
      */
-    public int emptySlots(int limit) {
-        int count = limit - items.length;
-        int i;
-        for(i = 0; i < items.length; i++) {
+    public int emptySlots() {
+        int count = 0;
+        for(int i = 0; i < capacity; i++) {
             if(items[i] != null) {
                 continue;
             }
@@ -332,21 +351,22 @@ public class Inventory {
      * Gets the next free slot from the specified start slot, inclusive.
      *
      * @param start the start slot.
-     * @return the free slot from the start, inclusive. If the capacity is reached then the current capacity is returned.
+     * @return the free slot from the start, inclusive. If the capacity is reached then {@code -1} is returned.
      */
     public int freeSlot(int start) {
-        for(int i = start; i < items.length; i++) {
+        for(int i = start; i < capacity; i++) {
             if(items[i] == null) {
                 return i;
             }
         }
-        return items.length;
+        return -1;
     }
 
     /**
+     * Gets if the inventory contains an item.
      *
-     * @param itemId
-     * @return
+     * @param itemId the item id.
+     * @return if the inventory contains at least one of an item.
      */
     private boolean contains(int itemId) {
         return contains(itemId, 1);
@@ -361,7 +381,7 @@ public class Inventory {
      */
     public boolean contains(int itemId, int amount) {
         int count = 0;
-        for(int i = 0; i < items.length; i++) {
+        for(int i = 0; i < capacity; i++) {
             Item item = items[i];
             if(item == null) {
                 continue;
@@ -385,7 +405,7 @@ public class Inventory {
      */
     public int count(int itemId) {
         int count = 0;
-        for(int i = 0; i < items.length; i++) {
+        for(int i = 0; i < capacity; i++) {
             Item item = items[i];
             if(item == null) {
                 continue;
@@ -408,9 +428,9 @@ public class Inventory {
     }
 
     /**
-     * Resets the updated slots.
+     * Clears the updated slots.
      */
-    public void resetUpdatedSlots() {
+    public void clearUpdatedSlots() {
         updatedSlots.clear();
     }
 
@@ -431,5 +451,4 @@ public class Inventory {
             items[i] = null;
         }
     }
-
 }

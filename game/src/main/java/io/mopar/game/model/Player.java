@@ -1,11 +1,13 @@
 package io.mopar.game.model;
 
-import io.mopar.account.InventoryModel;
-import io.mopar.account.ItemModel;
-import io.mopar.account.Profile;
-import io.mopar.account.SkillModel;
+import io.mopar.account.*;
+import io.mopar.core.Base37;
 import io.mopar.core.msg.Message;
 import io.mopar.core.msg.MessageListener;
+import io.mopar.game.config.ChildActions;
+import io.mopar.game.config.InterfaceComponent;
+import io.mopar.game.config.InterfaceConfig;
+import io.mopar.game.config.InventoryConfig;
 import io.mopar.game.model.block.RegionSet;
 import io.mopar.game.msg.*;
 
@@ -18,9 +20,9 @@ import java.util.Map.Entry;
 public class Player extends Mobile {
 
     /**
-     * The username.
+     * The user identifier, alias for username.
      */
-    private long username;
+    private long uid;
 
     /**
      * The inventories.
@@ -38,7 +40,7 @@ public class Player extends Mobile {
     private Appearance appearance = new Appearance();
 
     /**
-     *
+     * Flag for if the appearance has been updated.
      */
     private boolean appearanceUpdated;
 
@@ -53,14 +55,19 @@ public class Player extends Mobile {
     private Scene scene = new Scene();
 
     /**
-     * The submitPublicChat message.
+     * The most recently published public chat message.
      */
     private ChatMessage publicChatMessage;
 
     /**
-     *
+     * The skills.
      */
     private SkillSet skills = new SkillSet();
+
+    /**
+     * The interfaces.
+     */
+    private InterfaceSet interfaces = new InterfaceSet();
 
     /**
      * Constructs a new {@link Player};
@@ -68,20 +75,32 @@ public class Player extends Mobile {
     public Player() {}
 
     /**
+     * Sets the unique identifier.
      *
-     * @param username
+     * @param uid the unique identifier or username.
      */
-    public void setUsername(long username) {
-        this.username = username;
+    public void setUid(long uid) {
+        this.uid = uid;
     }
 
     /**
+     * Gets the unique identifier.
      *
-     * @return
+     * @return the unique identifier.
      */
     public long getUid() {
-        return username;
+        return uid;
     }
+
+    /**
+     * Gets the username of the player.
+     *
+     * @return the username,
+     */
+    public String getUsername() {
+        return Base37.decode(uid);
+    }
+
 
     /**
      * Sets the display mode.
@@ -111,44 +130,60 @@ public class Player extends Mobile {
     }
 
     /**
+     * Sets the value of a variable.
      *
-     * @param id
-     * @param active
+     * @param id the variable id.
+     * @param value the value.
      */
-    public void setFeatureVisible(int id, boolean active) {
-        appearance.setVisible(id, active);
+    @Override
+    public void setVariable(int id, int value) {
+        super.setVariable(id, value);
+        send(new SetVariableMessage(id, value));
     }
 
     /**
+     * Sets if a feature is visible.
      *
-     * @param bool
+     * @param id the feature id.
+     * @param visible if the feature is visible.
+     */
+    public void setFeatureVisible(int id, boolean visible) {
+        appearance.setVisible(id, visible);
+    }
+
+    /**
+     * Sets if the appearance was updated.
+     *
+     * @param bool the updated flag.
      */
     public void setAppearanceUpdated(boolean bool) {
         this.appearanceUpdated = bool;
     }
 
     /**
-     *
-     * @return
-     */
-    public Appearance getAppearance() {
-        return appearance;
-    }
-
-    /**
      * Gets if the appearance was updated.
      *
-     * @return if the appearnace was updated.
+     * @return if the appearance was updated.
      */
     public boolean getAppearanceUpdated() {
         return appearanceUpdated;
     }
 
     /**
+     * Gets the appearance.
      *
-     * @param id
-     * @param item
-     * @param stack
+     * @return the appearance.
+     */
+    public Appearance getAppearance() {
+        return appearance;
+    }
+
+    /**
+     * Adds an item to an inventory.
+     *
+     * @param id the inventory id.
+     * @param item the item to add.
+     * @param stack if the item should be stacked in the inventory.
      */
     public void addItem(int id, Item item, boolean stack) {
         Inventory inventory = getInventory(id);
@@ -156,23 +191,20 @@ public class Player extends Mobile {
     }
 
     /**
+     * Gets if an inventory will accept an item.
      *
-     * @param id
-     * @param item
-     * @param size
-     * @param stack
-     * @return
+     * @param id the inventory id.
+     * @param item the item to test.
+     * @param stack if the item should be stacked in the inventory.
+     * @return if the inventory has room for the specified item under the specified stack condition.
      */
-    public boolean acceptItem(int id, Item item, int size, boolean stack) {
-        if(!hasInventory(id)) {
-            return size > 0;
-        }
+    public boolean acceptItem(int id, Item item,  boolean stack) {
         Inventory inventory = inventories.get(id);
-        return inventory.accept(item, size, stack);
+        return inventory.accept(item, stack);
     }
 
     /**
-     * Helper method; adds an item to an inventory.
+     * Adds an item to an inventory.
      *
      * @param id the inventory id.
      * @param itemId the item id.
@@ -185,8 +217,9 @@ public class Player extends Mobile {
     }
 
     /**
-     * Helper method; moves an item from one inventory to another.
-     *  @param srcId the source inventory id.
+     * Moves an item from one inventory to another.
+     *
+     * @param srcId the source inventory id.
      * @param destId the destination inventory id.
      * @param slot the source inventory slot.
      * @param stack if the item should stack on addition to the destination inventory.
@@ -205,7 +238,7 @@ public class Player extends Mobile {
     }
 
     /**
-     * Helper method; gets the count of an item in an inventory.
+     * Gets the count of an item in an inventory.
      *
      * @param id the inventory id.
      * @param itemId the item id.
@@ -219,69 +252,83 @@ public class Player extends Mobile {
     }
 
     /**
-     * Helper method, swaps items in an inventory.
+     * Switches items in an inventory.
      *
      * @param id the inventory id.
      * @param firstSlot the first slot.
      * @param secondSlot the second slot.
-     * @param mode the swap mode.
+     * @param mode the switch mode.
+     *
+     * @see Inventory#SWAP
+     * @see Inventory#INSERT
      */
-    public void swapItem(int id, int firstSlot, int secondSlot, int mode) {
+    public void switchItems(int id, int firstSlot, int secondSlot, int mode) {
         if(!hasInventory(id)) {
             return;
         }
         Inventory inventory = inventories.get(id);
-        inventory.swap(firstSlot, secondSlot, mode);
+        inventory.switchItems(firstSlot, secondSlot, mode);
     }
 
     /**
+     * Swaps items between inventories.
      *
-     * @param sourceId
-     * @param destId
-     * @param firstSlot
-     * @param secondSlot
-     * @param stack
-     * @param shift
+     * @param srcId the source inventory id.
+     * @param destId the destination inventory id.
+     * @param firstSlot the first slot.
+     * @param secondSlot the second slot.
+     * @param stack if the item being shifted from the source inventory should stack, if this is the case
+     *              and the items being swapped are the same id the two stacks are combined in the destination
+     *              inventory at the specified second slot.
+     * @param shift if the items should be shifted in the source inventory from which the item was removed from.
      */
-    public void swapItems(int sourceId, int destId, int firstSlot, int secondSlot, boolean stack, boolean shift) {
-        if(!hasInventory(sourceId)) {
+    public void swapItems(int srcId, int destId, int firstSlot, int secondSlot, boolean stack, boolean shift) {
+        if(!hasInventory(srcId)) {
             return;
         }
-        Inventory source = inventories.get(sourceId);
-        Item item = source.remove(firstSlot, shift);
 
+        Inventory src = inventories.get(srcId);
         Inventory dest = getInventory(destId);
+
+        if(firstSlot < 0 || secondSlot < 0 || firstSlot >= src.capacity() || secondSlot >= dest.capacity()) {
+            throw new ArrayIndexOutOfBoundsException("Invalid slots");
+        }
+
+        Item item = src.remove(firstSlot, shift);
         Item replace = dest.get(secondSlot);
+
         if(replace != null && replace.getId() == item.getId() && stack) {
             int amount = item.getAmount();
             if(item.getAmount() + replace.getAmount() < 0) {
                 amount = Integer.MAX_VALUE - replace.getAmount();
-                source.set(firstSlot, new Item(item.getId(), item.getAmount() - amount));
+                src.set(firstSlot, new Item(item.getId(), item.getAmount() - amount));
             } else {
                 amount += replace.getAmount();
             }
             dest.set(secondSlot, new Item(item.getId(), amount));
         } else {
-            source.set(firstSlot, replace);
+            src.set(firstSlot, replace);
             dest.set(secondSlot, item);
         }
     }
 
     /**
+     * Gets an item in an inventory.
      *
-     * @param id
-     * @param slot
-     * @return
+     * @param id the inventory id.
+     * @param slot the slot.
+     * @return the item.
      */
     public Item getItem(int id, int slot) {
         if(!hasInventory(id)) {
             return null;
         }
-        return inventories.get(id).get(slot);
+        Inventory inventory = inventories.get(id);
+        return inventory.get(slot);
     }
 
     /**
-     * Helper method; removes an item from an inventory.
+     * Removes an item from an inventory.
      *
      * @param id the inventory id.
      * @param itemId the item id.
@@ -292,7 +339,7 @@ public class Player extends Mobile {
         if(!hasInventory(id)) {
             return;
         }
-        Inventory inventory = inventories.getOrDefault(id, new Inventory());
+        Inventory inventory = inventories.get(id);
         inventory.remove(itemId, amount, shift);
     }
 
@@ -302,13 +349,12 @@ public class Player extends Mobile {
      * @param id the inventory id.
      * @param itemId the item id.
      * @param amount the amount of the item.
-     * @param limit the inventory size limit.
      * @param stackable flag for if the item is stackable.
      * @return the amount of the item that the inventory can accept, up to the specified amount.
      */
-    public int getInventorySpace(int id, int itemId, int amount, int limit, boolean stackable) {
+    public int getInventorySpace(int id, int itemId, int amount, boolean stackable) {
         Inventory inventory = getInventory(id);
-        return inventory.getSpace(itemId, amount, limit, stackable);
+        return inventory.getSpaceFor(itemId, amount, stackable);
     }
 
     /**
@@ -325,7 +371,7 @@ public class Player extends Mobile {
         Inventory inventory = inventories.get(id);
         UpdateInventoryMessage message = new UpdateInventoryMessage(inventory, id, widgetId, componentId);
         inventory.getUpdatedSlots().forEach(message::addSlot);
-        inventory.resetUpdatedSlots();
+        inventory.clearUpdatedSlots();
         send(message);
     }
 
@@ -361,7 +407,8 @@ public class Player extends Mobile {
      * @return the inventory for the id.
      */
     public Inventory getInventory(int id) {
-        Inventory inventory = inventories.getOrDefault(id, new Inventory());
+        InventoryConfig config = InventoryConfig.forId(id);
+        Inventory inventory = inventories.getOrDefault(id, new Inventory(config.getSize()));
         inventories.putIfAbsent(id, inventory);
         return inventory;
     }
@@ -404,34 +451,69 @@ public class Player extends Mobile {
     }
 
     /**
+     * Opens a screen.
      *
-     * @param widgetId
+     * @param interfaceId the interface id.
      */
-    public void setRootInterface(int widgetId) {
-        send(new SetRootInterfaceMessage(widgetId));
+    public void openScreen(int interfaceId) {
+        interfaces.setScreen(interfaceId);
+        send(new OpenScreenMessage(interfaceId));
     }
 
     /**
+     * Opens an interface.
      *
-     * @param parentId
-     * @param componentId
-     * @param widgetId
-     * @param type
+     * @param parentId the parent interface id.
+     * @param componentId the component id.
+     * @param interfaceId the id of the interface to open.
+     * @param type the .
      */
-    public void setInterface(int parentId, int componentId, int widgetId, int type) {
-        send(new SetInterfaceMessage(parentId, componentId, widgetId, type));
+    public void openInterface(int parentId, int componentId, int interfaceId, int type) {
+        interfaces.openInterface(parentId, componentId, interfaceId, type);
+        InterfaceConfig config = InterfaceConfig.forId(interfaceId);
+        if(config != null) {
+            for(InterfaceComponent component : config.getComponents()) {
+                ChildActions actions = component.getChildActions();
+                if (actions != null) {
+                    send(new AccessOptionMessage(interfaceId, component.getId(), actions.getStart(), actions.getEnd(), actions.getFlags()));
+                }
+            }
+        }
+        send(new SetInterfaceMessage(parentId, componentId, interfaceId, type));
     }
 
     /**
+     * Sets the text for an interface.
      *
-     * @param widgetId
-     * @param componentId
-     * @param text
+     * @param widgetId the widget id.
+     * @param componentId the component id.
+     * @param text the text.
      */
     public void setInterfaceText(int widgetId, int componentId, String text) {
         send(new SetInterfaceTextMessage(widgetId, componentId, text));
     }
 
+    /**
+     * Sets if an interface is hidden.
+     *
+     * @param interfaceId the interface id.
+     * @param componentId the component id.
+     * @param hidden if the interface is hidden.
+     */
+    public void setInterfaceHidden(int interfaceId, int componentId, boolean hidden) {
+        send(new SetInterfaceHiddenMessage(interfaceId, componentId, hidden));
+    }
+
+    /**
+     * Gets if an interface is open.
+     *
+     * @param interfaceId the interface id.
+     * @param componentId the component id.
+     * @return if the interface is open.
+     */
+    public boolean isInterfaceOpen(int interfaceId, int componentId) {
+        return interfaces.isOpened(interfaceId, componentId);
+    }
 
     /**
      * Gets the scene.
@@ -445,7 +527,7 @@ public class Player extends Mobile {
     /**
      * Updates the local player graph.
      *
-     * @param players The player list.
+     * @param players the player list.
      */
     public void updateLocalPlayers(EntityList<Player> players) {
         scene.updateLocalPlayers(players, getPosition());
@@ -453,8 +535,9 @@ public class Player extends Mobile {
     }
 
     /**
+     * Updates the local NPC graph.
      *
-     * @param npcs
+     * @param npcs the npc list.
      */
     public void updateLocalNpcs(EntityList<NPC> npcs) {
         scene.updateLocalNpcs(npcs, getPosition());
@@ -462,8 +545,9 @@ public class Player extends Mobile {
     }
 
     /**
+     * Updates the blocks.
      *
-     * @param regions
+     * @param regions the regions.
      */
     public void updateBlocks(RegionSet regions) {
         scene.updateBlocks(regions, getPosition());
@@ -489,9 +573,88 @@ public class Player extends Mobile {
     }
 
     /**
+     * Refreshes the variables.
+     */
+    public void refreshVariables() {
+        VariableSet variables = getVariables();
+        for(int id : variables.getUpdated()) {
+            send(new SetVariableMessage(id, variables.getValue(id)));
+        }
+    }
+
+    /**
+     * Plays a song.
+     *
+     * @param id the song id.
+     */
+    public void playSong(int id) {
+        send(new PlaySongMessage(id));
+    }
+
+
+    /**
+     * Gets a stat.
+     *
+     * @param skillId the skill id.
+     * @return the stat.
+     */
+    public int getStat(int skillId) {
+        return skills.getStat(skillId);
+    }
+
+    /**
+     * Gets a level.
+     *
+     * @param skillId the skill id.
+     * @return the level.
+     */
+    public int getLevel(int skillId) {
+        return skills.getLevel(skillId);
+    }
+
+    /**
+     * Adds experience.
+     *
+     * @param skill the skill id.
+     * @param amount the amount of experience to add.
+     */
+    public void addExperience(int skill, double amount) {
+        skills.giveExperience(skill, amount);
+        Double experience = Double.valueOf(skills.getExperience(skill));
+        send(new UpdateSkillMessage(skill, experience.intValue(), skills.getStat(skill)));
+    }
+
+    /**
+     * Gets the skills.
+     *
+     * @return the skills.
+     */
+    public SkillSet getSkills() {
+        return skills;
+    }
+
+    /**
+     * Refreshes the skills.
+     */
+    public void refreshSkills() {
+        for(int i = 0; i < Skills.COUNT; i++) {
+            send(new UpdateSkillMessage(i, Double.valueOf(skills.getExperience(i)).intValue(), skills.getStat(i)));
+        }
+    }
+
+    /**
+     * Resets the player.
+     */
+    public void reset() {
+        publicChatMessage = null;
+        appearanceUpdated = false;
+        super.reset();
+    }
+
+    /**
      * Prints text to the players console.
      *
-     * @param text
+     * @param text the text.
      */
     public void print(String text) {
         send(new PrintMessage(text));
@@ -524,57 +687,13 @@ public class Player extends Mobile {
     }
 
     /**
+     * Returns the player to a profile model.
      *
-     * @param skill
-     * @param amount
-     */
-    public void giveExp(int skill, double amount) {
-        skills.giveExperience(skill, amount);
-        Double d = Double.valueOf(skills.getExperience(skill));
-        send(new UpdateSkillMessage(skill, d.intValue(), skills.getStat(skill)));
-    }
-
-    /**
-     *
-     */
-    public void refreshSkills() {
-        for(int i = 0; i < Skills.COUNT; i++) {
-            send(new UpdateSkillMessage(i, Double.valueOf(skills.getExperience(i)).intValue(), skills.getStat(i)));
-        }
-    }
-
-    /**
-     *
-     * @return
-     */
-    public SkillSet getSkills() {
-        return skills;
-    }
-
-    /**
-     *
-     * @param id
-     */
-    public void playSong(int id) {
-        send(new PlaySongMessage(id));
-    }
-
-    /**
-     * Resets the player.
-     */
-    public void reset() {
-        publicChatMessage = null;
-        appearanceUpdated = false;
-        super.reset();
-    }
-
-    /**
-     *
-     * @return
+     * @return the profile.
      */
     public Profile toProfile() {
         Profile profile = new Profile();
-        profile.setUid(username);
+        profile.setUid(uid);
 
         profile.setX(getPosition().getX());
         profile.setY(getPosition().getY());
@@ -608,6 +727,15 @@ public class Player extends Mobile {
             }
 
             profile.addInventory(model);
+        }
+
+        VariableSet variables = getVariables();
+        for(Entry<Integer, Integer> entry : variables.getEntries()) {
+            VariableModel variable = new VariableModel();
+            variable.setId(entry.getKey());
+            variable.setValue(entry.getValue());
+
+            profile.addVariable(variable);
         }
 
         return profile;
